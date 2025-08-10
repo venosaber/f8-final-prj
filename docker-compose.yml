@@ -1,0 +1,38 @@
+services:
+  web:
+    container_name: f8k13-full-web
+    image: node:24
+    working_dir: /app/web
+    volumes:
+      - './web:/app/web'
+    ports:
+      - '4000:4000'
+    env_file:
+      - .env
+    command: ['npm','run','dev']
+
+  api:
+    container_name: f8k13-full-api
+    image: node:24
+    working_dir: /app/api
+    volumes:
+      - './api:/app/api'
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    depends_on:
+      - db
+    command: ['npm','run','start:dev']
+
+  db:
+    container_name: f8k13-full-db
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=default
+    volumes:
+      - './db:/var/lib/postgresql/data'
+    ports:
+      - '5000:5432'
