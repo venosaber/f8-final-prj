@@ -6,9 +6,10 @@ import {DataSource} from "typeorm";
 import {ExamEntity} from "@/modules/exam/entity";
 import {ExamService} from "@/modules/exam/service";
 import {ExamController} from "@/modules/exam/controller";
+import {UserModule} from "@/modules/user/module";
 
 @Module({
-    imports: [DatabaseModule, QuestionModule],
+    imports: [DatabaseModule, QuestionModule, UserModule],
     controllers: [ExamController],
     providers: [{
         provide: ExamEntityRepository,
