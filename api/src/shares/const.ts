@@ -21,3 +21,15 @@ export const ClassServiceToken = Symbol('ClassServiceToken');
 export const ClassUserEntityRepository = Symbol('ClassUserEntityRepository');
 export const ClassUserServiceToken = Symbol('ClassUserServiceToken');
 export const InvitationServiceToken = Symbol('InvitationServiceToken');
+
+export const ExamGroupEntityRepository = Symbol('ExamGroupEntityRepository');
+export const ExamGroupServiceToken = Symbol('ExamGroupServiceToken');
+
+export const ExamEntityRepository = Symbol('ExamEntityRepository');
+export const ExamServiceToken = Symbol('ExamServiceToken');
+
+export const ExamResultEntityRepository = Symbol('ExamResultEntityRepository');
+export const ExamResultServiceToken = Symbol('ExamResultServiceToken');
+
+export const QuestionEntityRepository = Symbol('QuestionEntityRepository');
+export const QuestionServiceToken = Symbol('QuestionServiceToken');

@@ -8,9 +8,9 @@ import {RolesGuard} from "@/modules/auth/roles.guard";
 import {ClassReq} from "@/modules/class/dtos";
 
 @ApiTags('Class')
-@Controller('class')
+@Controller('classes')
 @ApiBearerAuth()
-@Roles(Role.TEACHER, Role.ADMIN)
+@Roles(Role.TEACHER, Role.ADMIN, Role.STUDENT)
 @UseGuards(AuthGuard, RolesGuard)
 export class ClassController {
     constructor(

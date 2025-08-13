@@ -1,13 +1,15 @@
 import {
-  UserReqI, UserI, UserResI,
+  UserReqI, UserWithPassI, UserResI,
   LoginReqI, LoginResI,
-  StudentI, StudentReqI,
+  StudentResI, StudentReqI,
   RegisterReqI,
-  TeacherReqI, TeacherI,
+  TeacherReqI, TeacherResI,
   FileI, FileReqI,
   ClassI, ClassReqI,
-  ClassUserI, ClassUserReqI,
-  InvitationI,
+  ClassUserI, ClassUserReqI, InvitationI,
+  ExamGroupI, ExamGroupReqI,
+  QuestionReqI, QuestionResI,
+  ExamReqI, ExamResI,
 } from '@/shares';
 import { ForgotPasswordReq, ResetPasswordReq } from '@/modules/auth/dtos';
 
@@ -20,12 +22,12 @@ export interface BaseServiceI<RequestI, ResponseI> {
   softDelete: (id: number) => Promise<{ msg: string }>;
 }
 
-export interface UserServiceI extends BaseServiceI<UserReqI, UserI> {
-  findUserByEmailWithPassword: (email: string) => Promise<UserResI | null>;
+export interface UserServiceI extends BaseServiceI<UserReqI, UserResI> {
+  findUserByEmailWithPassword: (email: string) => Promise<UserWithPassI | null>;
 }
 
-export type StudentServiceI = BaseServiceI<StudentReqI, StudentI>;
-export type TeacherServiceI = BaseServiceI<TeacherReqI, TeacherI>;
+export type StudentServiceI = BaseServiceI<StudentReqI, StudentResI>;
+export type TeacherServiceI = BaseServiceI<TeacherReqI, TeacherResI>;
 
 export interface AuthServiceI {
   login: (data: LoginReqI) => Promise<LoginResI>;
@@ -45,3 +47,11 @@ export interface ClassUserServiceI extends BaseServiceI<ClassUserReqI, ClassUser
 export interface InvitationServiceI {
   invite: (invitation: InvitationI) => Promise<{msg: string}>;
 }
+
+export interface ExamGroupServiceI extends BaseServiceI<ExamGroupReqI, ExamGroupI> {}
+export interface QuestionServiceI extends BaseServiceI<QuestionReqI, QuestionResI>{
+  createMany: (data: QuestionReqI[]) => Promise<QuestionResI[]>;
+  updateMany: (data: QuestionReqI[]) => Promise<QuestionResI[]>;
+  softDeleteMany: (ids: number[]) => Promise<{ msg: string }>;
+}
+export interface ExamServiceI extends BaseServiceI<ExamReqI, ExamResI> {}

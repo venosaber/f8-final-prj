@@ -64,7 +64,7 @@ export class RegisterReq implements RegisterReqI {
 
   @IsOptional()
   @IsNumber()
-  avatar?: number | null;
+  avatar: number | null;
 
   @IsOptional()
   @IsString()

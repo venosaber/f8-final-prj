@@ -6,7 +6,7 @@ import {Inject, Injectable} from "@nestjs/common";
 import {Repository} from "typeorm";
 import {ClsService} from "nestjs-cls";
 import {HttpException, HttpStatus} from "@nestjs/common";
-import {ClassUserEntity} from "@/modules/classUser/entity";
+import {ClassUserEntity} from "@/modules/class_user/entity";
 import {UserEntity} from "@/modules/user/entity";
 import {Transactional} from "typeorm-transactional";
 

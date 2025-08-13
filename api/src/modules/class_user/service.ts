@@ -1,5 +1,5 @@
 import {BaseService} from "@/modules/base/service";
-import {ClassUserEntity} from "@/modules/classUser/entity";
+import {ClassUserEntity} from "@/modules/class_user/entity";
 import {Inject, Injectable} from "@nestjs/common";
 import {ClassUserEntityRepository} from "@/shares";
 import type {ClassUserI, ClassUserReqI, ClassUserServiceI} from "@/shares";

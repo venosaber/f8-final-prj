@@ -1,41 +1,58 @@
 import {
-    EventSubscriber,
+    DataSource,
     EntitySubscriberInterface,
-    SoftRemoveEvent,
-} from 'typeorm';
-import { ClsService } from 'nestjs-cls';
-import { BaseEntity } from '@/modules/base/entity';
-import { UserI } from "@/shares";
+    UpdateEvent,
+} from "typeorm";
+import {BaseEntity} from "@/modules/base/entity";
 
-@EventSubscriber()
-export class BaseSubscriber implements EntitySubscriberInterface<BaseEntity> {
-    constructor(private readonly cls: ClsService) {}
+export abstract class BaseCascadeSubscriber<T extends BaseEntity>
+    implements EntitySubscriberInterface<T> {
 
-    private getAuthenticatedUserId(): number | null{
-        const user = this.cls.get<UserI>('user');
-        return user ? user.id : null;
-    }
+    public static dataSource: DataSource;
+    protected constructor(
+        private readonly cascades: { childEntity: any; foreignKey: string }[]
+    ) {}
 
-    listenTo() {
-        return BaseEntity;
+
+    /**
+     * After update on the entity T
+     */
+    async afterUpdate(event: UpdateEvent<T>): Promise<void> {
+        if (!event.entity || !event.databaseEntity) return;
+
+        // check if this update is soft-delete
+        const entity = event.entity as T;   // "after" value
+        const dbEntity = event.databaseEntity as T; // "before" value
+        // compare "before" and "after" values of deleted_at and active
+        if (!dbEntity.deleted_at && entity.deleted_at && dbEntity.active && !entity.active) {
+
+            const deleted_by: number | null = entity.deleted_by ?? null;
+            await this.cascadeSoftDelete(deleted_by, entity);
+        }
     }
 
     /**
-     * Will be called before any entities extended from BaseEntity are soft-deleted
-     * To update "deletedBy" and "active" (deletedAt has been already handled by DeleteDateColumn decorator)
+     * Run soft-delete on child entities
      */
-    async beforeSoftRemove(event: SoftRemoveEvent<BaseEntity>) {
-        const deletedBy: number | null = this.getAuthenticatedUserId();
+    private async cascadeSoftDelete(deleted_by: number | null, parent: T) {
+        const now = new Date();
 
-        // event.metadata.target will pick up the target entity class (UserEntity, ClassEntity,...)
-        // this action will be included in the same transaction as the soft delete command
-        await event.queryRunner.manager.update(
-            event.metadata.target,
-            event.entityId,
-            {
-                deletedBy: deletedBy,
-                active: false,
-            },
-        );
+        for (const cascade of this.cascades) {
+            const repo = BaseCascadeSubscriber.dataSource.getRepository(cascade.childEntity);
+            const children = await repo.find({
+                where: { [cascade.foreignKey]: parent.id },
+            });
+
+            if (!children.length) continue;
+
+            for (const child of children) {
+                child.deleted_by = deleted_by;
+                child.deleted_at = now;
+                child.active = false;
+            }
+
+            // Use save to trigger subscribers of child entities
+            await repo.save(children);
+        }
     }
 }

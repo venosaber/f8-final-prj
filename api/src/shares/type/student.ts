@@ -1,11 +1,9 @@
-import { UserBase } from '@/shares/type/user';
+import {UserBase, UserI, UserResI} from '@/shares/type/user';
 
-export type StudentBase = UserBase;
+export interface StudentBase extends UserBase {}
 
-export interface StudentI extends StudentBase {
-  id: number;
-}
+export interface StudentI extends UserI {}
 
 export interface StudentReqI extends StudentBase {}
 
-export type StudentResI = StudentI;
+export interface StudentResI extends UserResI {}

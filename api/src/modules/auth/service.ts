@@ -1,11 +1,11 @@
 import type {
     AuthServiceI,
     UserServiceI,
-    UserI,
+    UserResI,
     LoginReqI,
     LoginResI,
     RegisterReqI,
-    TokenPayloadData,
+    TokenPayloadData, UserWithPassI,
 } from '@/shares';
 import {UserServiceToken, UserEntityRepository, PasswordResetTokenRepository} from '@/shares';
 import {HttpException, HttpStatus, Injectable, Inject} from '@nestjs/common';
@@ -37,7 +37,7 @@ export class AuthService implements AuthServiceI {
     // register = create a new user
     async register(data: RegisterReqI) {
         // check if the email already exists
-        const users: UserI[] = await this.userService.find({
+        const users: UserResI[] = await this.userService.find({
             email: data.email,
         });
         if (users.length > 0) {
@@ -54,8 +54,7 @@ export class AuthService implements AuthServiceI {
 
     async login(data: LoginReqI): Promise<LoginResI> {
         // check if the email exists in the db
-        const user = await this.userService.findUserByEmailWithPassword(data.email);
-
+        const user: UserWithPassI | null = await this.userService.findUserByEmailWithPassword(data.email);
         if (!user) {
             throw new HttpException(
                 'Invalid email or password',
@@ -78,11 +77,11 @@ export class AuthService implements AuthServiceI {
             name: user.name,
             email: user.email,
             role: user.role,
-            avatar: user?.avatar ?? null,
+            avatar_info: user?.avatar_info ?? null,
         }
 
         // make new JWT tokens and return them
-        const payload = {sub: user.id, data: payloadData};
+        const payload = {sub: user.id, ...payloadData};
 
         return {
             accessToken: await this.jwtService.signAsync(payload),

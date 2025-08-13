@@ -4,7 +4,14 @@ import {PasswordResetTokenEntity} from "@/modules/password_reset_token/entity";
 import {UserEntity} from "@/modules/user/entity";
 import {FileEntity} from "@/modules/file/entity";
 import {ClassEntity} from "@/modules/class/entity";
-import {ClassUserEntity} from "@/modules/classUser/entity";
+import {ClassUserEntity} from "@/modules/class_user/entity";
+import {ClassSubscriber} from "@/modules/class/subscriber";
+import {UserSubscriber} from "@/modules/user/subscriber";
+import {ExamGroupEntity} from "@/modules/exam_group/entity";
+import {QuestionEntity} from "@/modules/question/entity";
+import {ExamEntity} from "@/modules/exam/entity";
+import { addTransactionalDataSource } from 'typeorm-transactional';
+import {BaseCascadeSubscriber} from "@/modules/base/subscriber";
 
 export const databaseProviders = [
     {
@@ -23,11 +30,19 @@ export const databaseProviders = [
                     FileEntity,
                     ClassEntity,
                     ClassUserEntity,
+                    ExamGroupEntity,
+                    QuestionEntity,
+                    ExamEntity,
                 ],
+                subscribers: [BaseCascadeSubscriber, UserSubscriber, ClassSubscriber],
                 synchronize: true,
             });
 
-            return dataSource.initialize();
+            await dataSource.initialize();
+
+            addTransactionalDataSource(dataSource);
+            BaseCascadeSubscriber.dataSource = dataSource;
+            return dataSource;
         },
     },
 ];

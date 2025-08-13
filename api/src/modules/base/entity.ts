@@ -13,37 +13,43 @@ export class BaseEntity {
   id: number;
 
   @CreateDateColumn({
+    name: 'created_at',
     type: 'timestamp',
   })
-  createdAt: Date;
+  created_at: Date;
 
   @Column({
+    name: 'created_by',
     type: 'bigint',
     nullable: true,
   })
-  createdBy: number | null;
+  created_by: number | null;
 
   @UpdateDateColumn({
+    name: 'updated_at',
     type: 'timestamp',
   })
-  updatedAt: Date;
+  updated_at: Date;
 
   @Column({
+    name: 'updated_by',
     type: 'bigint',
     nullable: true,
   })
-  updatedBy: number | null;
+  updated_by: number | null;
 
   @DeleteDateColumn({
+    name: 'deleted_at',
     type: 'timestamp',
   })
-  deletedAt: Date;
+  deleted_at: Date;
 
   @Column({
+    name: 'deleted_by',
     type: 'bigint',
     nullable: true,
   })
-  deletedBy: number | null;
+  deleted_by: number | null;
 
   @Column({
     type: 'boolean',

@@ -6,6 +6,7 @@ import {
   UpdateQueryBuilder,
   InsertResult,
   UpdateResult,
+  FindOptionsWhere,
 } from 'typeorm';
 import { BaseServiceI, UserI } from '@/shares';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -35,12 +36,12 @@ export abstract class BaseService<
 
   protected getPublicColumns() {
     const privateColumns: string[] = [
-      'createdAt',
-      'createdBy',
-      'updatedAt',
-      'updatedBy',
-      'deletedAt',
-      'deletedBy',
+      'created_at',
+      'created_by',
+      'updated_at',
+      'updated_by',
+      'deleted_at',
+      'deleted_by',
       'active',
     ];
     const columns: string[] = this.repository.metadata.columns.map(
@@ -63,7 +64,16 @@ export abstract class BaseService<
     query: SelectQueryBuilder<Entity>,
     condition: Partial<Record<keyof Entity, any>>,
   ): SelectQueryBuilder<Entity> {
-    return query.where({ ...condition });
+
+    Object.entries(condition).forEach(([key, value], index: number) => {
+      const paramName = `param_${index}`;
+      if (index === 0) {
+        query.where(`${query.alias}.${key} = :${paramName}`, { [paramName]: value });
+      } else {
+        query.andWhere(`${query.alias}.${key} = :${paramName}`, { [paramName]: value });
+      }
+    });
+    return query;
   }
 
   async find(condition = {}) {
@@ -98,8 +108,8 @@ export abstract class BaseService<
   }
 
   async create(data: RequestI) {
-    const userId = this.getAuthenticatedUserId();
-    const dataWithUserId = { ...data, createdBy: userId };
+    const userId: number | null = this.getAuthenticatedUserId();
+    const dataWithUserId = { ...data, created_by: userId };
 
     const query: InsertQueryBuilder<Entity> = this.repository
       .createQueryBuilder(this.getTableName())
@@ -118,8 +128,8 @@ export abstract class BaseService<
   }
 
   async updateOne(id: number, data: Partial<RequestI>) {
-    const userId = this.getAuthenticatedUserId();
-    const dataWithUserId = { ...data, updatedBy: userId };
+    const userId: number | null = this.getAuthenticatedUserId();
+    const dataWithUserId = { ...data, updated_by: userId };
 
     const query: UpdateQueryBuilder<Entity> = this.repository
       .createQueryBuilder(this.getTableName())
@@ -140,10 +150,6 @@ export abstract class BaseService<
   }
 
   async softDelete(id: number) {
-    // QueryBuilder cannot help with calling subscribers => use repository pattern
-    // need to call subscribers for the need of "soft-delete cascade"
-
-
     // const userId = this.getAuthenticatedUserId();
     // const dataWithUserId = {
     //   deletedAt: () => 'CURRENT_TIMESTAMP',
@@ -158,14 +164,23 @@ export abstract class BaseService<
     //   .where('id = :id and active = :active', { id, active: true });
     //
     // const response: UpdateResult = await query.execute();
+    // if (response.affected === 0) {
+    //   throw new NotFoundException(
+    //     'Record not found or already deleted',
+    //   );
+    // }
 
-    const response: UpdateResult = await this.repository.softDelete(id);
+    // QueryBuilder cannot help with calling subscribers => use repository pattern
+    // need to call subscribers for the need of "soft-delete cascade"
+    const entity: Entity | null = await this.repository.findOneBy({ id, active: true } as FindOptionsWhere<Entity>);
+    if (!entity)
+      throw new NotFoundException('Record not found or already deleted')
 
-    if (response.affected === 0) {
-      throw new NotFoundException(
-        'Record not found or already deleted',
-      );
-    }
+    entity.deleted_at = new Date();
+    entity.deleted_by = this.getAuthenticatedUserId();
+    entity.active = false;
+    await this.repository.save(entity); // calling save(entity) will trigger subscribers
+
     return {
       msg: 'Successfully deleted',
     };

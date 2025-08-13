@@ -21,7 +21,7 @@ export class InvitationDto implements InvitationI {
 
     @ApiProperty({
         description: 'passcode of the class',
-        example: '101',
+        example: '101abc',
         minLength: 6,
     })
     @IsString()

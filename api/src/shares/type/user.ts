@@ -4,24 +4,37 @@ export enum Role {
   TEACHER = 'teacher',
 }
 
+export interface AvatarInfo {
+  id: number;
+  url: string;
+}
+
 export interface UserBase {
   name: string;
   email: string;
-
   status: string;
-  avatar?: number | null;
   parent_name: string | null;
   parent_phone: string | null;
 }
 
-export interface UserI extends UserBase {
+export interface UserI extends UserBase{
   id: number;
   role: Role;
+  avatar: number | null;
 }
 
 export interface UserReqI extends UserBase {}
 
-export interface UserResI extends UserI {
+export interface UserResI extends Omit<UserI, 'avatar'> {
+  avatar_info: AvatarInfo | null;
+}
+
+export interface RegisterReqI extends UserReqI {
+  role: Role;
+  password: string;
+}
+
+export interface UserWithPassI extends UserResI {
   password: string;
 }
 
@@ -35,14 +48,9 @@ export interface LoginResI {
   refreshToken: string;
 }
 
-export interface RegisterReqI extends UserReqI {
-  role: Role;
-  password: string;
-}
-
 export interface TokenPayloadData {
   name: string;
   email: string;
   role: Role;
-  avatar: number | null;
+  avatar_info: AvatarInfo | null;
 }

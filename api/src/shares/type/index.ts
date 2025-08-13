@@ -4,7 +4,9 @@ export * from './teacher';
 export * from './services';
 export * from './file';
 export * from './class';
-export * from './classUser';
+export * from './class_user';
 export * from './invitation';
-
+export * from './exam_group';
+export * from './question';
+export * from './exam';
 

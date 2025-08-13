@@ -4,7 +4,7 @@ import { UserModule } from '@/modules/user/module';
 import { JwtModule } from '@nestjs/jwt';
 import { PasswordResetTokenModule } from '@/modules/password_reset_token/module';
 import { MailModule } from '@/infrastructure/mail/module';
-import { AuthServiceToken } from '@/shares';
+import {AuthServiceToken} from '@/shares';
 import { AuthService } from '@/modules/auth/service';
 
 @Module({

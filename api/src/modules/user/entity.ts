@@ -1,7 +1,8 @@
 import { BaseEntity } from '@/modules/base/entity';
-import {Column, Entity, OneToMany} from 'typeorm';
+import {Column, Entity, JoinColumn, OneToMany, OneToOne} from 'typeorm';
 import { Role } from '@/shares';
-import {ClassUserEntity} from "@/modules/classUser/entity";
+import {ClassUserEntity} from "@/modules/class_user/entity";
+import {FileEntity} from "@/modules/file/entity";
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
@@ -10,6 +11,9 @@ export class UserEntity extends BaseEntity {
 
   @Column()
   email: string;
+
+  @Column()
+  status: string;
 
   @Column({
     type: 'enum',
@@ -21,18 +25,19 @@ export class UserEntity extends BaseEntity {
   @Column()
   password: string;
 
-  @Column()
-  status: string;
-
-  @Column({ type: 'int', nullable: true })
-  avatar: number | null;
-
   @Column({ type: 'varchar', nullable: true })
   parent_name: string | null;
 
   @Column({ type: 'varchar', nullable: true })
   parent_phone: string | null;
 
+  @Column({nullable: true})
+  avatar: number | null;
+
   @OneToMany(()=> ClassUserEntity, classUser => classUser.user)
   classUsers: ClassUserEntity[];
+
+  @OneToOne(()=> FileEntity)
+  @JoinColumn({ name: 'avatar' })
+  file: FileEntity;
 }

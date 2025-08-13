@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ClassUserModule } from '@/modules/classUser/module';
+import { ClassUserModule } from '@/modules/class_user/module';
 import { ClassModule } from "@/modules/class/module";
 import { UserModule } from "@/modules/user/module";
 import { InvitationService } from "@/modules/invitation/service";

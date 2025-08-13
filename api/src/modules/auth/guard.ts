@@ -7,12 +7,12 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
-import type { UserI, UserServiceI, TokenPayloadData } from '@/shares';
+import type { UserResI, UserServiceI, TokenPayloadData } from '@/shares';
 import { UserServiceToken } from '@/shares';
 import {ClsService} from "nestjs-cls";
 
 interface RequestWithUser extends Request {
-  user: UserI
+  user: UserResI
 }
 
 interface TokenPayload {
@@ -47,7 +47,7 @@ export class AuthGuard implements CanActivate {
       });
 
       // use payload to find user in DB
-      const user: UserI = await this.userService.findOne(payload.sub);
+      const user: UserResI = await this.userService.findOne(payload.sub);
       if (!user) {
         throw new UnauthorizedException('User not found');
       }

@@ -7,7 +7,7 @@ import {Inject, Post, Body, UseGuards} from "@nestjs/common";
 import {AuthGuard} from "@/modules/auth/guard";
 
 @ApiTags('Invitation')
-@Controller('invitation')
+@Controller('invitations')
 @ApiBearerAuth()
 @UseGuards(AuthGuard)
 export class InvitationController {

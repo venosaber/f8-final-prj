@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import {DataSource} from "typeorm";
 import {DatabaseModule} from "@/database/module";
 import {DATA_SOURCE, ClassUserEntityRepository, ClassUserServiceToken} from "@/shares";
-import {ClassUserEntity} from "@/modules/classUser/entity";
-import {ClassUserService} from "@/modules/classUser/service";
+import {ClassUserEntity} from "@/modules/class_user/entity";
+import {ClassUserService} from "@/modules/class_user/service";
 
 @Module({
     imports: [DatabaseModule],
