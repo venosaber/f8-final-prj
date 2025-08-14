@@ -69,11 +69,7 @@ export class ExamService extends BaseService<ExamEntity, ExamReqI, ExamResI>
             .returning(this.getPublicColumns());
         const response: InsertResult = await query.execute();
 
-        if (
-            !response ||
-            !Array.isArray(response.raw) ||
-            response.raw.length === 0
-        ) {
+        if (!response || !Array.isArray(response.raw) || response.raw.length === 0) {
             throw new Error('Failed to create new record');
         }
         const examId: number = response.raw[0].id;
@@ -84,10 +80,6 @@ export class ExamService extends BaseService<ExamEntity, ExamReqI, ExamResI>
             exam_id: examId,
         }));
         const newQuestions: QuestionResI[] = await this.questionService.createMany(questionsWithExamId);
-
-        // update questions field for the exam
-        // const result: UpdateResult = await this.repository.update(examId, {questions: questionsWithExamId});
-        // if (!result) throw new InternalServerErrorException('Failed to update exam with questions');
 
         return {...response.raw[0], questions: newQuestions} as ExamResI;
     }

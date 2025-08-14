@@ -5,8 +5,7 @@ import {
   InsertQueryBuilder,
   UpdateQueryBuilder,
   InsertResult,
-  UpdateResult,
-  FindOptionsWhere,
+  UpdateResult, FindOptionsWhere,
 } from 'typeorm';
 import { BaseServiceI, UserI } from '@/shares';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -172,15 +171,51 @@ export abstract class BaseService<
 
     // QueryBuilder cannot help with calling subscribers => use repository pattern
     // need to call subscribers for the need of "soft-delete cascade"
-    const entity: Entity | null = await this.repository.findOneBy({ id, active: true } as FindOptionsWhere<Entity>);
-    if (!entity)
-      throw new NotFoundException('Record not found or already deleted')
 
-    entity.deleted_at = new Date();
-    entity.deleted_by = this.getAuthenticatedUserId();
+
+    // const entity: Entity | null = await this.repository.findOneBy({ id, active: true } as FindOptionsWhere<Entity>);
+    // if (!entity)
+    //   throw new NotFoundException('Record not found or already deleted')
+    //
+    // entity.deleted_at = new Date();
+    // entity.deleted_by = this.getAuthenticatedUserId();
+    // entity.active = false;
+    // await this.repository.save(entity); // calling save(entity) will trigger subscribers
+    //
+    // return {
+    //   msg: 'Successfully deleted',
+    // };
+
+    const entity: Entity | null = await this.repository
+        .findOne({ where: { id, active: true } as FindOptionsWhere<Entity>});
+    if (!entity) {
+      throw new NotFoundException('Record not found or has already been deleted');
+    }
+
+    const userId: number | null = this.getAuthenticatedUserId();
+    const now = new Date();
+
+    entity.deleted_at = now;
+    entity.deleted_by = userId;
     entity.active = false;
-    await this.repository.save(entity); // calling save(entity) will trigger subscribers
+    entity.updated_at = now;
+    entity.updated_by = userId;
 
+    await this.repository.save(entity);
+
+    // const response: UpdateResult = await this.repository.update(id, {
+    //   deleted_at: now,
+    //   deleted_by: userId,
+    //   active: false,
+    //   updated_at: now,
+    //   updated_by: userId,
+    // } as unknown as QueryDeepPartialEntity<Entity>)
+    //
+    // if (response.affected === 0) {
+    //   throw new NotFoundException(
+    //     'Record not found or already deleted',
+    //   );
+    // }
     return {
       msg: 'Successfully deleted',
     };

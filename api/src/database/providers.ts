@@ -11,7 +11,8 @@ import {ExamGroupEntity} from "@/modules/exam_group/entity";
 import {QuestionEntity} from "@/modules/question/entity";
 import {ExamEntity} from "@/modules/exam/entity";
 import { addTransactionalDataSource } from 'typeorm-transactional';
-import {BaseCascadeSubscriber} from "@/modules/base/subscriber";
+import {ExamGroupSubscriber} from "@/modules/exam_group/subscriber";
+import {ExamSubscriber} from "@/modules/exam/subscriber";
 
 export const databaseProviders = [
     {
@@ -34,14 +35,19 @@ export const databaseProviders = [
                     QuestionEntity,
                     ExamEntity,
                 ],
-                subscribers: [BaseCascadeSubscriber, UserSubscriber, ClassSubscriber],
+                subscribers: [
+                    UserSubscriber,
+                    ClassSubscriber,
+                    ExamGroupSubscriber,
+                    ExamSubscriber,
+                ],
                 synchronize: true,
             });
 
             await dataSource.initialize();
 
             addTransactionalDataSource(dataSource);
-            BaseCascadeSubscriber.dataSource = dataSource;
+
             return dataSource;
         },
     },
