@@ -7,9 +7,10 @@ import {ExamEntity} from "@/modules/exam/entity";
 import {ExamService} from "@/modules/exam/service";
 import {ExamController} from "@/modules/exam/controller";
 import {UserModule} from "@/modules/user/module";
+import {FileModule} from "@/modules/file/module";
 
 @Module({
-    imports: [DatabaseModule, QuestionModule, UserModule],
+    imports: [DatabaseModule, UserModule, QuestionModule, FileModule],
     controllers: [ExamController],
     providers: [{
         provide: ExamEntityRepository,

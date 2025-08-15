@@ -1,5 +1,7 @@
 import { BaseEntity } from '@/modules/base/entity';
-import {Entity, Column} from "typeorm";
+import {Entity, Column, OneToOne, JoinColumn} from "typeorm";
+import {UserEntity} from "@/modules/user/entity";
+import {ExamEntity} from "@/modules/exam/entity";
 
 @Entity('file')
 export class FileEntity extends BaseEntity{
@@ -7,7 +9,7 @@ export class FileEntity extends BaseEntity{
         name: 'public_id',
         unique: true
     })
-    publicId: string;
+    public_id: string;
 
     @Column({
         unique: true
@@ -15,17 +17,29 @@ export class FileEntity extends BaseEntity{
     url: string;
 
     @Column({
+        name: 'viewable_url',
+        nullable: true
+    })
+    viewable_url: string;
+
+    @Column({
         name: 'original_name'
     })
-    originalName: string;
+    original_name: string;
 
     @Column({
         name: 'file_type',
         type: 'varchar',
         length: 50
     })
-    fileType: string;
+    file_type: string;
 
     @Column()
     size: number;
+
+    @OneToOne(()=>UserEntity, user => user.file)
+    user: UserEntity;
+
+    @OneToOne(()=>ExamEntity, exam => exam.file)
+    exam: ExamEntity;
 }

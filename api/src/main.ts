@@ -8,7 +8,13 @@ async function bootstrap() {
   initializeTransactionalContext();
 
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    transform: true, // IMPORTANT: turn on type auto-transformation
+    transformOptions: {
+      enableImplicitConversion: true,
+    },
+  }));
 
   const config = new DocumentBuilder()
       .setTitle('F8K13')

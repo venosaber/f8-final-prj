@@ -3,11 +3,24 @@ import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 
 @Injectable()
 export class CloudinaryService {
+  private getResourceType(mimetype: string): 'image' | 'video' | 'raw' {
+    if (mimetype.startsWith('image/')) {
+      return 'image';
+    } else if (mimetype.startsWith('video/')) {
+      return 'video';
+    } else {
+      return 'raw';
+    }
+  }
+
   async uploadFile(file: Express.Multer.File): Promise<UploadApiResponse> {
     return new Promise((resolve, reject) => {
+
+      const resourceType = this.getResourceType(file.mimetype);
+
       const upload = cloudinary.uploader.upload_stream(
         {
-            resource_type: 'auto', // automatically detect the file type
+            resource_type: resourceType,
             folder: 'uploads',    // destination folder on Cloudinary
         },
         (error, result) => {

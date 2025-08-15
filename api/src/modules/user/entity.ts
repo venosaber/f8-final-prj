@@ -37,7 +37,7 @@ export class UserEntity extends BaseEntity {
   @OneToMany(()=> ClassUserEntity, classUser => classUser.user)
   classUsers: ClassUserEntity[];
 
-  @OneToOne(()=> FileEntity)
+  @OneToOne(()=> FileEntity, file => file.user)
   @JoinColumn({ name: 'avatar' })
   file: FileEntity;
 }

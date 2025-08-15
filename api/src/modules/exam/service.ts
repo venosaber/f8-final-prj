@@ -49,10 +49,13 @@ export class ExamService extends BaseService<ExamEntity, ExamReqI, ExamResI>
                         )
                     ) filter (where question.active = true),
                 '[]') as questions   
-                `
+                `,
+                `json_build_object('id', exam_file.id, 'url', exam_file.viewable_url, 'file_type', exam_file.file_type)
+                as file`
             ])
             .leftJoin(QuestionEntity, 'question', 'question.exam_id = exam.id and question.active = true')
-            .groupBy('exam.id, exam.exam_group_id, exam.name, exam.code, exam.total_time, exam.number_of_question, exam.description');
+            .leftJoin('exam.file','exam_file')
+            .groupBy('exam.id, exam.exam_group_id, exam.name, exam.code, exam.total_time, exam.number_of_question, exam.description, exam_file.id');
     }
 
     @Transactional()
@@ -94,16 +97,20 @@ export class ExamService extends BaseService<ExamEntity, ExamReqI, ExamResI>
         const {questions: newQuestions, ...rest} = examReq;
 
         // question to create are those from payload without ids
-        const questionsWithoutIds = newQuestions.filter(q => !q.id);
-        const questionsToCreate: QuestionReqI[] = questionsWithoutIds.map((question) => ({
-            ...question,
+        const questionsWithoutIds: QuestionReqI[] = newQuestions.filter(q => !q.id);
+        const questionsToCreate: QuestionReqI[] = questionsWithoutIds.map(q => ({
+            ...q,
             exam_id: id,
         }));
 
         // questions to update are those from payload with ids
-        const questionsToUpdate: QuestionReqI[] = newQuestions.filter(q => q.id);
+        const questionsWithIds: QuestionReqI[] = newQuestions.filter(q => q.id);
+        const questionsToUpdate: QuestionReqI[] = questionsWithIds.map(q => ({
+            ...q,
+            exam_id: id
+        }));
 
-        // questions to delete are those with ids exist in the database but not in payload
+        // questions to delete are those with ids exist in the database but not in the payload
         const idsInPayload = questionsToUpdate.map(q => q.id);
         const questionIdsToDelete = curQuestions
             .filter(q => !idsInPayload.includes(q.id))
@@ -111,10 +118,14 @@ export class ExamService extends BaseService<ExamEntity, ExamReqI, ExamResI>
 
         let updatedExamQuestions: QuestionResI[] = [];
         try {
+            const deletePromises = questionIdsToDelete.map((id: number) =>
+                this.questionService.softDelete(id)
+            );
+
             const [createdQuestions, updateQuestions, _deleteResults] = await Promise.all([
                 this.questionService.createMany(questionsToCreate),
                 this.questionService.updateMany(questionsToUpdate),
-                this.questionService.softDeleteMany(questionIdsToDelete)
+                Promise.all(deletePromises)
             ]);
 
             updatedExamQuestions = [...createdQuestions, ...updateQuestions];
@@ -122,19 +133,18 @@ export class ExamService extends BaseService<ExamEntity, ExamReqI, ExamResI>
             const query: UpdateQueryBuilder<ExamEntity> = this.repository
                 .createQueryBuilder(this.getTableName())
                 .update()
-                .set({...rest, questions: updatedExamQuestions, updated_by: userId})
+                .set({...rest, updated_by: userId})
                 .where('id = :id and active = :active', {id, active: true})
                 .returning(this.getPublicColumns());
 
             const response: UpdateResult = await query.execute();
             if (!response || !Array.isArray(response.raw) || response.raw.length === 0)
                 throw new InternalServerErrorException('Failed to update exam with questions');
-            return response.raw[0] as ExamResI;
+            return {...response.raw[0], questions: updatedExamQuestions} as ExamResI;
 
         } catch (e) {
             throw new InternalServerErrorException(e.message);
         }
     }
-
 
 }

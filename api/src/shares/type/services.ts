@@ -52,6 +52,5 @@ export interface ExamGroupServiceI extends BaseServiceI<ExamGroupReqI, ExamGroup
 export interface QuestionServiceI extends BaseServiceI<QuestionReqI, QuestionResI>{
   createMany: (data: QuestionReqI[]) => Promise<QuestionResI[]>;
   updateMany: (data: QuestionReqI[]) => Promise<QuestionResI[]>;
-  softDeleteMany: (ids: number[]) => Promise<{ msg: string }>;
 }
 export interface ExamServiceI extends BaseServiceI<ExamReqI, ExamResI> {}

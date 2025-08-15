@@ -31,10 +31,10 @@ export class ExamEntity extends BaseEntity {
     @OneToMany(()=> QuestionEntity, question => question.exam)
     questions: QuestionEntity[];
 
-    // @Column()
-    // file_id: number;
-    //
-    // @OneToOne(()=> FileEntity)
-    // @JoinColumn({ name: 'file_id' })
-    // file: FileEntity;
+    @Column()
+    file_id: number;
+
+    @OneToOne(()=> FileEntity, file => file.exam)
+    @JoinColumn({ name: 'file_id' })
+    file: FileEntity;
 }

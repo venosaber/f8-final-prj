@@ -9,7 +9,7 @@ export class FileReq implements FileReqI {
     })
     @IsString()
     @IsNotEmpty()
-    publicId: string;
+    public_id: string;
 
     @ApiProperty({
         description: 'URL of the file on Cloudinary',
@@ -25,7 +25,7 @@ export class FileReq implements FileReqI {
     })
     @IsString()
     @IsNotEmpty()
-    originalName: string;
+    original_name: string;
 
     @ApiProperty({
         description: 'Image type of the file when uploaded',
@@ -33,7 +33,7 @@ export class FileReq implements FileReqI {
     })
     @IsString()
     @IsNotEmpty()
-    fileType: string;
+    file_type: string;
 
     @ApiProperty({
         description: 'Size of the file when uploaded',

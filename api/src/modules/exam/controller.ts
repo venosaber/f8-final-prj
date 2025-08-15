@@ -10,16 +10,19 @@ import {
     Query,
     ParseIntPipe,
     UseGuards,
-    UseInterceptors
+    UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator
 } from '@nestjs/common';
-import {ApiBearerAuth, ApiQuery, ApiTags} from '@nestjs/swagger';
-import {ExamServiceToken} from "@/shares";
-import type {ExamServiceI} from "@/shares";
+import {ApiBearerAuth, ApiBody, ApiConsumes, ApiQuery, ApiTags} from '@nestjs/swagger';
+import {ExamServiceToken, FileServiceToken} from "@/shares";
+import type {ExamServiceI, FileServiceI} from "@/shares";
 import {ExamReq} from "@/modules/exam/dtos";
-import {OptionalParseIntPipe} from "@/shares";
 import {AuthGuard} from "@/modules/auth/guard";
 import {RolesGuard} from "@/modules/auth/roles.guard";
 import {ExamInterceptor} from "@/modules/exam/interceptor";
+import {FileInterceptor} from "@nestjs/platform-express";
+import {CreateExamWithFileDto, UpdateExamWithFileDto} from "@/modules/exam/dtos";
+import {MultiFileType, OptionalParseIntPipe} from "@/shares";
+import {Transactional} from "typeorm-transactional";
 
 @ApiTags('Exam')
 @Controller('exams')
@@ -28,7 +31,9 @@ import {ExamInterceptor} from "@/modules/exam/interceptor";
 export class ExamController {
     constructor(
         @Inject(ExamServiceToken)
-         private readonly examService: ExamServiceI
+         private readonly examService: ExamServiceI,
+        @Inject(FileServiceToken)
+        private readonly fileService: FileServiceI,
     ) {}
 
     @Get()
@@ -52,13 +57,78 @@ export class ExamController {
     }
 
     @Post()
-    create(@Body() data: ExamReq){
-        return this.examService.create(data);
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        description: 'File for the exam',
+        type: CreateExamWithFileDto
+    })
+    @Transactional()
+    @UseInterceptors(FileInterceptor('examFile'))
+    async create(
+        @Body() data: ExamReq,
+        @UploadedFile(
+            // use Pipe to validate the file
+            new ParseFilePipe({
+                validators: [
+                    new MaxFileSizeValidator({maxSize: 1024 * 1024 * 10}), // 10MB
+                    new MultiFileType({
+                        fileTypes: ['image/png', 'image/jpeg', 'image/gif','application/pdf'],
+                    }),
+                ],
+                fileIsRequired: true,
+            }),
+        )
+        file: Express.Multer.File,
+    ){
+        console.log(data);
+        // upload and create a file record
+        const examFile = await this.fileService.uploadAndCreateFile(file);
+
+        const createData = {...data};
+        if(examFile.id){
+            createData['file_id'] = examFile.id ;
+        }
+
+        return this.examService.create(createData);
     }
 
     @Put(':id')
-    updateOne(@Param('id', ParseIntPipe) id: number, @Body() data: ExamReq){
-        return this.examService.updateOne(id, data);
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        description: 'File for the exam',
+        type: UpdateExamWithFileDto
+    })
+    @Transactional()
+    @UseInterceptors(FileInterceptor('examFile'))
+    async updateOne(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() data: ExamReq,
+        @UploadedFile(
+            // use Pipe to validate the file
+            new ParseFilePipe({
+                validators: [
+                    new MaxFileSizeValidator({maxSize: 1024 * 1024 * 10}), // 10MB
+                    new MultiFileType({
+                        fileTypes: ['image/png', 'image/jpeg', 'image/gif','application/pdf'],
+                    }),
+                ],
+                fileIsRequired: false,
+            }),
+        )
+        file?: Express.Multer.File,
+        ){
+        let fileId: number| undefined = undefined;
+        if (file) {
+            // upload and create a file record
+            const examFile = await this.fileService.uploadAndCreateFile(file);
+            fileId = examFile.id;
+        }
+
+        const updateData = {...data};
+        if(fileId){
+            updateData['file_id'] = fileId;
+        }
+        return this.examService.updateOne(id, updateData);
     }
 
     @Delete(':id')

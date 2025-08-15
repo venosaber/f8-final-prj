@@ -5,6 +5,13 @@ import { QuestionReqI } from '@/shares';
 //payload / body
 export class QuestionReq implements QuestionReqI {
     @ApiProperty({
+        example: 1,
+    })
+    @IsNumber()
+    @IsOptional()
+    id?: number;
+
+    @ApiProperty({
         example: 0,
     })
     @IsNumber()
@@ -26,5 +33,5 @@ export class QuestionReq implements QuestionReqI {
 
     @IsNumber()
     @IsOptional()
-    exam_id: number;
+    exam_id?: number;
 }

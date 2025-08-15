@@ -11,6 +11,7 @@ import {ConfigModule} from "@nestjs/config";
 import {ExamGroupModule} from "@/modules/exam_group/module";
 import {QuestionModule} from "@/modules/question/module";
 import {ExamModule} from "@/modules/exam/module";
+import {PDFViewerModule} from "@/modules/pdf-viewer/module";
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import {ExamModule} from "@/modules/exam/module";
     ExamGroupModule,
     QuestionModule,
     ExamModule,
+    PDFViewerModule,
   ],
   controllers: [],
   providers: [],

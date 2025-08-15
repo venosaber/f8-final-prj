@@ -1,9 +1,10 @@
 interface FileBaseI {
-    publicId: string;
+    public_id: string;
     url: string;
-    originalName: string;
-    fileType: string;
+    original_name: string;
+    file_type: string;
     size: number;
+    viewable_url?: string | null;
 }
 
 // select

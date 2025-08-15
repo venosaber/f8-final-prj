@@ -3,7 +3,7 @@ import {BaseService} from "@/modules/base/service";
 import {QuestionEntity} from "@/modules/question/entity";
 import type {QuestionResI, QuestionReqI, QuestionServiceI} from "@/shares";
 import {QuestionEntityRepository} from "@/shares";
-import {InsertQueryBuilder, InsertResult, Repository, UpdateQueryBuilder, UpdateResult} from "typeorm";
+import {InsertQueryBuilder, InsertResult, Repository} from "typeorm";
 import {ClsService} from "nestjs-cls";
 import {Transactional} from "typeorm-transactional";
 
@@ -38,14 +38,17 @@ implements QuestionServiceI{
             .returning(this.getPublicColumns());
 
         const response: InsertResult = await query.execute();
-        if(
-            !response ||
-            !Array.isArray(response.raw) ||
-            response.raw.length === 0
-        ){
+        if(!response || !Array.isArray(response.raw) || response.raw.length === 0){
             throw new InternalServerErrorException('Failed to create new questions');
         }
-        return response.raw as QuestionResI[];
+        console.log('response raw: ', response.raw);
+        const cleanedResult = response.raw.map((q) => ({
+            id: q.id,
+            index: q.index,
+            type: q.type,
+            correct_answer: q.correct_answer
+        }))
+        return cleanedResult as QuestionResI[];
     }
 
     @Transactional()
@@ -55,7 +58,7 @@ implements QuestionServiceI{
         if(!questions || questions.length === 0) return [];
 
         const questionsData: string = questions.map((q)=>
-            `('${q.id}','${q.index}','${q.type}','${q.correct_answer}','${q.exam_id}','${userId}')`
+            `(${q.id},${q.index},'${q.type}','${q.correct_answer}',${q.exam_id},${userId})`
         ).join(',');
 
         const query =
@@ -63,44 +66,23 @@ implements QuestionServiceI{
                 WITH questions_to_update(id, index, type, correct_answer, exam_id, updated_by) AS (
                     VALUES ${questionsData}
                 )
-                UPDATE ${this.getTableName()} AS q
-                SET index = qtu.index,
-                    type = qtu.type,
-                    correct_answer = qtu.correct_answer,
-                    exam_id = qtu.exam_id,
-                    updated_by = qtu.updated_by
-                FROM questions_to_update qtu
+                UPDATE "${this.getTableName()}" AS q
+                SET
+                    "index" = qtu.index,
+                    "type" = qtu.type,
+                    "correct_answer" = qtu.correct_answer,
+                    "updated_by" = qtu.updated_by
+                    FROM questions_to_update AS qtu
                 WHERE q.id = qtu.id
-                RETURNING ${this.getPublicColumns().join(', ')};
+                RETURNING q.id, q.index, q.type, q.correct_answer;
             `
         try{
             const result = await this.repository.query(query);
             if(!result || result.length === 0) throw new InternalServerErrorException('Failed to update records');
-            return result as QuestionResI[];
+            return result[0] as QuestionResI[];
         } catch(e){
             throw new InternalServerErrorException(e.message);
         }
     }
 
-    @Transactional()
-    async softDeleteMany(questionIds: number[]){
-        if(!questionIds || questionIds.length === 0) return {msg: 'No questions to delete'};
-
-        const userId: number | null = this.getAuthenticatedUserId();
-        const dataWithUserId = {
-            deleted_at: new Date(),
-            deleted_by: userId,
-            active: false
-        }
-
-        const query: UpdateQueryBuilder<QuestionEntity> = this.repository
-            .createQueryBuilder(this.getTableName())
-            .update()
-            .set(dataWithUserId)
-            .where('id IN (:...ids) and active = :active', {ids: questionIds, active: true})
-
-        const response: UpdateResult = await query.execute();
-        if(response.affected === 0) throw new InternalServerErrorException('Failed to delete records');
-        return {msg: 'Successfully deleted questions'};
-    }
 }
