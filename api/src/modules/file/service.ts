@@ -78,7 +78,7 @@ export class FileService extends BaseService<FileEntity, FileReqI, FileI>
         }
     }
 
-    // Tạo URL để view file
+    // create url for viewing a file directly in the browser
     private generateViewableUrl(fileId: number, fileType: string, originalUrl: string): string {
         if (fileType === 'pdf') {
             // return to endpoint of PDF viewer

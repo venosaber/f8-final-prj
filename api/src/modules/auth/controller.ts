@@ -6,6 +6,7 @@ import {
   LoginReq,
   RegisterReq,
   ResetPasswordReq,
+  RefreshTokenReq,
 } from './dtos';
 
 @ApiTags('Auth')
@@ -24,6 +25,11 @@ export class AuthController {
   @Post('login')
   login(@Body() loginReq: LoginReq) {
     return this.authService.login(loginReq);
+  }
+
+  @Post('refresh')
+  refreshToken(@Body() refreshTokenReq: RefreshTokenReq) {
+    return this.authService.refreshToken(refreshTokenReq);
   }
 
   @Post('forgot-password')

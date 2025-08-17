@@ -3,6 +3,7 @@ import {BaseService} from "@/modules/base/service";
 import {ExamEntity} from "@/modules/exam/entity";
 import type {ExamResI, ExamReqI, ExamServiceI, QuestionServiceI, QuestionReqI, QuestionResI} from "@/shares";
 import {ExamEntityRepository, QuestionServiceToken} from "@/shares";
+import {QuestionType} from "@/shares";
 import {
     InsertQueryBuilder,
     InsertResult,
@@ -64,7 +65,7 @@ export class ExamService extends BaseService<ExamEntity, ExamReqI, ExamResI>
         const {questions, ...rest} = examReq;
 
         // create an exam with temp data first to receive the exam id
-        const tempExamData = {...rest, created_by: creatorId, questions: []};
+        const tempExamData = {...rest, created_by: creatorId};
         const query: InsertQueryBuilder<ExamEntity> = this.repository
             .createQueryBuilder(this.getTableName())
             .insert()
@@ -81,6 +82,7 @@ export class ExamService extends BaseService<ExamEntity, ExamReqI, ExamResI>
         const questionsWithExamId: QuestionReqI[] = questions.map((question) => ({
             ...question,
             exam_id: examId,
+            type: question.type as QuestionType
         }));
         const newQuestions: QuestionResI[] = await this.questionService.createMany(questionsWithExamId);
 
@@ -101,13 +103,15 @@ export class ExamService extends BaseService<ExamEntity, ExamReqI, ExamResI>
         const questionsToCreate: QuestionReqI[] = questionsWithoutIds.map(q => ({
             ...q,
             exam_id: id,
+            type: q.type as QuestionType,
         }));
 
         // questions to update are those from payload with ids
         const questionsWithIds: QuestionReqI[] = newQuestions.filter(q => q.id);
         const questionsToUpdate: QuestionReqI[] = questionsWithIds.map(q => ({
             ...q,
-            exam_id: id
+            exam_id: id,
+            type: q.type as QuestionType,
         }));
 
         // questions to delete are those with ids exist in the database but not in the payload
@@ -116,6 +120,7 @@ export class ExamService extends BaseService<ExamEntity, ExamReqI, ExamResI>
             .filter(q => !idsInPayload.includes(q.id))
             .map(q => q.id) as number[];
 
+        // operations to update questions for the exam
         let updatedExamQuestions: QuestionResI[] = [];
         try {
             const deletePromises = questionIdsToDelete.map((id: number) =>

@@ -1,6 +1,7 @@
 import { BaseEntity } from '@/modules/base/entity';
 import {Column, Entity, JoinColumn, ManyToOne} from 'typeorm';
 import {ExamEntity} from "@/modules/exam/entity";
+import {QuestionType} from "@/shares";
 
 @Entity('question')
 export class QuestionEntity extends BaseEntity {
@@ -10,8 +11,12 @@ export class QuestionEntity extends BaseEntity {
     @Column()
     index: number;
 
-    @Column()
-    type: string;
+    @Column({
+        type: 'enum',
+        enum: QuestionType,
+        default: QuestionType.MULTIPLE_CHOICE,
+    })
+    type: QuestionType;
 
     @Column()
     correct_answer: string;

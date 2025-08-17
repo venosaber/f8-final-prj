@@ -149,42 +149,8 @@ export abstract class BaseService<
   }
 
   async softDelete(id: number) {
-    // const userId = this.getAuthenticatedUserId();
-    // const dataWithUserId = {
-    //   deletedAt: () => 'CURRENT_TIMESTAMP',
-    //   deletedBy: userId,
-    //   active: false
-    // };
-    //
-    // const query: UpdateQueryBuilder<Entity> = this.repository
-    //   .createQueryBuilder(this.getTableName())
-    //   .update()
-    //   .set(dataWithUserId as QueryDeepPartialEntity<Entity>)
-    //   .where('id = :id and active = :active', { id, active: true });
-    //
-    // const response: UpdateResult = await query.execute();
-    // if (response.affected === 0) {
-    //   throw new NotFoundException(
-    //     'Record not found or already deleted',
-    //   );
-    // }
-
     // QueryBuilder cannot help with calling subscribers => use repository pattern
     // need to call subscribers for the need of "soft-delete cascade"
-
-
-    // const entity: Entity | null = await this.repository.findOneBy({ id, active: true } as FindOptionsWhere<Entity>);
-    // if (!entity)
-    //   throw new NotFoundException('Record not found or already deleted')
-    //
-    // entity.deleted_at = new Date();
-    // entity.deleted_by = this.getAuthenticatedUserId();
-    // entity.active = false;
-    // await this.repository.save(entity); // calling save(entity) will trigger subscribers
-    //
-    // return {
-    //   msg: 'Successfully deleted',
-    // };
 
     const entity: Entity | null = await this.repository
         .findOne({ where: { id, active: true } as FindOptionsWhere<Entity>});
@@ -201,21 +167,8 @@ export abstract class BaseService<
     entity.updated_at = now;
     entity.updated_by = userId;
 
-    await this.repository.save(entity);
+    await this.repository.save(entity); // calling save will trigger subscribers
 
-    // const response: UpdateResult = await this.repository.update(id, {
-    //   deleted_at: now,
-    //   deleted_by: userId,
-    //   active: false,
-    //   updated_at: now,
-    //   updated_by: userId,
-    // } as unknown as QueryDeepPartialEntity<Entity>)
-    //
-    // if (response.affected === 0) {
-    //   throw new NotFoundException(
-    //     'Record not found or already deleted',
-    //   );
-    // }
     return {
       msg: 'Successfully deleted',
     };

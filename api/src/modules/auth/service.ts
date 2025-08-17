@@ -11,13 +11,14 @@ import {UserServiceToken, UserEntityRepository, PasswordResetTokenRepository} fr
 import {HttpException, HttpStatus, Injectable, Inject} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import {JwtService} from '@nestjs/jwt';
-import {ForgotPasswordReq, ResetPasswordReq} from "@/modules/auth/dtos";
+import {ForgotPasswordReq, RefreshTokenReq, ResetPasswordReq} from "@/modules/auth/dtos";
 import {PasswordResetTokenEntity} from "@/modules/password_reset_token/entity";
 import {MailServiceToken} from "@/infrastructure/mail/const";
 import type {MailServiceI} from "@/infrastructure/mail/interface";
 import {Repository} from "typeorm";
 import {UserEntity} from "@/modules/user/entity";
 import {Transactional} from "typeorm-transactional";
+import {ConfigService} from "@nestjs/config";
 
 @Injectable()
 export class AuthService implements AuthServiceI {
@@ -31,6 +32,8 @@ export class AuthService implements AuthServiceI {
         private readonly userService: UserServiceI,
         @Inject(UserEntityRepository)
         private readonly userRepository: Repository<UserEntity>,
+
+        private readonly configService: ConfigService,
     ) {
     }
 
@@ -56,10 +59,7 @@ export class AuthService implements AuthServiceI {
         // check if the email exists in the db
         const user: UserWithPassI | null = await this.userService.findUserByEmailWithPassword(data.email);
         if (!user) {
-            throw new HttpException(
-                'Invalid email or password',
-                HttpStatus.UNAUTHORIZED,
-            );
+            throw new HttpException('Invalid email or password', HttpStatus.UNAUTHORIZED);
         }
 
         // check if the password is correct
@@ -68,10 +68,7 @@ export class AuthService implements AuthServiceI {
             user.password,
         );
         if (!isPasswordMatching)
-            throw new HttpException(
-                'Invalid email or password',
-                HttpStatus.UNAUTHORIZED,
-            );
+            throw new HttpException('Invalid email or password', HttpStatus.UNAUTHORIZED);
 
         const payloadData: TokenPayloadData = {
             name: user.name,
@@ -83,12 +80,59 @@ export class AuthService implements AuthServiceI {
         // make new JWT tokens and return them
         const payload = {sub: user.id, ...payloadData};
 
-        return {
-            accessToken: await this.jwtService.signAsync(payload),
-            refreshToken: await this.jwtService.signAsync(payload, {
+        const [accessToken, refreshToken] = await Promise.all([
+            this.jwtService.signAsync(payload, {
+                secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+                expiresIn: '15m',
+            }),
+            this.jwtService.signAsync(payload, {
+                secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
                 expiresIn: '7d',
             }),
-        };
+        ]);
+
+        return { accessToken, refreshToken };
+    }
+
+    async refreshToken(data: RefreshTokenReq): Promise<LoginResI> {
+        const {refreshToken} = data;
+        try {
+            const payload = await this.jwtService.verifyAsync(refreshToken, {
+                secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+            });
+
+            const user = await this.userService.findOne(payload.sub);
+            if (!user) {
+                throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
+            }
+
+            const newPayloadData: TokenPayloadData = {
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                avatar_info: user?.avatar_info ?? null,
+            }
+            const newPayload = {sub: user.id, ...newPayloadData};
+
+            const [newAccessToken, newRefreshToken] = await Promise.all([
+                this.jwtService.signAsync(newPayload, {
+                    secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+                    expiresIn: '15m',
+                }),
+                this.jwtService.signAsync(newPayload, {
+                    secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+                    expiresIn: '7d',
+                })
+            ]);
+
+            return {
+                accessToken: newAccessToken,
+                refreshToken: newRefreshToken,
+            }
+
+        } catch (e) {
+            throw new HttpException('Invalid or expired refresh token', HttpStatus.UNAUTHORIZED);
+        }
     }
 
     async forgotPassword(data: ForgotPasswordReq) {

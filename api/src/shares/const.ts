@@ -33,3 +33,6 @@ export const ExamResultServiceToken = Symbol('ExamResultServiceToken');
 
 export const QuestionEntityRepository = Symbol('QuestionEntityRepository');
 export const QuestionServiceToken = Symbol('QuestionServiceToken');
+
+export const AnswerEntityRepository = Symbol('AnswerEntityRepository');
+export const AnswerServiceToken = Symbol('AnswerServiceToken');

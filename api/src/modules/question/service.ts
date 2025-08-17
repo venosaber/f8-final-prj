@@ -1,7 +1,7 @@
 import {Inject, Injectable, InternalServerErrorException} from '@nestjs/common';
 import {BaseService} from "@/modules/base/service";
 import {QuestionEntity} from "@/modules/question/entity";
-import type {QuestionResI, QuestionReqI, QuestionServiceI} from "@/shares";
+import {QuestionResI, QuestionReqI, QuestionServiceI, QuestionType} from "@/shares";
 import {QuestionEntityRepository} from "@/shares";
 import {InsertQueryBuilder, InsertResult, Repository} from "typeorm";
 import {ClsService} from "nestjs-cls";
@@ -41,7 +41,7 @@ implements QuestionServiceI{
         if(!response || !Array.isArray(response.raw) || response.raw.length === 0){
             throw new InternalServerErrorException('Failed to create new questions');
         }
-        console.log('response raw: ', response.raw);
+
         const cleanedResult = response.raw.map((q) => ({
             id: q.id,
             index: q.index,
@@ -58,7 +58,7 @@ implements QuestionServiceI{
         if(!questions || questions.length === 0) return [];
 
         const questionsData: string = questions.map((q)=>
-            `(${q.id},${q.index},'${q.type}','${q.correct_answer}',${q.exam_id},${userId})`
+            `(${q.id},${q.index},'${q.type}'::question_type_enum,'${q.correct_answer}',${q.exam_id},${userId})`
         ).join(',');
 
         const query =
@@ -76,13 +76,9 @@ implements QuestionServiceI{
                 WHERE q.id = qtu.id
                 RETURNING q.id, q.index, q.type, q.correct_answer;
             `
-        try{
-            const result = await this.repository.query(query);
-            if(!result || result.length === 0) throw new InternalServerErrorException('Failed to update records');
-            return result[0] as QuestionResI[];
-        } catch(e){
-            throw new InternalServerErrorException(e.message);
-        }
+        const result = await this.repository.query(query);
+        if(!result || result.length === 0) throw new InternalServerErrorException('Failed to update questions');
+        return result[0] as QuestionResI[];
     }
 
 }

@@ -102,3 +102,12 @@ export class ResetPasswordReq {
   @IsNotEmpty()
   newPassword: string;
 }
+
+export class RefreshTokenReq {
+  @ApiProperty({
+    description: 'Refresh token',
+  })
+  @IsString()
+  @IsNotEmpty()
+  refreshToken: string;
+}

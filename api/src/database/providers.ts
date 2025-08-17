@@ -13,6 +13,10 @@ import {ExamEntity} from "@/modules/exam/entity";
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import {ExamGroupSubscriber} from "@/modules/exam_group/subscriber";
 import {ExamSubscriber} from "@/modules/exam/subscriber";
+import {AnswerEntity} from "@/modules/answer/entity";
+import {ExamResultEntity} from "@/modules/exam_result/entity";
+import {ExamResultSubscriber} from "@/modules/exam_result/subscriber";
+import {QuestionSubscriber} from "@/modules/question/subscriber";
 
 export const databaseProviders = [
     {
@@ -34,12 +38,16 @@ export const databaseProviders = [
                     ExamGroupEntity,
                     QuestionEntity,
                     ExamEntity,
+                    AnswerEntity,
+                    ExamResultEntity,
                 ],
                 subscribers: [
                     UserSubscriber,
                     ClassSubscriber,
                     ExamGroupSubscriber,
                     ExamSubscriber,
+                    ExamResultSubscriber,
+                    QuestionSubscriber,
                 ],
                 synchronize: true,
             });

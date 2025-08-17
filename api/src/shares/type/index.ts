@@ -9,4 +9,6 @@ export * from './invitation';
 export * from './exam_group';
 export * from './question';
 export * from './exam';
+export * from './answer';
+export * from './exam_result';
 

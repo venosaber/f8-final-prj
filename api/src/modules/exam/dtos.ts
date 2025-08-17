@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {IsString, IsNotEmpty, IsNumber, ValidateNested} from 'class-validator';
-import {ExamReqI, QuestionReqI} from '@/shares';
-import {QuestionReq} from "@/modules/question/dtos";
+import {ExamReqI} from '@/shares';
+import {CreateQuestionDTO, UpdateQuestionDTO} from "@/modules/question/dtos";
 import {plainToInstance, Transform, Type} from "class-transformer";
 
 //payload / body
-export class ExamReq implements ExamReqI {
+class BaseExamDto {
     @ApiProperty({
         example: 1,
     })
@@ -49,9 +49,12 @@ export class ExamReq implements ExamReqI {
     })
     @IsString()
     description: string;
+}
+
+export class CreateExamDto extends BaseExamDto implements ExamReqI {
 
     @ApiProperty({
-        type: [QuestionReq],
+        type: [CreateQuestionDTO],
         description: 'list of questions',
     })
     @ValidateNested({ each: true })
@@ -67,15 +70,14 @@ export class ExamReq implements ExamReqI {
             parsedValue = value;
         }
         if (!Array.isArray(parsedValue)) {
-            console.log('not array')
             return parsedValue;
         }
-        return parsedValue.map(obj => plainToInstance(QuestionReq, obj));
+        return parsedValue.map(obj => plainToInstance(CreateQuestionDTO, obj));
     })
-    questions: QuestionReq[];
+    questions: CreateQuestionDTO[];
 }
 
-export class CreateExamWithFileDto extends ExamReq {
+export class CreateExamWithFileDto extends CreateExamDto {
     @ApiProperty({
         type: 'string',
         format: 'binary', // inform to Swagger that this is a file upload
@@ -85,7 +87,32 @@ export class CreateExamWithFileDto extends ExamReq {
     examFile: any;
 }
 
-export class UpdateExamWithFileDto extends ExamReq {
+export class UpdateExamDto extends BaseExamDto implements ExamReqI {
+    @ApiProperty({
+        type: [UpdateQuestionDTO],
+        description: 'list of questions',
+    })
+    @ValidateNested({ each: true })
+    @Transform(({ value }) => {
+        let parsedValue: any[];
+        if (typeof value === 'string') {
+            try {
+                parsedValue = JSON.parse(value);
+            } catch {
+                return 'invalid json';
+            }
+        } else {
+            parsedValue = value;
+        }
+        if (!Array.isArray(parsedValue)) {
+            return parsedValue;
+        }
+        return parsedValue.map(obj => plainToInstance(UpdateQuestionDTO, obj));
+    })
+    questions: UpdateQuestionDTO[];
+}
+
+export class UpdateExamWithFileDto extends UpdateExamDto {
     @ApiProperty({
         type: 'string',
         format: 'binary',

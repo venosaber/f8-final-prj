@@ -15,12 +15,11 @@ import {
 import {ApiBearerAuth, ApiBody, ApiConsumes, ApiQuery, ApiTags} from '@nestjs/swagger';
 import {ExamServiceToken, FileServiceToken} from "@/shares";
 import type {ExamServiceI, FileServiceI} from "@/shares";
-import {ExamReq} from "@/modules/exam/dtos";
+import {CreateExamDto, UpdateExamDto, CreateExamWithFileDto, UpdateExamWithFileDto} from "@/modules/exam/dtos";
 import {AuthGuard} from "@/modules/auth/guard";
 import {RolesGuard} from "@/modules/auth/roles.guard";
 import {ExamInterceptor} from "@/modules/exam/interceptor";
 import {FileInterceptor} from "@nestjs/platform-express";
-import {CreateExamWithFileDto, UpdateExamWithFileDto} from "@/modules/exam/dtos";
 import {MultiFileType, OptionalParseIntPipe} from "@/shares";
 import {Transactional} from "typeorm-transactional";
 
@@ -65,7 +64,7 @@ export class ExamController {
     @Transactional()
     @UseInterceptors(FileInterceptor('examFile'))
     async create(
-        @Body() data: ExamReq,
+        @Body() data: CreateExamDto,
         @UploadedFile(
             // use Pipe to validate the file
             new ParseFilePipe({
@@ -80,7 +79,6 @@ export class ExamController {
         )
         file: Express.Multer.File,
     ){
-        console.log(data);
         // upload and create a file record
         const examFile = await this.fileService.uploadAndCreateFile(file);
 
@@ -102,7 +100,7 @@ export class ExamController {
     @UseInterceptors(FileInterceptor('examFile'))
     async updateOne(
         @Param('id', ParseIntPipe) id: number,
-        @Body() data: ExamReq,
+        @Body() data: UpdateExamDto,
         @UploadedFile(
             // use Pipe to validate the file
             new ParseFilePipe({

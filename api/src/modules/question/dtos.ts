@@ -1,15 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
-import { QuestionReqI } from '@/shares';
+import {IsString, IsNotEmpty, IsNumber, IsOptional, IsEnum} from 'class-validator';
+import {QuestionReqI, QuestionType} from '@/shares';
 
 //payload / body
-export class QuestionReq implements QuestionReqI {
-    @ApiProperty({
-        example: 1,
-    })
-    @IsNumber()
-    @IsOptional()
-    id?: number;
+export class CreateQuestionDTO implements QuestionReqI {
 
     @ApiProperty({
         example: 0,
@@ -20,10 +14,12 @@ export class QuestionReq implements QuestionReqI {
 
     @ApiProperty({
         example: 'multiple-choice',
+        description: 'type of the question',
+        enum: QuestionType,
     })
-    @IsString()
+    @IsEnum(QuestionType, {message: 'type must be one of: single-choice, multiple-choice, long-response'})
     @IsNotEmpty()
-    type: string;
+    type: QuestionType;
 
     @ApiProperty({
         example: 'A,C',
@@ -34,4 +30,13 @@ export class QuestionReq implements QuestionReqI {
     @IsNumber()
     @IsOptional()
     exam_id?: number;
+}
+
+export class UpdateQuestionDTO extends CreateQuestionDTO {
+    @ApiProperty({
+        example: 1,
+    })
+    @IsNumber()
+    @IsOptional()
+    id?: number;
 }

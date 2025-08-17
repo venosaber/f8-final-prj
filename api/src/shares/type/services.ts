@@ -10,8 +10,9 @@ import {
   ExamGroupI, ExamGroupReqI,
   QuestionReqI, QuestionResI,
   ExamReqI, ExamResI,
+  AnswerReqI, AnswerResI, ExamResultReqI, ExamResultResI,
 } from '@/shares';
-import { ForgotPasswordReq, ResetPasswordReq } from '@/modules/auth/dtos';
+import {ForgotPasswordReq, RefreshTokenReq, ResetPasswordReq} from '@/modules/auth/dtos';
 
 export interface BaseServiceI<RequestI, ResponseI> {
   find: (params?: any) => Promise<ResponseI[]>;
@@ -34,6 +35,7 @@ export interface AuthServiceI {
   register: (data: RegisterReqI) => Promise<{ msg: string }>;
   forgotPassword: (data: ForgotPasswordReq) => Promise<{ msg: string }>;
   resetPassword: (data: ResetPasswordReq) => Promise<{ msg: string }>;
+  refreshToken: (data: RefreshTokenReq) => Promise<LoginResI>;
 }
 
 export interface FileServiceI extends BaseServiceI<FileReqI, FileI> {
@@ -54,3 +56,11 @@ export interface QuestionServiceI extends BaseServiceI<QuestionReqI, QuestionRes
   updateMany: (data: QuestionReqI[]) => Promise<QuestionResI[]>;
 }
 export interface ExamServiceI extends BaseServiceI<ExamReqI, ExamResI> {}
+
+export interface AnswerServiceI extends BaseServiceI<AnswerReqI, AnswerResI>{
+  updateMany: (data: AnswerReqI[]) => Promise<AnswerResI[]>;
+}
+
+export interface ExamResultServiceI extends BaseServiceI<ExamResultReqI, ExamResultResI> {
+  findAndFilter: (examGroupId: number, userId: number) => Promise<any[]>;
+}

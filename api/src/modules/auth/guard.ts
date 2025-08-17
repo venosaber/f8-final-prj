@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import type { UserResI, UserServiceI, TokenPayloadData } from '@/shares';
 import { UserServiceToken } from '@/shares';
 import {ClsService} from "nestjs-cls";
+import {ConfigService} from "@nestjs/config";
 
 interface RequestWithUser extends Request {
   user: UserResI
@@ -29,6 +30,8 @@ export class AuthGuard implements CanActivate {
     private readonly clsService: ClsService,
     @Inject(UserServiceToken)
     private userService: UserServiceI,
+
+    private readonly configService: ConfigService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -43,7 +46,8 @@ export class AuthGuard implements CanActivate {
       // jwtService.verifyAsync will authenticate token and return payload
       // if token is invalid or expired, throw error
       const payload = await this.jwtService.verifyAsync<TokenPayload>(token, {
-        secret: process.env.PRIVATE_KEY,
+        // secret: process.env.PRIVATE_KEY,
+        secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
       });
 
       // use payload to find user in DB

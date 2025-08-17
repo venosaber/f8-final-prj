@@ -7,20 +7,22 @@ interface ExamBaseI {
     number_of_question: number;
     total_time: number;
     description: string;
-    questions: QuestionReqI[];
 }
 
-export interface ExamI extends Omit<ExamBaseI,'questions'>  {
+export interface ExamI extends ExamBaseI {
     id: number;
     questions: QuestionResI[];
     file_id: number;
 }
 
-export interface ExamReqI extends ExamBaseI{}
+export interface ExamReqI extends ExamBaseI{
+    questions: QuestionReqI[];
+}
 
 export interface ExamResI extends Omit<ExamI, 'file_id'> {
     file: {
         id: number;
         url: string;
+        file_type: string;
     }
 }

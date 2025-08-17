@@ -12,6 +12,8 @@ import {ExamGroupModule} from "@/modules/exam_group/module";
 import {QuestionModule} from "@/modules/question/module";
 import {ExamModule} from "@/modules/exam/module";
 import {PDFViewerModule} from "@/modules/pdf-viewer/module";
+import {AnswerModule} from "@/modules/answer/module";
+import {ExamResultModule} from "@/modules/exam_result/module";
 
 @Module({
   imports: [
@@ -22,7 +24,10 @@ import {PDFViewerModule} from "@/modules/pdf-viewer/module";
         mount: true,
       }
     }),
-    ConfigModule.forRoot({isGlobal: true}),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
 
     DatabaseModule,
     AuthModule,
@@ -34,6 +39,8 @@ import {PDFViewerModule} from "@/modules/pdf-viewer/module";
     QuestionModule,
     ExamModule,
     PDFViewerModule,
+    AnswerModule,
+    ExamResultModule,
   ],
   controllers: [],
   providers: [],
