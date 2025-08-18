@@ -107,7 +107,7 @@ export default function StudentExamDetail() {
             const {sub} = getUserInfo(accessToken);
             setUserId(Number(sub));
 
-            const examData = await getMethod(`/exam/${examId}`, {
+            const examData = await getMethod(`/exams/${examId}`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
