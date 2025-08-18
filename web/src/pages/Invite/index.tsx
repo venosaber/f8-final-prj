@@ -112,6 +112,12 @@ export default function Invite() {
             setIsAuthenticated(!!accessToken);
             setIsCheckingAuth(false);
 
+            if (!accessToken) {
+                localStorage.setItem('redirectAfterLogin', window.location.href);
+                navigate(`/login`);
+                return;
+            }
+
             if (accessToken && classId) {
                 const {sub} = getUserInfo(accessToken);
                 const userId = Number(sub);
