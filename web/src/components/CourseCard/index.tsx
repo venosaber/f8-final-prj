@@ -103,7 +103,7 @@ const CourseCard = ({course}: { course: Course }) => {
                         component="div"
                         sx={{fontWeight: 'bold', lineHeight: 1}}
                     >
-                        {course.users.length}
+                        {course.teachers.length + course.students.length}
                     </Typography>
                 </Box>
 

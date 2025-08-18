@@ -61,19 +61,19 @@ export default function StudentExamDetail() {
         }
 
         const payload = {
-            exam: Number(examId),
-            user: userId,
+            exam_id: Number(examId),
+            user_id: userId,
             status: 'completed',
             questions: state.questions.map((question: Answer) => (
                 {
-                    question: question.questionId,
+                    question_id: question.questionId,
                     answer: question.answer
                 }
             )),
             device: state.device
         }
 
-        const response = await postMethod('/exam_result', payload, {
+        const response = await postMethod('/exam_results', payload, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
@@ -104,8 +104,8 @@ export default function StudentExamDetail() {
                 return;
             }
 
-            const {id: userId} = getUserInfo(accessToken);
-            setUserId(userId);
+            const {sub} = getUserInfo(accessToken);
+            setUserId(Number(sub));
 
             const examData = await getMethod(`/exam/${examId}`, {
                 headers: {
@@ -115,8 +115,8 @@ export default function StudentExamDetail() {
 
             // the answers and time-left are saved by useEffect to localStorge
             // try to load data from localStorage first, otherwise load initial data from API
-            const savedQuestions = localStorage.getItem(`lesson-${examId}-${userId}-answers`);
-            const savedTimeLeft = localStorage.getItem(`lesson-${examId}-${userId}-time`);
+            const savedQuestions: string | null = localStorage.getItem(`lesson-${examId}-${userId}-answers`);
+            const savedTimeLeft: string | null = localStorage.getItem(`lesson-${examId}-${userId}-time`);
 
             const questions = savedQuestions ?
                 JSON.parse(savedQuestions) :

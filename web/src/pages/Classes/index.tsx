@@ -42,7 +42,7 @@ function Classes() {
             setUser({name, role});
 
             try{
-                const coursesData: Course[] = await getMethod('/master/class', {
+                const coursesData: Course[] = await getMethod('/classes', {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }

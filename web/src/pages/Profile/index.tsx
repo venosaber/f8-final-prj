@@ -3,7 +3,7 @@ import {Avatar, Box, Button, Container, Grid, Paper, TextField, Typography} from
 import {type ChangeEvent, type FocusEvent, type FormEvent, useEffect} from "react";
 import {useState} from "react";
 import {getUserInfo, getValidAccessToken} from "../../router/auth.ts";
-import type {User, Avata} from "../../utils/types";
+import type {User, AvatarInfo} from "../../utils/types";
 import {getMethod, postMethod, putMethod} from "../../utils/api.ts";
 import {useNavigate} from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -14,7 +14,7 @@ interface InfoForm {
     school: string,
     parent_name: string,
     parent_phone: string,
-    avata: Avata | null
+    avatar_info: AvatarInfo | null
 }
 
 interface PasswordForm {
@@ -26,17 +26,10 @@ interface PasswordForm {
 export default function Profile() {
     const navigate = useNavigate();
 
-    /********* convert to base 64 (images) ************/
-    const fileToBase64 = (file: File): Promise<string> => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-                resolve(reader.result as string);
-            };
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
-    };
+    const [userId, setUserId] = useState(0);
+    const [role, setRole] = useState('student');
+    const [isLoadingInfo, setIsLoadingInfo] = useState<boolean>(true);
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
     const [infoFormData, setInfoFormData] = useState<InfoForm>({
         name: '',
@@ -44,7 +37,7 @@ export default function Profile() {
         school: '',
         parent_name: '',
         parent_phone: '',
-        avata: null
+        avatar_info: null
     });
 
     const [passwordFormData, setPasswordFormData] = useState<PasswordForm>({
@@ -201,17 +194,17 @@ export default function Profile() {
     const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
         const file: File | null = event.target.files?.[0] ?? null;
         if (file) {
-            const url: string = URL.createObjectURL(file);
+            const previewURL: string = URL.createObjectURL(file);
 
             setInfoFormData({
                 ...infoFormData,
-                avata: {
+                avatar_info: {
                     id: null,
-                    url,
-                    payload: await fileToBase64(file)
+                    url: previewURL,
                 }
             });
         }
+        setAvatarFile(file);
     };
 
     const onSubmitInfo = async (e: FormEvent<HTMLFormElement>) => {
@@ -227,10 +220,19 @@ export default function Profile() {
         if (!isValid) return;
 
         // submit logic
-        const payload = {...infoFormData, avata: null};
+        const formData = new FormData();
+        formData.append('name', infoFormData.name);
+        formData.append('email', infoFormData.email);
+        formData.append('school', infoFormData.school);
+        formData.append('parent_name', infoFormData.parent_name);
+        formData.append('parent_phone', infoFormData.parent_phone);
+
+        if(avatarFile){
+            formData.append('avatar', avatarFile);
+        }
 
         const accessToken: string | null = await getValidAccessToken();
-        const response = await putMethod(`/master/user/${userId}`,payload,{
+        const response = await putMethod(`/${role}s/${userId}`, formData,{
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
@@ -281,8 +283,7 @@ export default function Profile() {
 
     }
 
-    const [userId, setUserId] = useState(0);
-    const [isLoadingInfo, setIsLoadingInfo] = useState<boolean>(true);
+
 
     useEffect(() => {
         const onMounted = async () => {
@@ -293,17 +294,18 @@ export default function Profile() {
                 return;
             }
 
-            const {id} = getUserInfo(accessToken);
-            setUserId(id);
+            const {sub, role} = getUserInfo(accessToken);
+            setUserId(Number(sub));
+            setRole(role);
 
             try{
-                const userData: User = await getMethod(`/master/user/${id}`, {
+                const userData: User = await getMethod(`/${role}s/${sub}`, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }
                 });
 
-                const {name, email, school, parent_name, parent_phone, avata} = userData;
+                const {name, email, school, parent_name, parent_phone, avatar_info} = userData;
 
                 setInfoFormData({
                     name,
@@ -311,7 +313,7 @@ export default function Profile() {
                     school: school || '',
                     parent_name: parent_name || '',
                     parent_phone: parent_phone || '',
-                    avata: avata || {id: 0, url: '', payload: null}
+                    avatar_info: avatar_info || null
                 })
             }catch (err) {
                 console.error("Error on loading courses: ",err);
@@ -357,7 +359,7 @@ export default function Profile() {
                         <Grid size={{xs: 12}} sx={{textAlign: 'center', mb: 2}}>
                             <Avatar
                                 alt="Avatar"
-                                src={infoFormData.avata?.url ?? undefined}
+                                src={infoFormData.avatar_info?.url ?? undefined}
                                 sx={{width: 120, height: 120, mx: 'auto'}}
                             />
                             <input

@@ -73,8 +73,9 @@ export default function Invite() {
     const [isInClass, setIsInClass] = useState(false);
     const [classData, setClassData] = useState({
         name: '',
-        code: '',
-        users: [] as Member[]
+        code: '', /**todo: remove code from api for security */
+        teachers: [] as Member[],
+        students: [] as Member[],
     });
 
     /***** user id && protection code *****/
@@ -85,19 +86,20 @@ export default function Invite() {
 
     const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (inputCode !== classData.code) {
-            toast.error('Mã bảo vệ không chính xác!');
-            return;
-        }
 
         // add the user to the class
         const payload = {
             class_id: classId,
-            user_id: userId
+            user_id: userId,
+            code: inputCode,
         }
-        const response = await postMethod('/invite', payload);
+        const response = await postMethod('/invitations', payload, {
+            headers: {
+                Authorization: `Bearer ${await getValidAccessToken()}`
+            }
+        });
         if(!response){
-            toast.error('Có lỗi xảy ra, vui lòng thử lại sau!');
+            toast.error('Có lỗi, vui lòng thử lại !');
         }else{
             toast.success('Tham gia thành công!')
             navigate(`/class/${classId}`);
@@ -111,18 +113,22 @@ export default function Invite() {
             setIsCheckingAuth(false);
 
             if (accessToken && classId) {
-                const {id} = getUserInfo(accessToken);
-                setUserId(id);
+                const {sub} = getUserInfo(accessToken);
+                const userId = Number(sub);
+                setUserId(userId);
 
-                const {name, code, users} = await getMethod(`/master/class/${classId}`, {
+                const {name, code, teachers, students} = await getMethod(`/classes/${classId}`, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }
                 });
-                setClassData({name, code, users});
+                setClassData({name, code, teachers, students});
 
                 // check if the user is already in the class
-                setIsInClass(users.some((user: Member) => user.id === id));
+                setIsInClass(
+                    teachers.some((user: Member) => user.id === userId)
+                    || students.some((user: Member) => user.id === userId)
+                );
             }
         }
 
@@ -183,7 +189,7 @@ export default function Invite() {
                                 Lớp học: {classData.name}
                             </Typography>
                             <Typography component={'p'} variant={'h6'}>
-                                {classData.users.length} Thành viên
+                                {classData.teachers.length + classData.students.length} Thành viên
                             </Typography>
 
                             <TextField fullWidth size={'small'} sx={{my: 1}}

@@ -12,7 +12,8 @@ export const initState: ExamDoing = {
     examCode: '',
     examFile: {
         id: null,
-        url: undefined
+        url: undefined,
+        file_type: undefined,
     },
     questions: [defaultAnswer],
     timeLeft: 3600,

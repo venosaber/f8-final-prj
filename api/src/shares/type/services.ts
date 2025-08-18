@@ -62,5 +62,5 @@ export interface AnswerServiceI extends BaseServiceI<AnswerReqI, AnswerResI>{
 }
 
 export interface ExamResultServiceI extends BaseServiceI<ExamResultReqI, ExamResultResI> {
-  findAndFilter: (examGroupId: number, userId: number) => Promise<any[]>;
+  findAndFilter: (userId: number, examGroupId: number) => Promise<any[]>;
 }

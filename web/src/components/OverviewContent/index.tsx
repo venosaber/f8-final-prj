@@ -16,20 +16,10 @@ interface OverviewContentProps {
 
 export default function OverviewContent({course, examGroups}: OverviewContentProps) {
 
-    // swapping to have teachers at the head of the array
-    const users: Member[] = course.users;
-    users.sort((a, b) => {
-        if (a.role === "teacher" && b.role === "student") {
-            return -1;
-        } else if (a.role === "student" && b.role === "teacher") {
-            return 1;
-        } else {
-            return 0;
-        }
-    });
-    const teachers: Member[] = users.filter(user => user.role === "teacher");
+    const teachers: Member[] = course.teachers;
+    const students: Member[] = course.students;
     const teachersName: string = teachers.map(teacher => teacher.name).join(", ");
-    const newUsers: Member[] = [...users];
+    const newUsers: Member[] = [...teachers, ...students];
 
     /*********** share invite link *************/
     const baseUrl: string = window.location.origin;

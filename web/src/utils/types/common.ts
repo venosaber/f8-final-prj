@@ -2,20 +2,20 @@ export interface Course {
     id: number,
     code: string,
     name: string,
-    users: Member[]
+    teachers: Member[],
+    students: Member[],
 }
 
 export interface Member {
     id: number,
     name: string,
     role: string,
-    status: string
+    email: string,
 }
 
-export interface Avata{
+export interface AvatarInfo {
     id: number | null,
     url?: string,
-    payload: string | null
 }
 
 export interface User extends Member {
@@ -23,13 +23,14 @@ export interface User extends Member {
     school: string | null,
     parent_name: string | null,
     parent_phone: string | null,
-    avata: Avata | null
+    status: string,
+    avatar_info: AvatarInfo | null
 }
 
 export interface ExamGroup {
     id: number,
     name: string,
-    clas: number,
+    class_id: number,
     start_time: string,
     await_time: number,
     created_at: Date,
@@ -41,14 +42,18 @@ export interface Exam{
     id?: number,
     name: string,
     code: string,
-    exam_group: number,
+    exam_group_id: number,
     number_of_question: number,
     total_time: number,
-    correct_answer: {},
     questions: Question[],
     description: string,
     file: ExamFile | null,
-    deleted_questions: number[]
+}
+
+export interface ExamFile{
+    id: number | null,
+    url?: string,
+    file_type?: string
 }
 
 export interface ExamWithStatus extends Exam{
@@ -71,17 +76,11 @@ export interface Answer{
 
 export interface AnswerResult{
     id: number | null,
-    question: number,
+    question_id: number,
     index: number,
     answer: string | null,
     is_correct: boolean[] | null,
     type: string
-}
-
-export interface ExamFile{
-    id: number | null,
-    url?: string,
-    payload?: string
 }
 
 export interface ExamDoing{
@@ -95,10 +94,9 @@ export interface ExamDoing{
 
 export interface ExamResult{
     id: number,
-    exam: number,
-    user: number,
+    exam_id: number,
+    user_id: number,
     status: string,
-    old_answer: null,
     answers: AnswerResult[],
     number_of_question: number,
     number_of_correct_answer: number,
@@ -107,7 +105,7 @@ export interface ExamResult{
     device: string
 }
 
-export interface StudentResultGroup extends User{
+export interface StudentResultGroup extends Member{
     results: ExamResult[]
 }
 

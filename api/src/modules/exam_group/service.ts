@@ -16,4 +16,8 @@ export class ExamGroupService extends BaseService<ExamGroupEntity, ExamGroupReqI
     ) {
         super(repository, cls);
     }
+
+    protected getPublicColumns(): string[] {
+        return super.getPublicColumns().concat(['created_at']);
+    }
 }

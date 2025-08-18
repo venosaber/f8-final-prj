@@ -167,13 +167,13 @@ export default function ExamGroupDialog({
         const accessToken: string | null = await getValidAccessToken();
         let response;
         if (!isEditMode) {
-            response = await postMethod('/exam_group', payload, {
+            response = await postMethod('/exam_groups', payload, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
             });
         } else {
-            response = await putMethod(`/exam_group/${examGroup?.id}`, payload, {
+            response = await putMethod(`/exam_groups/${examGroup?.id}`, payload, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
@@ -191,7 +191,7 @@ export default function ExamGroupDialog({
 
     const onDelete = async () => {
         const accessToken: string | null = await getValidAccessToken();
-        const response = await deleteMethod(`/exam_group/${examGroup?.id}`, {
+        const response = await deleteMethod(`/exam_groups/${examGroup?.id}`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }

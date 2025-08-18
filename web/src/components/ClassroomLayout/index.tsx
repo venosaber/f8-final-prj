@@ -25,7 +25,8 @@ const ClassroomLayout = () => {
         id: 0,
         code: '',
         name: '',
-        users: []
+        teachers: [],
+        students: []
     });
 
     const [examGroups, setExamGroups] = useState<ExamGroup[]>([])
@@ -84,12 +85,12 @@ const ClassroomLayout = () => {
 
             try {
                 const [courseData, examGroupsData] = await Promise.all([
-                    getMethod(`/master/class/${classId}`, {
+                    getMethod(`/classes/${classId}`, {
                         headers: {
                             Authorization: `Bearer ${accessToken}`
                         }
                     }),
-                    getMethod(`/exam_group?class_id=${classId}`, {
+                    getMethod(`/exam_groups?class_id=${classId}`, {
                         headers: {
                             Authorization: `Bearer ${accessToken}`
                         }
@@ -108,7 +109,7 @@ const ClassroomLayout = () => {
         }
 
         onMounted();
-    }, []);
+    }, [classId]);
 
     if (isLoading) return <Loading/>
 

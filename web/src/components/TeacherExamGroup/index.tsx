@@ -2,7 +2,7 @@ import {Box, Typography, Button} from '@mui/material';
 import {Add as AddIcon} from '@mui/icons-material';
 import {useNavigate, useParams} from 'react-router-dom';
 import {useState, useEffect} from 'react';
-import type {ExamGroup, Exam, ExamResult, User, Member, StudentResultGroup} from '../../utils/types';
+import type {ExamGroup, Exam, ExamResult, StudentResultGroup, Member} from '../../utils/types';
 import {ExamGroupDialog, ExamsList, ResultGroupsList} from '..';
 import dayjs from 'dayjs';
 import {getValidAccessToken} from "../../router/auth.ts";
@@ -41,7 +41,7 @@ export default function TeacherExamGroup() {
 
     const [examGroupDetail, setExamGroupDetail] = useState<ExamGroup | undefined>(undefined);
     const [exams, setExams] = useState<Exam[]>([]);
-    const [students, setStudents] = useState<User[]>([]);
+    const [students, setStudents] = useState<Member[]>([]);
     const [studentResultGroups, setStudentResultGroups] = useState<StudentResultGroup[]>([]);
 
     let examName: string = '';
@@ -63,40 +63,18 @@ export default function TeacherExamGroup() {
 
         try {
             const [examGroupData, examsData, classData] = await Promise.all([
-                getMethod(`/exam_group/${examGroupId}`, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                }),
-                getMethod(`/exam/?exam_group=${examGroupId}`, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                }),
-                getMethod(`/master/class/${classId}`, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                })
+                getMethod(`/exam_groups/${examGroupId}`, { headers: {Authorization: `Bearer ${accessToken}`}}),
+                getMethod(`/exams/?exam_group_id=${examGroupId}`, { headers: {Authorization: `Bearer ${accessToken}`}}),
+                getMethod(`/classes/${classId}`, { headers: {Authorization: `Bearer ${accessToken}`}})
             ]);
+
             if (examGroupData) setExamGroupDetail(examGroupData);
             if (examsData) setExams(examsData);
 
-            // get detail info of all users in the class
-            let members: Member[] = [];
-            if (classData) members = classData.users;
-            // filter by role to get students only
-            if (members) {
-                const membersData: User[] = await Promise.all(
-                    members.map(member => getMethod(`/master/user/${member.id}`, {
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`
-                        }
-                    }))
-                )
-                const studentsData: User[] = membersData.filter(member => member.role === 'student');
-                if (studentsData) setStudents(studentsData);
-            }
+            // get the students of the class
+            const studentsData = classData?.students;
+            if (studentsData) setStudents(studentsData);
+
         } catch (e) {
             console.error('Problem fetching data from server', e);
         }
@@ -104,7 +82,7 @@ export default function TeacherExamGroup() {
 
     useEffect(() => {
         onMounted();
-    }, [])
+    }, [classId, examGroupId]);
 
     useEffect(() => {
         const onMountingResults = async () => {
@@ -119,7 +97,7 @@ export default function TeacherExamGroup() {
                 // 2-dimensional array of ExamResult
                 const resultsData: ExamResult[][] = await Promise.all(
                     students.map(student =>
-                        getMethod(`/exam_result/?student=${student.id}&exam_group=${examGroupId}`, {
+                        getMethod(`/exam_results/?student_id=${student.id}&exam_group_id=${examGroupId}`, {
                             headers: {
                                 Authorization: `Bearer ${accessToken}`
                             }
@@ -128,17 +106,17 @@ export default function TeacherExamGroup() {
                 );
 
                 // add exam results to each student's data
-                const studentResults= students.map((student: User, index: number)=>{
+                const studentResults= students.map((student: Member, index: number)=>{
                     return {
                         ...student,
                         results: resultsData[index]
                     }
                 });
-                console.log('empty & not empty: ', studentResults);
+
                 // only show students who have taken at least one of the exams
                 const notEmptyStudentResults: StudentResultGroup[] = studentResults.filter((studentResult: StudentResultGroup) =>
                     studentResult.results.length > 0);
-                console.log('not empty: ',notEmptyStudentResults);
+
                 setStudentResultGroups(notEmptyStudentResults);
             } catch (e) {
                 console.error('Problem fetching data from server', e);

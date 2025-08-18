@@ -24,7 +24,7 @@ export default function TeacherMarking() {
     const [examResults, setExamResults] = useState<ExamResult[]>([]);
 
     const matchExam = (examResult: ExamResult) => {
-        return exams.find(exam => exam.id === examResult.exam);
+        return exams.find(exam => exam.id === examResult.exam_id);
     }
 
     const fetchResultData = async () => {
@@ -37,9 +37,9 @@ export default function TeacherMarking() {
 
         try {
             // only exam results data need to fetch (reload)
-            const examResultsData = await getMethod(`/exam_result?student=${studentId}&exam_group=${examGroupId}`, {headers: {Authorization: `Bearer ${accessToken}`}});
+            const examResultsData = await getMethod(`/exam_results?student_id=${studentId}&exam_group_id=${examGroupId}`, {headers: {Authorization: `Bearer ${accessToken}`}});
             if (examResultsData) {
-                setExamResults(examResultsData.sort((a: ExamResult, b: ExamResult) => a.exam - b.exam));
+                setExamResults(examResultsData.sort((a: ExamResult, b: ExamResult) => a.exam_id - b.exam_id));
             }
         } catch (e) {
             console.error('Error on re-loading exam results: ', e);
@@ -58,13 +58,13 @@ export default function TeacherMarking() {
 
             try {
                 const [examResultsData, examsData, examGroupData] = await Promise.all([
-                    getMethod(`/exam_result?student=${studentId}&exam_group=${examGroupId}`, {headers: {Authorization: `Bearer ${accessToken}`}}),
-                    getMethod(`/exam?exam_group=${examGroupId}`, {headers: {Authorization: `Bearer ${accessToken}`}}),
-                    getMethod(`/exam_group/${examGroupId}`, {headers: {Authorization: `Bearer ${accessToken}`}})
+                    getMethod(`/exam_results?student_id=${studentId}&exam_group_id=${examGroupId}`, {headers: {Authorization: `Bearer ${accessToken}`}}),
+                    getMethod(`/exams?exam_group_id=${examGroupId}`, {headers: {Authorization: `Bearer ${accessToken}`}}),
+                    getMethod(`/exam_groups/${examGroupId}`, {headers: {Authorization: `Bearer ${accessToken}`}})
                 ]);
 
                 // sort by exam id
-                if (examResultsData) setExamResults(examResultsData.sort((a: ExamResult, b: ExamResult) => a.exam - b.exam));
+                if (examResultsData) setExamResults(examResultsData.sort((a: ExamResult, b: ExamResult) => a.exam_id - b.exam_id));
                 if (examsData) setExams(examsData.sort((a: Exam, b: Exam) => a.id! - b.id!));
 
                 if (examGroupData) setExamGroup(examGroupData);

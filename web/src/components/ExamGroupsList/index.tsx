@@ -59,7 +59,7 @@ export default function ExamsContent({course}: { course: Course }) {
         const {role} = getUserInfo(accessToken);
         setUserRole(role);
 
-        const examGroupsData: ExamGroup[] = await getMethod(`/exam_group?class_id=${course.id}`, {
+        const examGroupsData: ExamGroup[] = await getMethod(`/exam_groups?class_id=${course.id}`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }

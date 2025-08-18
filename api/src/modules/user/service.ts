@@ -26,7 +26,7 @@ export class UserService
     // remove password for security
     // remove id to avoid conflict when joining with FileEntity
     protected getPublicColumns(): string[] {
-        return super.getPublicColumns().filter((column) => column !== 'password' && column !== 'id');
+        return super.getPublicColumns().filter((column) => !['password', 'avatar', 'id'].includes(column));
     }
 
     protected handleSelect(): SelectQueryBuilder<UserEntity> {

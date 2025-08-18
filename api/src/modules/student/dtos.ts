@@ -20,12 +20,13 @@ export class StudentReq implements StudentReqI {
   email: string;
 
   @ApiProperty({
-    example: 'confirmed',
-    description: 'status of the account',
+    example: 'school name',
+    description: 'name of the school',
+    required: false,
   })
   @IsString()
-  @IsNotEmpty()
-  status: string;
+  @IsOptional()
+  school: string | null;
 
   @ApiProperty({
     example: 'parent name',

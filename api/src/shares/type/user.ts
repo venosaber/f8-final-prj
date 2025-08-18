@@ -12,9 +12,10 @@ export interface AvatarInfo {
 export interface UserBase {
   name: string;
   email: string;
-  status: string;
-  parent_name: string | null;
-  parent_phone: string | null;
+  status?: string;
+  school?: string | null;
+  parent_name?: string | null;
+  parent_phone?: string | null;
 }
 
 export interface UserI extends UserBase{

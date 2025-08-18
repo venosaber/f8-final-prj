@@ -16,13 +16,13 @@ export class ExamResultController {
     ) {}
 
     @Get()
+    @ApiQuery({ name: 'student_id', required: true, type: Number, description: 'student ID'})
     @ApiQuery({ name: 'exam_group_id', required: true, type: Number, description: 'exam group ID'})
-    @ApiQuery({ name: 'user_id', required: true, type: Number, description: 'student ID'})
     findAll(
-        @Query('exam_group_id', ParseIntPipe) examGroupId: number,
-        @Query('user_id', ParseIntPipe) userId: number
+        @Query('student_id', ParseIntPipe) userId: number,
+        @Query('exam_group_id', ParseIntPipe) examGroupId: number
     ){
-    return this.examResultService.findAndFilter(examGroupId, userId);
+    return this.examResultService.findAndFilter(userId, examGroupId);
     }
 
     @Post()

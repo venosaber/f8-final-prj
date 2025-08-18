@@ -61,18 +61,6 @@ export class RegisterReq implements RegisterReqI {
   @IsString()
   @IsNotEmpty()
   status: string;
-
-  @IsOptional()
-  @IsNumber()
-  avatar: number | null;
-
-  @IsOptional()
-  @IsString()
-  parent_name: string | null;
-
-  @IsOptional()
-  @IsString()
-  parent_phone: string | null;
 }
 
 export class ForgotPasswordReq {

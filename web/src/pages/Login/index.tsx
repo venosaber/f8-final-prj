@@ -111,12 +111,12 @@ function LoginPage() {
             email: formData.email,
             password: formData.password
         }
-        const response = await postMethod('/login', payload);
+        const response = await postMethod('/auth/login', payload);
         if(!response){
             toast.error('Sai email hoặc mật khẩu!');
         } else {
             toast.success('Đăng nhập thành công!');
-            const {access: accessToken, refresh: refreshToken} = response;
+            const {accessToken, refreshToken} = response;
             /********* save tokens in cookie ********/
             const now: number = Math.floor(Date.now() / 1000);
 

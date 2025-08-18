@@ -35,7 +35,8 @@ export class ClassService extends BaseService<ClassEntity, ClassReqI, ClassI>
                         json_build_object(
                             'id', "user".id,
                             'name', "user".name,
-                            'role', "user".role
+                            'role', "user".role,
+                            'email', "user".email
                         )
                     ) filter (where "user".role = 'teacher'),
                  '[]') as teachers, 
@@ -45,7 +46,8 @@ export class ClassService extends BaseService<ClassEntity, ClassReqI, ClassI>
                         json_build_object(
                             'id', "user".id,
                             'name', "user".name,
-                            'role', "user".role
+                            'role', "user".role,
+                            'email', "user".email
                         )
                     ) filter (where "user".role = 'student'),
                  '[]') as students
@@ -53,7 +55,7 @@ export class ClassService extends BaseService<ClassEntity, ClassReqI, ClassI>
             ])
             .innerJoin(ClassUserEntity, 'class_user', 'class_user.class_id = class.id and class_user.active = true')
             .innerJoin(UserEntity, 'user', '"user".id = class_user.user_id and "user".active = true')
-            .groupBy('class.id, class.name, class.code')
+            .groupBy('class.id, class.name, class.code');
     }
 
     @Transactional()

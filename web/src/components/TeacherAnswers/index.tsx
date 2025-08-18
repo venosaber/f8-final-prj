@@ -22,7 +22,8 @@ interface TeacherAnswersProps {
     examGroupIdNum: number,
     examIdNum: number,
     state: Exam,
-    dispatch: Dispatch<Action>
+    dispatch: Dispatch<Action>,
+    selectedFile: File | null,
 }
 
 export default function TeacherAnswers({
@@ -30,7 +31,8 @@ export default function TeacherAnswers({
                                            examGroupIdNum,
                                            examIdNum,
                                            state,
-                                           dispatch
+                                           dispatch,
+                                           selectedFile
                                        }: TeacherAnswersProps) {
 
     const onNameChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -97,24 +99,25 @@ export default function TeacherAnswers({
     const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!checkValid()) return;
-        const payload = {
-            name: state.name,
-            code: state.code,
-            exam_group: examGroupIdNum,
-            number_of_question: state.number_of_question,
-            total_time: state.total_time * 60,  // convert to seconds
-            correct_answer: state.correct_answer,
-            questions: state.questions,
-            description: state.description,
-            file: state.file,
-            deleted_questions: state.deleted_questions
+
+        const formData = new FormData();
+        formData.append('name', state.name);
+        formData.append('code', state.code);
+        formData.append('exam_group_id', examGroupIdNum.toString());
+        formData.append('number_of_question', state.number_of_question.toString());
+        formData.append('total_time', (state.total_time * 60).toString());
+        formData.append('questions', JSON.stringify(state.questions));
+        formData.append('description', state.description);
+
+        if(selectedFile){
+            formData.append('examFile', selectedFile);
         }
 
         const accessToken: string | null = await getValidAccessToken();
 
         // create mode
         if (examIdNum === 0) {
-            const response = await postMethod('/exam', payload, {
+            const response = await postMethod('/exams', formData, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
@@ -129,7 +132,7 @@ export default function TeacherAnswers({
         }
         // update mode
         if (examIdNum) {
-            const response = await putMethod(`/exam/${examIdNum}`, payload, {
+            const response = await putMethod(`/exams/${examIdNum}`, formData, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }

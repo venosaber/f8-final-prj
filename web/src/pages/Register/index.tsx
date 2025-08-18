@@ -179,7 +179,7 @@ function RegisterPage() {
             ...formData,
             status: 'confirmed'
         }
-        const response = await postMethod('/master/user', payload);
+        const response = await postMethod('/auth/register', payload);
         if(!response){
             toast.error('Đăng ký mới thất bại, hãy thử lại!');
         }else{

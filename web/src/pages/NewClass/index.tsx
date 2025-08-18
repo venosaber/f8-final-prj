@@ -2,7 +2,7 @@ import {FHeader} from "../../components";
 import {Box, Button, Container, Grid, Paper, TextField, Typography} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {type ChangeEvent, type FocusEvent, type FormEvent, useEffect, useState} from "react";
-import {getUserInfo, getValidAccessToken} from "../../router/auth.ts";
+import {getValidAccessToken} from "../../router/auth.ts";
 import {postMethod} from "../../utils/api.ts";
 import { toast } from 'react-toastify';
 
@@ -95,11 +95,10 @@ function NewClass(){
         const payload = {
             name: formData.name,
             code: formData.code,
-            users: [userId]
         }
 
         const accessToken: string | null = await getValidAccessToken();
-        const response = await postMethod('/master/class', payload, {
+        const response = await postMethod('/classes', payload, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
@@ -120,7 +119,6 @@ function NewClass(){
         navigate('/classes');
     }
 
-    const [userId, setUserId] = useState(0);
     useEffect(()=>{
        const onMounted = async ()=>{
            const accessToken: string | null = await getValidAccessToken();
@@ -130,8 +128,6 @@ function NewClass(){
                return;
            }
 
-           const {id} = getUserInfo(accessToken);
-           setUserId(id);
        }
        onMounted();
     },[])

@@ -18,16 +18,8 @@ interface MembersContentProps {
 
 export default function MembersContent({course}: MembersContentProps) {
     // swapping to have teachers at the head of the array
-    const members: Member[] = course.users;
-    members.sort((a, b) => {
-        if (a.role === "teacher" && b.role === "student") {
-            return -1;
-        } else if (a.role === "student" && b.role === "teacher") {
-            return 1;
-        } else {
-            return 0;
-        }
-    });
+    const {teachers, students} = course;
+    const members: Member[] = [...teachers, ...students];
 
     return (
         <Box sx={{mt: 3, overflowY: 'auto'}}>

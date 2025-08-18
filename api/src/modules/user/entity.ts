@@ -25,6 +25,9 @@ export class UserEntity extends BaseEntity {
   @Column()
   password: string;
 
+  @Column({type: 'varchar', nullable: true})
+  school: string | null;
+
   @Column({ type: 'varchar', nullable: true })
   parent_name: string | null;
 

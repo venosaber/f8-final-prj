@@ -1,9 +1,10 @@
 import axios from 'axios'
 
-export const API_URL = 'https://b1u9y178ok.execute-api.ap-southeast-1.amazonaws.com';
+export const API_URL = import.meta.env.VITE_API_URL as string;
 
 const api = axios.create({
-    baseURL: API_URL
+    baseURL: API_URL,
+    withCredentials: true,
 })
 
 export default api

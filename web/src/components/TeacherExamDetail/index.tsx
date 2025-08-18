@@ -6,12 +6,12 @@ import type {ExamGroup} from "../../utils/types";
 import {getValidAccessToken} from "../../router/auth.ts";
 import {getMethod} from "../../utils/api.ts";
 import {initState, reducer} from "./teacherReducer.ts";
-import {TeacherAnswers} from '..'
-import {API_URL} from "../../plugins/api.ts";
+import {TeacherAnswers} from '..';
 import {toast} from "react-toastify";
 
 export default function TeacherExamDetail() {
     const [state, dispatch] = useReducer(reducer, initState);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
     const navigate = useNavigate();
     const {id, examGroupId, examId} = useParams();
@@ -30,21 +30,6 @@ export default function TeacherExamDetail() {
         navigate(`/class/${id}/exam/${examGroupId}`);
     }
 
-    const fileToBase64 = (file: File) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-                if (typeof reader.result === 'string') {
-                    resolve(reader.result);
-                } else {
-                    reject(new Error('Cannot read file to base64 string.'));
-                }
-            }
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
-    }
-
     const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
         const file: File | null = e.target.files?.[0] ?? null;
         if (!file) return;
@@ -52,14 +37,14 @@ export default function TeacherExamDetail() {
             alert('Vui lòng chọn file PDF hoặc hình ảnh');
             return;
         }
+        setSelectedFile(file);
 
-        const response = await fileToBase64(file);
-        if (!response) return;
+        const previewUrl: string = URL.createObjectURL(file);
 
         const uploadFile = {
             id: null,
-            url: URL.createObjectURL(file),
-            payload: String(response)
+            url: previewUrl,
+            file_type: file.type.split('/')[1]
         }
         console.log(uploadFile);
 
@@ -80,7 +65,7 @@ export default function TeacherExamDetail() {
             try {
                 // examId already exists => edit mode
                 if (examIdNum !== 0) {
-                    const examData = await getMethod(`/exam/${examId}`, {
+                    const examData = await getMethod(`/exams/${examId}`, {
                         headers: {
                             Authorization: `Bearer ${accessToken}`
                         }
@@ -89,7 +74,7 @@ export default function TeacherExamDetail() {
                     dispatch({type: 'LOAD_INITIAL_DATA', payload: examData})
                 }
 
-                const examGroupData = await getMethod(`/exam_group/${examGroupId}`, {
+                const examGroupData = await getMethod(`/exam_groups/${examGroupId}`, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }
@@ -168,12 +153,7 @@ export default function TeacherExamDetail() {
                                         height: '100%'
                                     }}>
                                         <iframe
-                                            src={
-                                            // edit mode: examIdNum !== 0
-                                            examIdNum !== 0 ?
-                                            `${API_URL}/${state.file.url}`
-                                                :`${state.file.url}`
-                                        }
+                                            src={`${state.file.url}`}
                                             style={{
                                                 width: '100%',
                                                 height: '100%',
@@ -211,7 +191,9 @@ export default function TeacherExamDetail() {
                             <TeacherAnswers
                                 handleBackToExamGroupDetail={handleBackToExamGroupDetail}
                                 examGroupIdNum={examGroupIdNum} examIdNum={examIdNum}
-                                state={state} dispatch={dispatch}/>
+                                state={state} dispatch={dispatch}
+                                selectedFile={selectedFile}
+                            />
                         </Grid>
                     </Grid>
                 </Box>

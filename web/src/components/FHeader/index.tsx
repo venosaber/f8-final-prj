@@ -20,12 +20,21 @@ import HomeIcon from '@mui/icons-material/Home';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CloseIcon from '@mui/icons-material/Close';
 
-import {Menu, MenuItem} from "@mui/material";
+import {Avatar, Menu, MenuItem} from "@mui/material";
 import {AvatarDefault} from '..';
 
 import {useNavigate, useParams, Link} from "react-router-dom";
 import {deleteCookie, getUserInfo, getValidAccessToken} from "../../router/auth.ts";
 import {getMethod} from "../../utils/api.ts";
+
+interface UserBaseInfo {
+    name: string;
+    role: string;
+    avatar_info: {
+        id: number;
+        url: string;
+    } | null
+}
 
 export const CustomLogoIcon = () => (
     <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', mr: 0.8}}>
@@ -100,7 +109,8 @@ export default function DrawerAppBar() {
 
     /************** Set classname, username, role label ****************/
     const [className, setClassName] = useState<string>('');
-    const [user, setUser] = useState({name: '', role: ''});
+
+    const [user, setUser] = useState<UserBaseInfo>({name: '', role: '', avatar_info: null});
     const displayAddClassButton = user.role === 'teacher' ? 'inline-flex' : 'none';
     const {id: classId} = useParams();
 
@@ -114,12 +124,12 @@ export default function DrawerAppBar() {
             }
 
             try {
-                const {name, role} = getUserInfo(accessToken);
-                setUser({name, role});
+                const {name, role, avatar_info} = getUserInfo(accessToken);
+                setUser({name, role, avatar_info});
 
                 // the ClassDetail page has an id, the Classes page doesn't
                 if (classId) {
-                    const {name} = await getMethod(`/master/class/${classId}`, {
+                    const {name} = await getMethod(`/classes/${classId}`, {
                         headers: {
                             Authorization: `Bearer ${accessToken}`
                         }
@@ -300,7 +310,12 @@ export default function DrawerAppBar() {
                             }}
                         >
                             {/*Placeholder avatar*/}
-                            <AvatarDefault fullName={user.name} width={36} height={36} mr={1}/>
+                            {
+                                user.avatar_info !== null
+                                ? <Avatar sx={{width: 36, height: 36, mr: 1}} src={user.avatar_info.url} />
+                                    : <AvatarDefault fullName={user.name} width={36} height={36} mr={1}/>
+                            }
+
                             <Box
                                 sx={{
                                     display: {xs: 'none', md: 'flex'},

@@ -9,14 +9,12 @@ const defaultQuestion = {
 export const initState: Exam = {
     name: "",
     code: "",
-    exam_group: 0,
+    exam_group_id: 0,
     number_of_question: 1,
     total_time: 0,
-    correct_answer: {},
     questions: [defaultQuestion],
     description: "default",
-    file: null,
-    deleted_questions: []
+    file: null
 }
 
 const actionHandlers = {

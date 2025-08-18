@@ -49,8 +49,8 @@ export const refreshToken = async () => {
     if (!refreshToken) throw new Error('No refreshToken');
 
     try {
-        const payload = { refresh: refreshToken }
-        const {access: newAccessToken, refresh: newRefreshToken } = await postMethod('/login/get_new_token', payload);
+        const payload = { refreshToken: refreshToken }
+        const {accessToken: newAccessToken, refreshToken: newRefreshToken } = await postMethod('/auth/refresh', payload);
 
         const {exp} = getUserInfo(newAccessToken); // decode JWT token
         const now: number = Math.floor(Date.now() / 1000);
