@@ -43,7 +43,7 @@ export interface Exam{
     name: string,
     code: string,
     exam_group_id: number,
-    number_of_question: number,
+    number_of_question: number | string,
     total_time: number,
     questions: Question[],
     description: string,

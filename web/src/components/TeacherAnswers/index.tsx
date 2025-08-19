@@ -1,6 +1,7 @@
-import type {FormEvent, Dispatch, ChangeEvent} from 'react'
+import {type FormEvent, type Dispatch, type ChangeEvent} from 'react'
 import {useCallback, memo} from "react";
 import type {Question, Exam, Action} from '../../utils/types';
+import {FixedSizeList as List, type ListChildComponentProps} from "react-window";
 
 import {
     Grid,
@@ -48,7 +49,10 @@ export default function TeacherAnswers({
     }, [dispatch]);
 
     const onAmountChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        const amount: number = Number(e.target.value);
+        const filtered = e.target.value.replace(/[^0-9]/g, "");
+        e.target.value = filtered;
+
+        const amount = filtered === "" ? 0 : Number(filtered);
         dispatch({type: 'SET_AMOUNT', payload: amount});
     }, [dispatch]);
 
@@ -206,23 +210,40 @@ export default function TeacherAnswers({
                         <TextField fullWidth size={'small'}
                                    id={'exam-number_of_question'}
                                    name={'number_of_question'}
-                                   value={state.number_of_question}
+                                   value={state.number_of_question || ''}
                                    onChange={onAmountChange}
                         />
                     </Grid>
                 </Grid>
 
                 <Box>
-                    {
-                        state.questions.map((question: Question) =>
-                            (
-                                <MemoizedQuestionUnit key={question.index}
-                                                      question={question}
-                                                      onTypeChange={handleTypeChange}
-                                                      onAnswerChange={handleAnswerChange}
-                                />
-                            ))
-                    }
+                    <List
+                      height={600}
+                      itemCount={state.questions.length}
+                      itemSize={50}
+                      width={"100%"}
+                      itemData={{
+                          questions: state.questions,
+                          onTypeChange: handleTypeChange,
+                          onAnswerChange: handleAnswerChange
+                      }}
+                    >
+                        {({ index, style, data }: ListChildComponentProps) => {
+                            const { questions, onTypeChange, onAnswerChange } = data;
+                            const question = questions[index];
+
+                            return (
+                              <div style={style}>
+                                  <MemoizedQuestionUnit
+                                    key={question.index}
+                                    question={question}
+                                    onTypeChange={onTypeChange}
+                                    onAnswerChange={onAnswerChange}
+                                  />
+                              </div>
+                            );
+                        }}
+                    </List>
                 </Box>
 
                 <Box sx={{textAlign: 'center'}}>
@@ -247,15 +268,16 @@ interface QuestionUnitProps {
     onAnswerChange: (index: number, type: 'single-choice' | 'multiple-choice', value: string, checked?: boolean) => void,
 }
 
-const MemoizedQuestionUnit = memo(function QuestionUnit({question, onTypeChange, onAnswerChange}: QuestionUnitProps) {
+const MemoizedQuestionUnit = memo(
+  function QuestionUnit({question, onTypeChange, onAnswerChange}: QuestionUnitProps) {
 
-    const handleTypeChange = (e: SelectChangeEvent) => {
+    const handleTypeChange = useCallback((e: SelectChangeEvent) => {
         onTypeChange(question.index, e.target.value);
-    }
+    },[onTypeChange, question.index])
 
-    const handleAnswerChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleAnswerChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         onAnswerChange(question.index, question.type as 'single-choice' | 'multiple-choice', e.target.value, e.target.checked)
-    }
+    },[onAnswerChange, question.index, question.type])
 
     const options: string[] = ["A", "B", "C", "D"];
 
@@ -322,6 +344,15 @@ const MemoizedQuestionUnit = memo(function QuestionUnit({question, onTypeChange,
 
             </Grid>
         </Box>
-    )
-})
+    );
+  },
+
+  (prevProps, nextProps) => {
+      return (
+        prevProps.question.type === nextProps.question.type &&
+        prevProps.question.correct_answer === nextProps.question.correct_answer &&
+        prevProps.question.index === nextProps.question.index
+      );
+  }
+);
 
