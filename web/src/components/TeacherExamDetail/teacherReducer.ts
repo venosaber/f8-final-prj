@@ -45,13 +45,13 @@ const actionHandlers = {
     'SET_AMOUNT': (state: Exam, action: Action) => {
         const newAmount: number = action.payload;
         if(newAmount <= 0 || isNaN(newAmount)) return state;
-        if(newAmount < state.questions.length){
-            return {
-                ...state,
-                number_of_question: newAmount,
-                questions: state.questions.slice(0, newAmount)
-            }
-        }else{
+        // if(newAmount < state.questions.length){
+        //     return {
+        //         ...state,
+        //         number_of_question: newAmount,
+        //         questions: state.questions.slice(0, newAmount)
+        //     }
+        // }else{
             const newQuestions = [...state.questions];
             for (let i: number = state.questions.length; i < newAmount; i++) {
                 newQuestions.push({
@@ -64,7 +64,7 @@ const actionHandlers = {
                 number_of_question: newAmount,
                 questions: newQuestions
             }
-        }
+
     },
 
     // change a question's type

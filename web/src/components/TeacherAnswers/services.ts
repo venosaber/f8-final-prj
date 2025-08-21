@@ -10,7 +10,7 @@ export const submitExam = async (data: ExamFormData) => {
     formData.append('exam_group_id', data.examGroupIdNum.toString());
     formData.append('number_of_question', data.number_of_question.toString());
     formData.append('total_time', (data.total_time * 60).toString());
-    formData.append('questions', JSON.stringify(data.questions));
+    formData.append('questions', JSON.stringify(data.questions.slice(0, data.number_of_question)));
     formData.append('description', data.description);
 
     if(data.selectedFile) {

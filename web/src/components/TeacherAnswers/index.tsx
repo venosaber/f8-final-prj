@@ -15,6 +15,10 @@ export default function TeacherAnswers(props: TeacherAnswersProps) {
     const { state, examIdNum } = props;
     const { handlers, handleSubmit } = useTeacherAnswers(props);
 
+    const checkDisplay = (questionIndex: number): boolean => {
+        return questionIndex < state.number_of_question ;
+    };
+
     return (
         <>
             <Box
@@ -85,7 +89,9 @@ export default function TeacherAnswers(props: TeacherAnswersProps) {
                             (
                                 <MemoizedQuestionUnit question={question}
                                                       onTypeChange={handlers.onTypeChange}
-                                                      onAnswerChange={handlers.onAnswerChange} />
+                                                      onAnswerChange={handlers.onAnswerChange}
+                                                      isDisplay={checkDisplay(question.index)}
+                                />
                             ))
                     }
                 </Box>

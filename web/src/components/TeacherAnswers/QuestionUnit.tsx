@@ -14,7 +14,7 @@ import {memo} from "react";
 import type { QuestionUnitProps } from './types.ts';
 
 
-const QuestionUnit = ({question, onTypeChange, onAnswerChange}: QuestionUnitProps) => {
+const QuestionUnit = ({question, onTypeChange, onAnswerChange, isDisplay}: QuestionUnitProps) => {
     const handleTypeChange = (e: SelectChangeEvent) => {
         onTypeChange(question.index, e.target.value);
     }
@@ -63,7 +63,7 @@ const QuestionUnit = ({question, onTypeChange, onAnswerChange}: QuestionUnitProp
             questionElement = <></>
     }
 
-    return (
+    return (isDisplay && (
         <Box sx={{m: "10px 0 10px 10px "}}>
             <Grid container spacing={2} alignItems={'center'}>
                 <Grid size={{xs: 1.5, lg: 2}}>
@@ -88,7 +88,7 @@ const QuestionUnit = ({question, onTypeChange, onAnswerChange}: QuestionUnitProp
 
             </Grid>
         </Box>
-    )
+    ))
 }
 
 export const MemoizedQuestionUnit = memo(QuestionUnit);
