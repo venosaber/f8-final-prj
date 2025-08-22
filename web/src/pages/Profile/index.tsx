@@ -262,18 +262,17 @@ export default function Profile() {
         if(!isValid) return;
 
         // submit logic
-        // passwords need to be converted to base64
         const payload = {
-            id: userId,
-            old_password: btoa(passwordFormData.old_password),
-            new_password: btoa(passwordFormData.new_password)
+            old_password: passwordFormData.old_password,
+            new_password: passwordFormData.new_password
         }
         const accessToken: string | null = await getValidAccessToken();
-        const response = await postMethod('/master/user/change_password',payload,{
+        const response = await postMethod('/users/change-password', payload, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
         });
+        console.log(response);
 
         if(!response){
            toast.error('Sai mật khẩu cũ!');

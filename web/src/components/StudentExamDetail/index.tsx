@@ -11,7 +11,6 @@ import type {Question, Answer} from "../../utils/types";
 import {isMobile, isTablet, isDesktop} from "react-device-detect";
 import {useExamFlow} from '../../contexts/ExamFlowProvider';
 import {toast} from "react-toastify";
-import {API_URL} from "../../plugins/api.ts";
 
 export default function StudentExamDetail() {
     const [state, dispatch] = useReducer(reducer, initState);
@@ -115,8 +114,8 @@ export default function StudentExamDetail() {
 
             // the answers and time-left are saved by useEffect to localStorge
             // try to load data from localStorage first, otherwise load initial data from API
-            const savedQuestions: string | null = localStorage.getItem(`lesson-${examId}-${userId}-answers`);
-            const savedTimeLeft: string | null = localStorage.getItem(`lesson-${examId}-${userId}-time`);
+            const savedQuestions: string | null = localStorage.getItem(`lesson-${examId}-${sub}-answers`);
+            const savedTimeLeft: string | null = localStorage.getItem(`lesson-${examId}-${sub}-time`);
 
             const questions = savedQuestions ?
                 JSON.parse(savedQuestions) :
@@ -216,7 +215,7 @@ export default function StudentExamDetail() {
             <Container maxWidth={false}
                        sx={{
                            mt: '0px', backgroundColor: '#f0f2f5',
-                           minHeight: 'calc(100vh - 80px)', p: 3,
+                           height: 'calc(100vh - 80px)', p: 3,
                            display: 'flex',
                            flexDirection: 'column'
                        }}>
@@ -243,20 +242,17 @@ export default function StudentExamDetail() {
                 }}>
                     <Grid container spacing={2} sx={{height: "100%"}}>
                         <Grid size={{xs: 12, lg: 6}} sx={{
-                            height: '100%',
-                            border: '1px dashed #cccccc',
-                            backgroundColor: "#ffffff",
+                            height: '100%'
 
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center'
                         }}>
                             <Box sx={{
                                 width: '100%',
-                                height: '100%'
+                                height: '100%',
+                                border: '1px dashed #cccccc',
+                                backgroundColor: "#ffffff",
                             }}>
                                 <iframe
-                                    src={`${API_URL}/${state.examFile.url}`}
+                                    src={`${state.examFile.url}`}
                                     style={{
                                         width: '100%',
                                         height: '100%',

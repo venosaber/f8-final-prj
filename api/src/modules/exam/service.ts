@@ -34,7 +34,7 @@ export class ExamService extends BaseService<ExamEntity, ExamReqI, ExamResI>
             .createQueryBuilder(this.getTableName())
             .select([
                 'exam.id as id',
-                'exam.exam_group_id as exam_group_id',
+                'exam.exam_group_id::int as exam_group_id',
                 'exam.name as name',
                 'exam.code as code',
                 'exam.total_time as total_time',

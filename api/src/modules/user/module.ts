@@ -5,10 +5,11 @@ import { DataSource } from 'typeorm';
 import { UserEntityRepository, UserServiceToken } from '@/shares';
 import { UserEntity } from '@/modules/user/entity';
 import { UserService } from '@/modules/user/service';
+import {UserController} from "@/modules/user/controller";
 
 @Module({
   imports: [DatabaseModule],
-  controllers: [],
+  controllers: [UserController],
   providers: [
     {
       provide: UserEntityRepository,

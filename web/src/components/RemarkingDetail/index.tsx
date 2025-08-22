@@ -41,7 +41,7 @@ export default function RemarkingDetail({examResult, exam, onSaveSuccess}: Remar
     const answerObj = useMemo(() => {
         const obj: { [key: number]: { answer: string | null, isCorrect: boolean | null } } = {};
         examResult.answers.forEach((answer: AnswerResult) => {
-            obj[answer.question] = {
+            obj[answer.question_id] = {
                 answer: answer.answer,
                 isCorrect: translateCorrection(answer.is_correct)
             };
@@ -82,7 +82,7 @@ export default function RemarkingDetail({examResult, exam, onSaveSuccess}: Remar
 
     // if the is_correct array already exists, return it, otherwise return [true] or [false]
     const getIsCorrectArray = (question: QuestionI): boolean[] => {
-        const existing = examResult.answers.find(answer => answer.question === question.id)?.is_correct;
+        const existing = examResult.answers.find(answer => answer.question_id === question.id)?.is_correct;
         return existing ?? [question.isCorrect === true];
     };
 
@@ -100,23 +100,22 @@ export default function RemarkingDetail({examResult, exam, onSaveSuccess}: Remar
         // payload can only include answered questions as these questions have IDs
         const questionsForPayload = answeredQuestions.map(question => {
             return {
-                question: question.id,
+                question_id: question.id,
                 answer: question.answer,
                 is_correct: getIsCorrectArray(question),
-                id: examResult.answers.find(answer => answer.question === question.id)!.id
+                id: examResult.answers.find(answer => answer.question_id === question.id)!.id
             }
         });
         const payload = {
-            exam: examResult.exam,
-            user: examResult.user,
+            exam_id: examResult.exam_id,
+            user_id: examResult.user_id,
             status: 'remarked',
             questions: questionsForPayload,
             device: examResult.device,
-            id: examResult.id,
         };
 
         const accessToken: string | null = await getValidAccessToken();
-        const response = await putMethod(`/exam_result/${examResult.id}`, payload, {
+        const response = await putMethod(`/exam_results/${examResult.id}`, payload, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }

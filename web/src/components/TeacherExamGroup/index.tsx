@@ -104,6 +104,7 @@ export default function TeacherExamGroup() {
                         })
                     )
                 );
+                console.log('resultsData: ', resultsData);
 
                 // add exam results to each student's data
                 const studentResults= students.map((student: Member, index: number)=>{
@@ -112,6 +113,7 @@ export default function TeacherExamGroup() {
                         results: resultsData[index]
                     }
                 });
+                console.log('studentResults: ', studentResults);
 
                 // only show students who have taken at least one of the exams
                 const notEmptyStudentResults: StudentResultGroup[] = studentResults.filter((studentResult: StudentResultGroup) =>

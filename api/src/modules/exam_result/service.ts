@@ -32,12 +32,12 @@ implements ExamResultServiceI
     }
 
     // cannot be sure this is still ExamResultEntity, so use any
-    async findAndFilter(examGroupId: number, userId: number) {
+    async findAndFilter(userId: number, examGroupId: number) {
         const query = this.repository
             .createQueryBuilder(this.getTableName())
-            .select('er.id','id')
-            .addSelect('er.exam_id','exam_id')
-            .addSelect('er.user_id','user_id')
+            .select('er.id::int','id')
+            .addSelect('er.exam_id::int','exam_id')
+            .addSelect('er.user_id::int','user_id')
             .addSelect('er.status','status')
             .addSelect('er.device','device')
             .addSelect('er.number_of_correct_answer','number_of_correct_answer')
@@ -45,10 +45,10 @@ implements ExamResultServiceI
             .addSelect('er.created_at','created_at')
             .addSelect( subQuery => {
                 return subQuery
-                    .select('COUNT(*)')
+                    .select('COUNT(*)::int')
                     .from('answer', 'a')
                     .where('a.exam_result_id = er.id')
-                    .andWhere('a.active = true')
+                    .andWhere('a.active')
             },'number_of_question')
             .addSelect( subQuery => {
                 return subQuery
@@ -67,15 +67,15 @@ implements ExamResultServiceI
                     `).from('answer', 'a')
                     .leftJoin('question', 'q', 'q.id = a.question_id')
                     .where('a.exam_result_id = er.id')
-                    .andWhere('a.active = true')
-                    .andWhere('q.active = true');
+                    .andWhere('a.active')
+                    .andWhere('q.active');
             }, 'answers')
             .from('exam_result', 'er')
             .innerJoin('exam', 'e', 'e.id = er.exam_id')
             .where('e.exam_group_id = :examGroupId', {examGroupId})
             .andWhere('er.user_id = :userId', {userId})
-            .andWhere('er.active = true')
-            .andWhere('e.active = true')
+            .andWhere('er.active')
+            .andWhere('e.active')
             .groupBy('er.id, er.exam_id, er.user_id, er.status, er.device, er.number_of_correct_answer, er.score, er.created_at');
 
         return await query.getRawMany();
