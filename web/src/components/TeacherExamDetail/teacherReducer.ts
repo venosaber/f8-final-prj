@@ -44,27 +44,27 @@ const actionHandlers = {
     // set the number of questions
     'SET_AMOUNT': (state: Exam, action: Action) => {
         const newAmount: number = action.payload;
-        if(newAmount <= 0 || isNaN(newAmount)) return state;
-        //comment for stop slice questions leading to changing state
-        // if(newAmount < state.questions.length){
-        //     return {
-        //         ...state,
-        //         number_of_question: newAmount,
-        //         questions: state.questions.slice(0, newAmount)
-        //     }
-        // }else{
-            const newQuestions = [...state.questions];
-            for (let i: number = state.questions.length; i < newAmount; i++) {
-                newQuestions.push({
-                    ...defaultQuestion,
-                    index: i
-                })
-            }
-            return {
-                ...state,
-                number_of_question: newAmount,
-                questions: newQuestions
-            }
+
+      if (!newAmount || newAmount <= 0) {
+        return {
+          ...state,
+          number_of_question: 0,
+          // questions: []
+        };
+      }
+
+        const newQuestions = [...state.questions];
+        for (let i: number = state.questions.length; i < newAmount; i++) {
+            newQuestions.push({
+                ...defaultQuestion,
+                index: i
+            })
+        }
+        return {
+            ...state,
+            number_of_question: newAmount,
+            questions: newQuestions
+        }
 
     },
 
