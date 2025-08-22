@@ -49,7 +49,7 @@ const actionHandlers = {
         return {
           ...state,
           number_of_question: 0,
-          questions: []
+          // questions: []
         };
       }
 
