@@ -10,7 +10,7 @@ import {
   ExamGroupI, ExamGroupReqI,
   QuestionReqI, QuestionResI,
   ExamReqI, ExamResI,
-  AnswerReqI, AnswerResI, ExamResultReqI, ExamResultResI,
+  AnswerReqI, AnswerResI, ExamResultReqI, ExamResultResI, ChangePasswordReqI, ClassResI,
 } from '@/shares';
 import {ForgotPasswordReq, RefreshTokenReq, ResetPasswordReq} from '@/modules/auth/dtos';
 
@@ -25,6 +25,7 @@ export interface BaseServiceI<RequestI, ResponseI> {
 
 export interface UserServiceI extends BaseServiceI<UserReqI, UserResI> {
   findUserByEmailWithPassword: (email: string) => Promise<UserWithPassI | null>;
+  changePassword: (data: ChangePasswordReqI) => Promise<{ msg: string }>;
 }
 
 export type StudentServiceI = BaseServiceI<StudentReqI, StudentResI>;
@@ -42,7 +43,7 @@ export interface FileServiceI extends BaseServiceI<FileReqI, FileI> {
   uploadAndCreateFile: (file: Express.Multer.File) => Promise<FileI>;
 }
 
-export interface ClassServiceI extends BaseServiceI<ClassReqI, ClassI> {
+export interface ClassServiceI extends BaseServiceI<ClassReqI, ClassResI> {
   createAndJoinClass: (data: ClassReqI) => Promise<ClassI>;
 }
 export interface ClassUserServiceI extends BaseServiceI<ClassUserReqI, ClassUserI> {}

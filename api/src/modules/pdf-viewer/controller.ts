@@ -1,7 +1,8 @@
-import {Controller, Get, Param, Res, ParseIntPipe, Inject} from '@nestjs/common';
+import {Controller, Get, Param, Res, ParseIntPipe, Inject, UseGuards} from '@nestjs/common';
 import type { Response } from 'express';
 import {type FileServiceI, FileServiceToken} from "@/shares";
-import {ApiTags} from "@nestjs/swagger";
+import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
+import {AuthGuard} from "@/modules/auth/guard";
 
 @ApiTags('PDF Viewer')
 @Controller('pdf-viewer')

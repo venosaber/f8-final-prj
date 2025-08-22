@@ -13,7 +13,7 @@ import {
     UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator
 } from '@nestjs/common';
 import {ApiBearerAuth, ApiBody, ApiConsumes, ApiQuery, ApiTags} from '@nestjs/swagger';
-import {ExamServiceToken, FileServiceToken} from "@/shares";
+import {ExamServiceToken, FileServiceToken, Role} from "@/shares";
 import type {ExamServiceI, FileServiceI} from "@/shares";
 import {CreateExamDto, UpdateExamDto, CreateExamWithFileDto, UpdateExamWithFileDto} from "@/modules/exam/dtos";
 import {AuthGuard} from "@/modules/auth/guard";
@@ -22,11 +22,12 @@ import {ExamInterceptor} from "@/modules/exam/interceptor";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {MultiFileType, OptionalParseIntPipe} from "@/shares";
 import {Transactional} from "typeorm-transactional";
+import {Roles} from "@/modules/auth/roles.decorator";
 
-@ApiTags('Exam')
+@ApiTags('Exams')
 @Controller('exams')
 @ApiBearerAuth()
-@UseGuards(AuthGuard, RolesGuard)
+@UseGuards(AuthGuard)
 export class ExamController {
     constructor(
         @Inject(ExamServiceToken)
@@ -51,6 +52,7 @@ export class ExamController {
     }
 
     @Get(':id')
+    @UseInterceptors(ExamInterceptor)
     findOne(@Param('id', ParseIntPipe) id: number){
         return this.examService.findOne(id);
     }
@@ -61,6 +63,8 @@ export class ExamController {
         description: 'File for the exam',
         type: CreateExamWithFileDto
     })
+    @Roles(Role.TEACHER, Role.ADMIN)
+    @UseGuards(RolesGuard)
     @Transactional()
     @UseInterceptors(FileInterceptor('examFile'))
     async create(
@@ -96,6 +100,8 @@ export class ExamController {
         description: 'File for the exam',
         type: UpdateExamWithFileDto
     })
+    @Roles(Role.TEACHER, Role.ADMIN)
+    @UseGuards(RolesGuard)
     @Transactional()
     @UseInterceptors(FileInterceptor('examFile'))
     async updateOne(
@@ -130,6 +136,8 @@ export class ExamController {
     }
 
     @Delete(':id')
+    @Roles(Role.TEACHER, Role.ADMIN)
+    @UseGuards(RolesGuard)
     softDelete(@Param('id', ParseIntPipe) id: number){
         return this.examService.softDelete(id);
     }

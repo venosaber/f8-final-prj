@@ -7,7 +7,7 @@ import {
   InsertResult,
   UpdateResult, FindOptionsWhere,
 } from 'typeorm';
-import { BaseServiceI, UserI } from '@/shares';
+import {BaseServiceI, Role, UserI} from '@/shares';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import {
   InternalServerErrorException,
@@ -31,6 +31,11 @@ export abstract class BaseService<
   protected getAuthenticatedUserId(): number | null{
     const user = this.cls.get<UserI>('user');
     return user ? user.id : null;
+  }
+
+  protected getAuthenticatedRole(): Role | null {
+    const user = this.cls.get<UserI>('user');
+    return user ? user.role : null;
   }
 
   protected getPublicColumns() {
@@ -80,7 +85,12 @@ export abstract class BaseService<
     query = this.handleWhere(query, { ...condition, active: true } as Partial<
       Record<keyof Entity, any>
     >);
-    return await query.getRawMany<ResponseI>();
+    const results = await query.getRawMany<ResponseI>();
+    return results.map(result => ({
+      ...result,
+      // @ts-ignore
+      id: parseInt(String(result.id), 10),
+    }))
   }
 
   async findOne(id: number) {
@@ -92,7 +102,11 @@ export abstract class BaseService<
     if (!response) {
       throw new NotFoundException('Record not found');
     }
-    return response;
+    return {
+      ...response,
+      // @ts-ignore
+      id: parseInt(String(response.id), 10),
+    };
   }
 
   async findOneBy(condition = {}) {

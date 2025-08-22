@@ -55,3 +55,8 @@ export interface TokenPayloadData {
   role: Role;
   avatar_info: AvatarInfo | null;
 }
+
+export interface ChangePasswordReqI {
+  old_password: string;
+  new_password: string;
+}

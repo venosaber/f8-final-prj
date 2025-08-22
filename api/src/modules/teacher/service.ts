@@ -15,16 +15,20 @@ export class TeacherService extends UserService implements TeacherServiceI {
   }
 
   async updateOne(id: number, data: Partial<UserEntity>) {
-    const user = await this.findOne(id);
-    if (!user || user.role !== Role.TEACHER)
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    const curUserId = this.getAuthenticatedUserId();
+    const curRole = this.getAuthenticatedRole();
+    if (curUserId !== id && curRole !== Role.ADMIN){
+      throw new HttpException('You are not authorized to update this user', HttpStatus.FORBIDDEN);
+    }
     return super.updateOne(id, data);
   }
 
   async softDelete(id: number) {
-    const user = await this.findOne(id);
-    if (!user || user.role !== Role.TEACHER)
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    const curUserId = this.getAuthenticatedUserId();
+    const curRole = this.getAuthenticatedRole();
+    if (curUserId !== id && curRole !== Role.ADMIN){
+      throw new HttpException('You are not authorized to delete this user', HttpStatus.FORBIDDEN);
+    }
     return super.softDelete(id);
   }
 }
