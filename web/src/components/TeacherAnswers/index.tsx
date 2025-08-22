@@ -1,11 +1,19 @@
-import type {Question} from '../../utils/types';
+import {type FormEvent, type Dispatch, type ChangeEvent} from 'react'
+import {useCallback, memo} from "react";
+import type {Question, Exam, Action} from '../../utils/types';
+import {FixedSizeList as List, type ListChildComponentProps} from "react-window";
 import type {TeacherAnswersProps} from './types.ts';
 
 import {
-    Grid,
-    Box,
-    TextField,
-    Button
+  Grid,
+  Box,
+  TextField,
+  Radio,
+  Checkbox,
+  Select,
+  type SelectChangeEvent,
+  MenuItem,
+  Typography, Button
 } from '@mui/material';
 import {useTeacherAnswers} from "./useTeacherAnswers.ts";
 import {MemoizedQuestionUnit} from "./QuestionUnit.tsx";
@@ -77,24 +85,42 @@ export default function TeacherAnswers(props: TeacherAnswersProps) {
                         <TextField fullWidth size={'small'}
                                    id={'exam-number_of_question'}
                                    name={'number_of_question'}
-                                   value={state.number_of_question}
+                                   value={state.number_of_question || ''}
                                    onChange={handlers.onAmountChange}
                         />
                     </Grid>
                 </Grid>
 
-                <Box>
-                    {
-                        state.questions.map((question: Question) =>
-                            (
-                                <MemoizedQuestionUnit question={question}
-                                                      onTypeChange={handlers.onTypeChange}
-                                                      onAnswerChange={handlers.onAnswerChange}
-                                                      isDisplay={checkDisplay(question.index)}
-                                />
-                            ))
-                    }
-                </Box>
+        <Box>
+          <List
+            height={600}
+            itemCount={state.questions.length}
+            itemSize={50}
+            width={"100%"}
+            itemData={{
+              questions: state.questions,
+              onTypeChange: handleTypeChange,
+              onAnswerChange: handleAnswerChange
+            }}
+          >
+            {({index, style, data}: ListChildComponentProps) => {
+              const {questions, onTypeChange, onAnswerChange} = data;
+              const question = questions[index];
+
+              return (
+                <div style={style}>
+                  <MemoizedQuestionUnit
+                    key={question.index}
+                    question={question}
+                    onTypeChange={handlers.onTypeChange}
+                    onAnswerChange={handlers.onAnswerChange}
+                    isDisplay={checkDisplay(question.index)}
+                  />
+                </div>
+              );
+            }}
+          </List>
+        </Box>
 
                 <Box sx={{textAlign: 'center'}}>
                     <Button
