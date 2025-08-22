@@ -156,7 +156,17 @@ function LoginPage() {
         }
 
         await login();
-        navigate('/classes');
+
+        const redirectUrl: string | null = localStorage.getItem('redirectAfterLogin');
+
+        if (redirectUrl) {
+
+            localStorage.removeItem('redirectAfterLogin');
+            window.location.href = redirectUrl;  // redirect (for eg: invite link)`
+        } else {
+            navigate('/classes');  // default if there is no redirect link
+        }
+
     }
 
     return (

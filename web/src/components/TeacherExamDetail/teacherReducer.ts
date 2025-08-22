@@ -45,35 +45,27 @@ const actionHandlers = {
     'SET_AMOUNT': (state: Exam, action: Action) => {
         const newAmount: number = action.payload;
 
-        if (!newAmount || newAmount <= 0) {
-            return {
-                ...state,
-                number_of_question: 0,
-                questions: []
-            };
-        }
-
-        if (newAmount < state.questions.length) {
-            return {
-                ...state,
-                number_of_question: newAmount,
-                questions: state.questions.slice(0, newAmount)
-            };
-        }
+      if (!newAmount || newAmount <= 0) {
+        return {
+          ...state,
+          number_of_question: 0,
+          questions: []
+        };
+      }
 
         const newQuestions = [...state.questions];
-        for (let i = state.questions.length; i < newAmount; i++) {
+        for (let i: number = state.questions.length; i < newAmount; i++) {
             newQuestions.push({
                 ...defaultQuestion,
                 index: i
-            });
+            })
         }
-
         return {
             ...state,
             number_of_question: newAmount,
             questions: newQuestions
-        };
+        }
+
     },
 
     // change a question's type

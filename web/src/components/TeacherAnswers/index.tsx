@@ -110,7 +110,11 @@ export default function TeacherAnswers({
         formData.append('exam_group_id', examGroupIdNum.toString());
         formData.append('number_of_question', state.number_of_question.toString());
         formData.append('total_time', (state.total_time * 60).toString());
-        formData.append('questions', JSON.stringify(state.questions));
+        //slice un-shown question before using api post
+        formData.append(
+          'questions',
+          JSON.stringify(state.questions.slice(0, state.number_of_question))
+        );
         formData.append('description', state.description);
 
         if(selectedFile){
@@ -151,6 +155,10 @@ export default function TeacherAnswers({
         }
 
     }
+    //Add function check question index
+    const checkDisplay = (questionIndex: number): boolean => {
+        return questionIndex < state.number_of_question ;
+    };
 
     return (
         <>
@@ -239,6 +247,7 @@ export default function TeacherAnswers({
                                     question={question}
                                     onTypeChange={onTypeChange}
                                     onAnswerChange={onAnswerChange}
+                                    isDisplay={checkDisplay(question.index)}
                                   />
                               </div>
                             );
@@ -266,10 +275,12 @@ interface QuestionUnitProps {
     question: Question,
     onTypeChange: (index: number, questionType: string) => void,
     onAnswerChange: (index: number, type: 'single-choice' | 'multiple-choice', value: string, checked?: boolean) => void,
+    //add interface for display att
+    isDisplay: boolean,
 }
 
 const MemoizedQuestionUnit = memo(
-  function QuestionUnit({question, onTypeChange, onAnswerChange}: QuestionUnitProps) {
+  function QuestionUnit({question, onTypeChange, onAnswerChange, isDisplay}: QuestionUnitProps) {
 
     const handleTypeChange = useCallback((e: SelectChangeEvent) => {
         onTypeChange(question.index, e.target.value);
@@ -320,6 +331,7 @@ const MemoizedQuestionUnit = memo(
     }
 
     return (
+      isDisplay && (
         <Box sx={{m: "10px 0 10px 10px "}}>
             <Grid container spacing={2} alignItems={'center'}>
                 <Grid size={{xs: 1.5, lg: 2}}>
@@ -344,7 +356,7 @@ const MemoizedQuestionUnit = memo(
 
             </Grid>
         </Box>
-    );
+    ))
   },
 
   (prevProps, nextProps) => {
