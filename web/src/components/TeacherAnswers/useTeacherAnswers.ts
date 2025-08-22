@@ -55,7 +55,7 @@ export const useTeacherAnswers = ({
             total_time: state.total_time,
             questions: state.questions,
             fileUrl: state.file?.url,
-            number_of_question: state.number_of_question
+            number_of_question: Number(state.number_of_question)
         });
 
         if(!validationResult.isValid){

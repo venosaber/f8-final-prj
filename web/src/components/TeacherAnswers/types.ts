@@ -22,7 +22,7 @@ export type ExamFormValidationData = {
     code: string,
     total_time: number,
     questions: Question[],
-    number_of_question: number,
+    number_of_question: number | string,
     fileUrl?: string,
 }
 
