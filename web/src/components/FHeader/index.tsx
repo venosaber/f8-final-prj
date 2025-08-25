@@ -179,7 +179,9 @@ export default function DrawerAppBar() {
         <Box>
             <Box sx={{p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                 <Box sx={{p: '10px'}}/>
-                <CustomLogoIcon/>
+                <Button onClick={()=>navigate('/classes')}>
+                    <CustomLogoIcon/>
+                </Button>
                 <button onClick={handleDrawerToggle} style={{border: 'none', background: 'none', cursor: 'pointer'}}>
                     <CloseIcon/>
                 </button>
@@ -223,7 +225,9 @@ export default function DrawerAppBar() {
                     </IconButton>
 
                     {/* Logo Section */}
-                    <Box sx={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
+                    <Button sx={{display: 'flex', alignItems: 'center', cursor: 'pointer', textTransform: 'none'}}
+                            onClick={()=>navigate('/classes')}
+                    >
                         <Box sx={{display: {xs: 'none', lg: 'block'}}}>
                             <CustomLogoIcon/>
                         </Box>
@@ -248,7 +252,7 @@ export default function DrawerAppBar() {
                                 Classroom
                             </Typography>
                         </Box>
-                    </Box>
+                    </Button>
 
                     <Box sx={{position: 'relative', left: '130px', display: {xs: 'none', md: 'block'}}}>
                         <Typography sx={{fontWeight: 600, fontSize: '1.2rem'}}>
