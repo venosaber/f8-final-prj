@@ -21,6 +21,6 @@ import {ClassSubscriber} from "@/modules/class/subscriber";
         useClass: ClassService
     }, ClassSubscriber
     ],
-    exports: [ClassServiceToken]
+    exports: [ClassServiceToken, ClassEntityRepository]
 })
 export class ClassModule {}

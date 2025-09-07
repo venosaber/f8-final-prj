@@ -71,12 +71,6 @@ export default function Invite() {
 
     /***** class information ******/
     const [isInClass, setIsInClass] = useState(false);
-    const [classData, setClassData] = useState({
-        name: '',
-        code: '', /**todo: remove code from api for security */
-        teachers: [] as Member[],
-        students: [] as Member[],
-    });
 
     /***** user id && protection code *****/
     const [userId, setUserId] = useState(0);
@@ -89,7 +83,7 @@ export default function Invite() {
 
         // add the user to the class
         const payload = {
-            class_id: classId,
+            class_id: Number(classId),
             user_id: userId,
             code: inputCode,
         }
@@ -114,7 +108,6 @@ export default function Invite() {
 
             if (!accessToken) {
                 localStorage.setItem('redirectAfterLogin', window.location.href);
-                navigate(`/login`);
                 return;
             }
 
@@ -123,12 +116,13 @@ export default function Invite() {
                 const userId = Number(sub);
                 setUserId(userId);
 
-                const {name, code, teachers, students} = await getMethod(`/classes/${classId}`, {
+                const response = await getMethod(`/classes/${classId}`, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }
                 });
-                setClassData({name, code, teachers, students});
+                if(!response) return;
+                const {teachers, students} = response;
 
                 // check if the user is already in the class
                 setIsInClass(
@@ -191,13 +185,6 @@ export default function Invite() {
                         <Box component={'form'} sx={{width: '100%'}}
                              onSubmit={onSubmit}
                         >
-                            <Typography component={'p'} variant={'h6'}>
-                                Lớp học: {classData.name}
-                            </Typography>
-                            <Typography component={'p'} variant={'h6'}>
-                                {classData.teachers.length + classData.students.length} Thành viên
-                            </Typography>
-
                             <TextField fullWidth size={'small'} sx={{my: 1}}
                                        placeholder={"Vui lòng nhập mã bảo vệ"}
 
