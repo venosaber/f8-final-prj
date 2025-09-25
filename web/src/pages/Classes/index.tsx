@@ -42,11 +42,7 @@ function Classes() {
             setUser({name, role});
 
             try{
-                const coursesData: Course[] = await getMethod('/classes', {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                });
+                const coursesData: Course[] = await getMethod('/classes');
                 setCourses(coursesData);
             }catch (err) {
                 console.error("Error on loading courses: ",err);

@@ -1,26 +1,16 @@
-import {useEffect, useState} from "react";
-import {getValidAccessToken} from "./auth.ts";
 import {Navigate, Outlet} from "react-router-dom";
+import {useAuthCheck} from "./useAuthCheck.ts";
 import {CheckingAuth} from "../components";
 
 export default function ProtectedLayout() {
-    const [isChecking, setIsChecking] = useState(true);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const {isChecking, isAuthenticated} = useAuthCheck();
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            const token: string | null = await getValidAccessToken();
-            setIsAuthenticated(!!token);
-            setIsChecking(false);
-        }
-
-        checkAuth();
-    },[]);
-
-    if(isChecking) return <CheckingAuth />;
+    // while checking, show a loading component
+    if (isChecking) return <CheckingAuth />;
+    // after checking, if unauthenticated => redirect to the login page
     if(!isAuthenticated){
         return <Navigate to="/login" />
     }
-
+    // after checking, if authenticated => display the content
     return <Outlet />
 }

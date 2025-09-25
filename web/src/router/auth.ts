@@ -29,7 +29,7 @@ export const isTokenExpired = (token: string): boolean => {
         const { exp } = jwtDecode<DecodedJWT>(token);
         const now: number = Date.now() / 1000;
         return exp < now;
-    } catch (e) {
+    } catch {
         return true;
     }
 };
@@ -37,7 +37,7 @@ export const isTokenExpired = (token: string): boolean => {
 export const getUserInfo = (token: string) => {
     try {
         return jwtDecode<any>(token);
-    } catch (e) {
+    } catch {
         return null;
     }
 }
@@ -52,31 +52,8 @@ export const refreshToken = async () => {
         const payload = { refreshToken: refreshToken }
         const {accessToken: newAccessToken, refreshToken: newRefreshToken } = await postMethod('/auth/refresh', payload);
 
-        const {exp} = getUserInfo(newAccessToken); // decode JWT token
-        const now: number = Math.floor(Date.now() / 1000);
-
-        const maxAge: number = exp - now;
-        setCookie('accessToken', newAccessToken, maxAge);
-
-        // Conditionally set refreshToken depending on rememberMe
-        if (newRefreshToken) {
-            if (localStorage.getItem('rememberMe') === 'true') {
-
-                const expiresAt: number = parseInt(localStorage.getItem('refreshTokenExpiresAt') || '0');
-                const remainingMs: number = expiresAt - Date.now();
-                if (remainingMs > 0) {
-                    setCookie('refreshToken', newRefreshToken, Math.floor(remainingMs/1000));
-                } else {
-                    // refreshToken is already expired
-                    deleteCookie('refreshToken');
-                    localStorage.removeItem('refreshTokenExpiresAt');
-                    throw new Error('Refresh token is expired');
-                }
-
-            } else {
-                setCookie('refreshToken', newRefreshToken); // session cookie
-            }
-        }
+        setNewAccessToken(newAccessToken);
+        setNewRefreshToken(newRefreshToken);
 
         return newAccessToken;
     } catch (error) {
@@ -100,6 +77,45 @@ export const getValidAccessToken = async () => {
         }
     }
     return accessToken;
+}
+
+// set a new accessToken after login or refresh
+export const setNewAccessToken = (accessToken: string) => {
+    const {exp} = getUserInfo(accessToken);
+    if (!exp) {
+        console.error('New access token has no expiration time.');
+        return;
+    }
+    const nowInSeconds: number = Math.floor(Date.now() / 1000);
+    const maxAgeInSeconds: number = exp - nowInSeconds;
+    if (maxAgeInSeconds < 0) {
+        console.error('New access token has expired.');
+        return;
+    }
+    setCookie('accessToken', accessToken, maxAgeInSeconds);
+}
+
+// set a new refreshToken after login or refresh
+export const setNewRefreshToken = (refreshToken: string) => {
+    if(!refreshToken) return;
+
+    // Conditionally set refreshToken depending on rememberMe
+    if (localStorage.getItem('rememberMe') === 'true') {
+
+        const expiresAt: number = parseInt(localStorage.getItem('refreshTokenExpiresAt') || '0');
+        const remainingMs: number = expiresAt - Date.now();
+        if (remainingMs > 0) {
+            setCookie('refreshToken', refreshToken, Math.floor(remainingMs/1000));
+        } else {
+            // refreshToken is already expired
+            deleteCookie('refreshToken');
+            localStorage.removeItem('refreshTokenExpiresAt');
+            console.warn('Refresh token expiration from localStorage has passed. Not setting new refresh token cookie.');
+        }
+
+    } else {
+        setCookie('refreshToken', refreshToken); // session cookie
+    }
 }
 
 

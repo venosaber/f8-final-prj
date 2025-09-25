@@ -1,9 +1,8 @@
 import api from '../plugins/api.ts'
-import type {AxiosRequestConfig} from "axios";
 
-export const getMethod = async (endpoint: string, config?: AxiosRequestConfig) => {
+export const getMethod = async (endpoint: string) => {
     try{
-        const {data} = await api.get(endpoint, config ?? {});
+        const {data} = await api.get(endpoint);
         return data;
     }catch(e){
         console.log(e);
@@ -12,9 +11,9 @@ export const getMethod = async (endpoint: string, config?: AxiosRequestConfig) =
     return null;
 }
 
-export const postMethod = async (endpoint: string, payload: any, config?: AxiosRequestConfig) => {
+export const postMethod = async (endpoint: string, payload: unknown) => {
     try{
-        const {data} = await api.post(endpoint, payload, config ?? {});
+        const {data} = await api.post(endpoint, payload);
         return data;
     }catch(e){
         console.log(e);
@@ -23,9 +22,9 @@ export const postMethod = async (endpoint: string, payload: any, config?: AxiosR
     return null;
 }
 
-export const putMethod = async (endpoint: string, payload: any, config?: AxiosRequestConfig) => {
+export const putMethod = async (endpoint: string, payload: unknown) => {
     try {
-        const {data} = await api.put(endpoint, payload, config ?? {});
+        const {data} = await api.put(endpoint, payload);
         return data;
     } catch (e) {
         console.log(e);
@@ -34,9 +33,9 @@ export const putMethod = async (endpoint: string, payload: any, config?: AxiosRe
     return null;
 }
 
-export const deleteMethod = async (endpoint: string, config?: AxiosRequestConfig) => {
+export const deleteMethod = async (endpoint: string) => {
     try {
-        const {data} = await api.delete(endpoint, config ?? {});
+        const {data} = await api.delete(endpoint);
         return data;
     } catch (e) {
         console.log(e);

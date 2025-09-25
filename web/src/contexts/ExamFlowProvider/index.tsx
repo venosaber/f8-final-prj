@@ -60,9 +60,9 @@ export function ExamFlowProvider({children}: { children: ReactNode }) {
 
         try {
             const [examGroupData, exams, examResults] = await Promise.all([
-                getMethod(`/exam_groups/${examGroupId}`, {headers: {Authorization: `Bearer ${accessToken}`}}),
-                getMethod(`/exams/?exam_group_id=${examGroupId}`, {headers: {Authorization: `Bearer ${accessToken}`}}),
-                getMethod(`/exam_results/?student_id=${currentUserId}&exam_group_id=${examGroupId}`, {headers: {Authorization: `Bearer ${accessToken}`}})
+                getMethod(`/exam_groups/${examGroupId}`),
+                getMethod(`/exams/?exam_group_id=${examGroupId}`),
+                getMethod(`/exam_results/?student_id=${currentUserId}&exam_group_id=${examGroupId}`)
             ]);
 
             setExamGroupDetail(examGroupData);

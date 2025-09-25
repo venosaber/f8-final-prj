@@ -11,6 +11,10 @@ export const validateExamForm = (data: ExamFormValidationData): {isValid: boolea
         return {isValid: false, message: 'Thời gian thi phải là số dương!'};
     }
 
+    if(Number(number_of_question) <= 0 || isNaN(Number(number_of_question))) {
+        return {isValid: false, message: 'Số câu hỏi phải là số dương!'};
+    }
+
     if(!fileUrl) {
         return {isValid: false, message: 'Chưa upload đề thi!'};
     }
@@ -20,7 +24,7 @@ export const validateExamForm = (data: ExamFormValidationData): {isValid: boolea
     const unCheckedQtn: number = questions.findIndex(
         question => !question.correct_answer
             && question.type !== 'long-response'
-            && question.index < number_of_question
+            && question.index < Number(number_of_question)
     );
     if (unCheckedQtn !== -1) {
         return {isValid: false, message: `Câu số ${unCheckedQtn + 1} chưa chọn đáp án!`};

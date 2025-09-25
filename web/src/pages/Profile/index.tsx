@@ -231,12 +231,7 @@ export default function Profile() {
             formData.append('avatar', avatarFile);
         }
 
-        const accessToken: string | null = await getValidAccessToken();
-        const response = await putMethod(`/${role}s/${userId}`, formData,{
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
+        const response = await putMethod(`/${role}s/${userId}`, formData)
         if(response !== null){
             toast.success('Cập nhật thông tin thành công!');
         }else{
@@ -266,13 +261,8 @@ export default function Profile() {
             old_password: passwordFormData.old_password,
             new_password: passwordFormData.new_password
         }
-        const accessToken: string | null = await getValidAccessToken();
-        const response = await postMethod('/users/change-password', payload, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-        console.log(response);
+
+        const response = await postMethod('/users/change-password', payload);
 
         if(!response){
            toast.error('Sai mật khẩu cũ!');
@@ -298,11 +288,7 @@ export default function Profile() {
             setRole(role);
 
             try{
-                const userData: User = await getMethod(`/${role}s/${sub}`, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                });
+                const userData: User = await getMethod(`/${role}s/${sub}`);
 
                 const {name, email, school, parent_name, parent_phone, avatar_info} = userData;
 
@@ -321,7 +307,7 @@ export default function Profile() {
             }
         }
         onMounted();
-    }, []);
+    }, [navigate]);
 
     if(isLoadingInfo) return <Loading />
 

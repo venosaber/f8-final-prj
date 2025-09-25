@@ -5,7 +5,6 @@ import {ProgressCircle} from "../index.ts";
 import {useState, useCallback, useMemo, memo} from "react";
 import type {ChangeEvent} from "react";
 import {toast} from "react-toastify";
-import {getValidAccessToken} from "../../router/auth.ts";
 import {putMethod} from "../../utils/api.ts";
 
 interface QuestionI {
@@ -114,12 +113,7 @@ export default function RemarkingDetail({examResult, exam, onSaveSuccess}: Remar
             device: examResult.device,
         };
 
-        const accessToken: string | null = await getValidAccessToken();
-        const response = await putMethod(`/exam_results/${examResult.id}`, payload, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+        const response = await putMethod(`/exam_results/${examResult.id}`, payload);
         if (!response) {
             toast.error('Lưu không thành công!');
             return;

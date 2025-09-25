@@ -4,7 +4,6 @@ import type {SyntheticEvent, ReactNode} from "react";
 import {Box, Typography, Tab, Tabs} from "@mui/material";
 import {Loading, RemarkingDetail} from "..";
 import type {ExamGroup, Exam, ExamResult} from "../../utils/types";
-import {getValidAccessToken} from "../../router/auth.ts";
 import {getMethod} from "../../utils/api.ts";
 import {toast} from "react-toastify";
 
@@ -28,16 +27,10 @@ export default function TeacherMarking() {
     }
 
     const fetchResultData = async () => {
-        const accessToken: string | null = await getValidAccessToken();
-        if (!accessToken) {
-            console.error("No valid access token, redirecting to login page");
-            navigate('/login');
-            return;
-        }
 
         try {
             // only exam results data need to fetch (reload)
-            const examResultsData = await getMethod(`/exam_results?student_id=${studentId}&exam_group_id=${examGroupId}`, {headers: {Authorization: `Bearer ${accessToken}`}});
+            const examResultsData = await getMethod(`/exam_results?student_id=${studentId}&exam_group_id=${examGroupId}`);
             if (examResultsData) {
                 setExamResults(examResultsData.sort((a: ExamResult, b: ExamResult) => a.exam_id - b.exam_id));
             }
@@ -50,17 +43,12 @@ export default function TeacherMarking() {
     useEffect(() => {
         const onInitialMount = async () => {
             setIsLoading(true);
-            const accessToken: string | null = await getValidAccessToken();
-            if (!accessToken) {
-                console.error("No valid access token, redirecting to login page");
-                navigate('/login');
-            }
 
             try {
                 const [examResultsData, examsData, examGroupData] = await Promise.all([
-                    getMethod(`/exam_results?student_id=${studentId}&exam_group_id=${examGroupId}`, {headers: {Authorization: `Bearer ${accessToken}`}}),
-                    getMethod(`/exams?exam_group_id=${examGroupId}`, {headers: {Authorization: `Bearer ${accessToken}`}}),
-                    getMethod(`/exam_groups/${examGroupId}`, {headers: {Authorization: `Bearer ${accessToken}`}})
+                    getMethod(`/exam_results?student_id=${studentId}&exam_group_id=${examGroupId}`),
+                    getMethod(`/exams?exam_group_id=${examGroupId}`),
+                    getMethod(`/exam_groups/${examGroupId}`)
                 ]);
 
                 // sort by exam id

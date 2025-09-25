@@ -1,8 +1,7 @@
 import {FHeader} from "../../components";
 import {Box, Button, Container, Grid, Paper, TextField, Typography} from "@mui/material";
 import {useNavigate} from "react-router-dom";
-import {type ChangeEvent, type FocusEvent, type FormEvent, useEffect, useState} from "react";
-import {getValidAccessToken} from "../../router/auth.ts";
+import {type ChangeEvent, type FocusEvent, type FormEvent, useState} from "react";
 import {postMethod} from "../../utils/api.ts";
 import { toast } from 'react-toastify';
 
@@ -97,12 +96,7 @@ function NewClass(){
             code: formData.code,
         }
 
-        const accessToken: string | null = await getValidAccessToken();
-        const response = await postMethod('/classes', payload, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
+        const response = await postMethod('/classes', payload)
         if(!response){
             toast.error('Tạo lớp học không thành công!');
         } else {
@@ -118,19 +112,6 @@ function NewClass(){
         setTouched({name: false, code: false});
         navigate('/classes');
     }
-
-    useEffect(()=>{
-       const onMounted = async ()=>{
-           const accessToken: string | null = await getValidAccessToken();
-           if (!accessToken) {
-               console.error("No valid access token, redirecting to login page");
-               navigate('/login');
-               return;
-           }
-
-       }
-       onMounted();
-    },[])
 
     return (
         <>

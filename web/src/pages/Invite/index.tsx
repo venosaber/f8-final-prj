@@ -87,11 +87,7 @@ export default function Invite() {
             user_id: userId,
             code: inputCode,
         }
-        const response = await postMethod('/invitations', payload, {
-            headers: {
-                Authorization: `Bearer ${await getValidAccessToken()}`
-            }
-        });
+        const response = await postMethod('/invitations', payload);
         if(!response){
             toast.error('Có lỗi, vui lòng thử lại !');
         }else{
@@ -116,11 +112,7 @@ export default function Invite() {
                 const userId = Number(sub);
                 setUserId(userId);
 
-                const response = await getMethod(`/classes/${classId}`, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                });
+                const response = await getMethod(`/classes/${classId}`);
                 if(!response) return;
                 const {teachers, students} = response;
 
@@ -133,7 +125,7 @@ export default function Invite() {
         }
 
         onMounted();
-    }, []);
+    }, [classId]);
 
     if (isCheckingAuth) return <CheckingAuth/>;
     if (!isAuthenticated) {

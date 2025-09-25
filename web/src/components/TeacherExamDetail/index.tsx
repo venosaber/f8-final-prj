@@ -3,7 +3,6 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useReducer, useState} from "react";
 import type {ChangeEvent} from "react";
 import type {ExamGroup} from "../../utils/types";
-import {getValidAccessToken} from "../../router/auth.ts";
 import {getMethod} from "../../utils/api.ts";
 import {initState, reducer} from "./teacherReducer.ts";
 import {TeacherAnswers} from '..';
@@ -55,30 +54,16 @@ export default function TeacherExamDetail() {
 
     useEffect(() => {
         const onMounted = async () => {
-            const accessToken: string | null = await getValidAccessToken();
-            if (!accessToken) {
-                console.error("No valid access token, redirecting to login page");
-                navigate('/login');
-                return;
-            }
 
             try {
                 // examId already exists => edit mode
                 if (examIdNum !== 0) {
-                    const examData = await getMethod(`/exams/${examId}`, {
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`
-                        }
-                    });
+                    const examData = await getMethod(`/exams/${examId}`);
 
                     dispatch({type: 'LOAD_INITIAL_DATA', payload: examData})
                 }
 
-                const examGroupData = await getMethod(`/exam_groups/${examGroupId}`, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                });
+                const examGroupData = await getMethod(`/exam_groups/${examGroupId}`);
                 setExamGroup(examGroupData);
             }catch (e) {
                 console.error('Error on loading data: ', e);
@@ -87,7 +72,7 @@ export default function TeacherExamDetail() {
         }
 
         onMounted();
-    }, []);
+    }, [examGroupId, examId, dispatch, examIdNum]);
 
     return (
         <>

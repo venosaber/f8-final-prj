@@ -129,11 +129,7 @@ export default function DrawerAppBar() {
 
                 // the ClassDetail page has an id, the Classes page doesn't
                 if (classId) {
-                    const {name} = await getMethod(`/classes/${classId}`, {
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`
-                        }
-                    })
+                    const {name} = await getMethod(`/classes/${classId}`)
                     setClassName(name);
                 }
 
