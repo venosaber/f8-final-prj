@@ -5,7 +5,6 @@ import {useState, useEffect} from 'react';
 import type {ExamGroup, Exam, ExamResult, StudentResultGroup, Member} from '../../utils/types';
 import {ExamGroupDialog, ExamsList, ResultGroupsList} from '..';
 import dayjs from 'dayjs';
-import {getValidAccessToken} from "../../router/auth.ts";
 import {getMethod} from "../../utils/api.ts";
 
 export default function TeacherExamGroup() {
@@ -54,18 +53,12 @@ export default function TeacherExamGroup() {
     }
 
     const onMounted = async () => {
-        const accessToken: string | null = await getValidAccessToken();
-        if (!accessToken) {
-            console.error("No valid access token, redirecting to login page");
-            navigate('/login');
-            return;
-        }
 
         try {
             const [examGroupData, examsData, classData] = await Promise.all([
-                getMethod(`/exam_groups/${examGroupId}`, { headers: {Authorization: `Bearer ${accessToken}`}}),
-                getMethod(`/exams/?exam_group_id=${examGroupId}`, { headers: {Authorization: `Bearer ${accessToken}`}}),
-                getMethod(`/classes/${classId}`, { headers: {Authorization: `Bearer ${accessToken}`}})
+                getMethod(`/exam_groups/${examGroupId}`),
+                getMethod(`/exams/?exam_group_id=${examGroupId}`),
+                getMethod(`/classes/${classId}`)
             ]);
 
             if (examGroupData) setExamGroupDetail(examGroupData);
@@ -86,25 +79,14 @@ export default function TeacherExamGroup() {
 
     useEffect(() => {
         const onMountingResults = async () => {
-            const accessToken: string | null = await getValidAccessToken();
-            if (!accessToken) {
-                console.error("No valid access token, redirecting to login page");
-                navigate('/login');
-                return;
-            }
 
             try {
                 // 2-dimensional array of ExamResult
                 const resultsData: ExamResult[][] = await Promise.all(
                     students.map(student =>
-                        getMethod(`/exam_results/?student_id=${student.id}&exam_group_id=${examGroupId}`, {
-                            headers: {
-                                Authorization: `Bearer ${accessToken}`
-                            }
-                        })
+                        getMethod(`/exam_results/?student_id=${student.id}&exam_group_id=${examGroupId}`)
                     )
                 );
-                console.log('resultsData: ', resultsData);
 
                 // add exam results to each student's data
                 const studentResults= students.map((student: Member, index: number)=>{
@@ -113,7 +95,6 @@ export default function TeacherExamGroup() {
                         results: resultsData[index]
                     }
                 });
-                console.log('studentResults: ', studentResults);
 
                 // only show students who have taken at least one of the exams
                 const notEmptyStudentResults: StudentResultGroup[] = studentResults.filter((studentResult: StudentResultGroup) =>

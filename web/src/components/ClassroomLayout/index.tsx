@@ -15,7 +15,6 @@ import {
 } from "..";
 import {getMethod} from "../../utils/api.ts";
 import type {Course, ExamGroup} from "../../utils/types";
-import {getValidAccessToken} from "../../router/auth.ts";
 import {useNavigate} from "react-router-dom";
 
 const ClassroomLayout = () => {
@@ -76,25 +75,11 @@ const ClassroomLayout = () => {
 
     useEffect(() => {
         const onMounted = async () => {
-            const accessToken: string | null = await getValidAccessToken();
-            if (!accessToken) {
-                console.error("No valid access token, redirecting to login page");
-                navigate('/login');
-                return;
-            }
 
             try {
                 const [courseData, examGroupsData] = await Promise.all([
-                    getMethod(`/classes/${classId}`, {
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`
-                        }
-                    }),
-                    getMethod(`/exam_groups?class_id=${classId}`, {
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`
-                        }
-                    })
+                    getMethod(`/classes/${classId}`),
+                    getMethod(`/exam_groups?class_id=${classId}`)
                 ]);
                 setCourse(courseData);
                 setExamGroups(examGroupsData);
@@ -109,7 +94,7 @@ const ClassroomLayout = () => {
         }
 
         onMounted();
-    }, [classId]);
+    }, [classId, navigate]);
 
     if (isLoading) return <Loading/>
 

@@ -9,11 +9,11 @@ import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import type { UserResI, UserServiceI, TokenPayloadData } from '@/shares';
 import { UserServiceToken } from '@/shares';
-import {ClsService} from "nestjs-cls";
-import {ConfigService} from "@nestjs/config";
+import { ClsService } from 'nestjs-cls';
+import { ConfigService } from '@nestjs/config';
 
 interface RequestWithUser extends Request {
-  user: UserResI
+  user: UserResI;
 }
 
 interface TokenPayload {
@@ -35,7 +35,9 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request: RequestWithUser = context.switchToHttp().getRequest<RequestWithUser>();
+    const request: RequestWithUser = context
+      .switchToHttp()
+      .getRequest<RequestWithUser>();
     const token: string | undefined = this.extractTokenFromHeader(request);
 
     if (!token) {
@@ -59,7 +61,7 @@ export class AuthGuard implements CanActivate {
       // Assign the user to request so that the route handler can access
       request.user = user;
 
-      this.clsService.set('user',user);
+      this.clsService.set('user', user);
     } catch {
       throw new UnauthorizedException('Invalid or expired token');
     }

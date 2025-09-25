@@ -72,11 +72,7 @@ export default function StudentExamDetail() {
             device: state.device
         }
 
-        const response = await postMethod('/exam_results', payload, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
+        const response = await postMethod('/exam_results', payload)
         if (!response) {
             toast.error('Nộp bài không thành công!');
         } else {
@@ -106,11 +102,7 @@ export default function StudentExamDetail() {
             const {sub} = getUserInfo(accessToken);
             setUserId(Number(sub));
 
-            const examData = await getMethod(`/exams/${examId}`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
-            });
+            const examData = await getMethod(`/exams/${examId}`);
 
             // the answers and time-left are saved by useEffect to localStorge
             // try to load data from localStorage first, otherwise load initial data from API
@@ -144,7 +136,7 @@ export default function StudentExamDetail() {
             setIsDataReady(true);
         }
         onMounted();
-    }, []);
+    }, [examId, navigate]);
 
     useEffect(() => {
         // timeout
@@ -293,8 +285,8 @@ function formatTime(seconds: number) {
     const hours: number = Math.floor(seconds / 3600);
     const minutes: number = Math.floor((seconds % 3600) / 60);
     const secondsLeft: number = seconds % 60;
-    let hoursString: string = hours < 10 ? '0' + hours : hours.toString();
-    let minutesString: string = minutes < 10 ? '0' + minutes : minutes.toString();
-    let secondsString: string = secondsLeft < 10 ? '0' + secondsLeft : secondsLeft.toString();
+    const hoursString: string = hours < 10 ? '0' + hours : hours.toString();
+    const minutesString: string = minutes < 10 ? '0' + minutes : minutes.toString();
+    const secondsString: string = secondsLeft < 10 ? '0' + secondsLeft : secondsLeft.toString();
     return `${hoursString}:${minutesString}:${secondsString}`;
 }

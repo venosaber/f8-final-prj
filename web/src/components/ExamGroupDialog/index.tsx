@@ -5,7 +5,6 @@ import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import {type ChangeEvent, type FocusEvent, type FormEvent, useState, useEffect} from "react";
 import type {PickerValue} from "@mui/x-date-pickers/internals";
-import {getValidAccessToken} from "../../router/auth.ts";
 import {deleteMethod, postMethod, putMethod} from "../../utils/api.ts";
 import {toast} from "react-toastify";
 import type {ExamGroup} from "../../utils/types";
@@ -164,20 +163,12 @@ export default function ExamGroupDialog({
             is_once: true,
             is_save_local: true
         }
-        const accessToken: string | null = await getValidAccessToken();
+
         let response;
         if (!isEditMode) {
-            response = await postMethod('/exam_groups', payload, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
-            });
+            response = await postMethod('/exam_groups', payload);
         } else {
-            response = await putMethod(`/exam_groups/${examGroup?.id}`, payload, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
-            });
+            response = await putMethod(`/exam_groups/${examGroup?.id}`, payload);
         }
         if (!response) {
             toast.error('Tạo bài thi thất bại, hãy thử lại!');
@@ -190,12 +181,7 @@ export default function ExamGroupDialog({
     }
 
     const onDelete = async () => {
-        const accessToken: string | null = await getValidAccessToken();
-        const response = await deleteMethod(`/exam_groups/${examGroup?.id}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+        const response = await deleteMethod(`/exam_groups/${examGroup?.id}`);
 
         setIsDeleting(false);
         handleCloseDialog();

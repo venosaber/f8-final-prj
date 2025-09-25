@@ -23,6 +23,16 @@ export default function TeacherAnswers(props: TeacherAnswersProps) {
         autoComplete="off"
         onSubmit={handleSubmit}
       >
+        <Box sx={{textAlign: 'center'}}>
+          <Button
+              variant="contained"
+              size="large"
+              type="submit"
+              sx={{fontWeight: 600, mt: 2}}
+          >
+            {examIdNum ? 'Chỉnh sửa đề bài' : 'Tạo đề bài'}
+          </Button>
+        </Box>
 
         <Grid container spacing={2} sx={{p: 2}}>
           <Grid size={{xs: 12, lg: 6}}>
@@ -109,16 +119,6 @@ export default function TeacherAnswers(props: TeacherAnswersProps) {
           </List>
         </Box>
 
-        <Box sx={{textAlign: 'center'}}>
-          <Button
-            variant="contained"
-            size="large"
-            type="submit"
-            sx={{fontWeight: 600, mt: 2}}
-          >
-            {examIdNum ? 'Chỉnh sửa đề bài' : 'Tạo đề bài'}
-          </Button>
-        </Box>
       </Box>
     </>
   )

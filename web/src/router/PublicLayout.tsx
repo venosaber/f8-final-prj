@@ -1,26 +1,16 @@
-import {useEffect, useState} from "react";
-import {getValidAccessToken} from "./auth.ts";
 import {Navigate, Outlet} from "react-router-dom";
+import {useAuthCheck} from "./useAuthCheck.ts";
 import {CheckingAuth} from "../components";
 
 export default function PublicLayout() {
-    const [isChecking, setIsChecking] = useState(true);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const {isChecking, isAuthenticated} = useAuthCheck();
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            const token: string | null = await getValidAccessToken();
-            setIsAuthenticated(!!token);
-            setIsChecking(false);
-        }
-
-        checkAuth();
-    },[]);
-
+    // while checking, show a loading component
     if(isChecking) return <CheckingAuth />;
+    // after checking, if authenticated => redirect to the dashboard
     if(isAuthenticated){
         return <Navigate to="/classes" />
     }
-
+    // after checking, if unauthenticated => display the content
     return <Outlet />
 }
