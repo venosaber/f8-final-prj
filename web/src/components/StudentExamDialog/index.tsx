@@ -1,4 +1,6 @@
 import {Box, Button, Grid, Typography} from "@mui/material";
+import {useState, useRef} from "react";
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface StudentExamDialogProps {
     timeLeft: number,
@@ -15,9 +17,24 @@ export default function StudentExamDialog({
                                               onSubmit,
                                               handleBackToExamGroupDetail
                                           }: StudentExamDialogProps) {
+    // flag to lock
+    const isLocked = useRef<boolean>(false);
+    const [isWaiting, setIsWaiting] = useState<boolean>(false);
 
     const onSubmitEarly = async ()=>{
+        // check the flag immediately
+        if (isLocked.current) return;
+
+        // if not locked, lock immediately
+        isLocked.current = true;
+        setIsWaiting(true);
         await onSubmit();
+
+        // after submitting, unlock
+        setIsWaiting(false);
+        isLocked.current = false;
+        setIsOpenDialog(false);
+
         handleBackToExamGroupDetail();
     }
 
@@ -92,10 +109,16 @@ export default function StudentExamDialog({
                                         sx={{
                                             fontWeight: 600,
                                             borderRadius: '10px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '10px'
                                         }}
                                         onClick={onSubmitEarly}
+                                        disabled={isWaiting}
                                     >
                                         Xác nhận
+
+                                        {(isWaiting && <CircularProgress color={'inherit'} size={20} /> )}
                                     </Button>
                                 </Grid>
                             </Grid>

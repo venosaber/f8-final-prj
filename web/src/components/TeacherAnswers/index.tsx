@@ -1,14 +1,14 @@
 import {FixedSizeList as List, type ListChildComponentProps} from "react-window";
 import type {TeacherAnswersProps} from './types.ts';
 
-import {Box, Button, Grid, TextField} from '@mui/material';
+import {Box, Button, Grid, TextField, CircularProgress} from '@mui/material';
 import {useTeacherAnswers} from "./useTeacherAnswers.ts";
 import {MemoizedQuestionUnit} from "./QuestionUnit.tsx";
 
 export default function TeacherAnswers(props: TeacherAnswersProps) {
 
   const {state, examIdNum} = props;
-  const {handlers, handleSubmit} = useTeacherAnswers(props);
+  const {handlers, handleSubmit, isWaiting} = useTeacherAnswers(props);
 
   const checkDisplay = (questionIndex: number): boolean => {
     return questionIndex < Number(state.number_of_question);
@@ -28,9 +28,12 @@ export default function TeacherAnswers(props: TeacherAnswersProps) {
               variant="contained"
               size="large"
               type="submit"
-              sx={{fontWeight: 600, mt: 2}}
+              sx={{fontWeight: 600, mt: 2, display: 'inline-flex', alignItems: 'center', gap: '10px'}}
+              disabled={isWaiting}
           >
             {examIdNum ? 'Chỉnh sửa đề bài' : 'Tạo đề bài'}
+
+            {(isWaiting && <CircularProgress color={'inherit'} size={20} />)}
           </Button>
         </Box>
 

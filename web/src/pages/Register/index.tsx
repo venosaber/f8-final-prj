@@ -12,13 +12,14 @@ import {
     Typography
 } from "@mui/material";
 import {LogoElement} from "../../components";
-import {type ChangeEvent, type FormEvent, useState} from "react";
+import {type ChangeEvent, type FormEvent, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import type {FocusEvent, MouseEvent} from "react";
 import {postMethod} from "../../utils/api.ts";
 import {toast} from 'react-toastify'
 import {Visibility, VisibilityOff} from '@mui/icons-material';
 import Select, {type SelectChangeEvent } from '@mui/material/Select';
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface RegisterForm {
     name: string,
@@ -156,8 +157,22 @@ function RegisterPage() {
 
     /******************* register logic *********************/
 
+    // flag to lock
+    const isLocked = useRef<boolean>(false);
+    const [isWaiting, setIsWaiting] = useState<boolean>(false);
+
     const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        // check the flag immediately
+        if(isLocked.current){
+            return;
+        }
+
+        // turn on the lock immediately
+        isLocked.current = true;
+        setIsWaiting(true);
+
         // set all touched to true
         const curTouched = {...touched};
         Object.keys(touched).forEach((key) => {
@@ -172,7 +187,11 @@ function RegisterPage() {
             validate.password(formData.password) &&
             validate.confirmPassword(formData.confirmPassword);
 
-        if (!isValid) return;
+        if (!isValid) {
+            isLocked.current = false;
+            setIsWaiting(false);
+            return;
+        }
 
         // submit logic
         const payload = {
@@ -185,6 +204,8 @@ function RegisterPage() {
         }else{
             setShowSuccessful(true);
         }
+        isLocked.current = false;
+        setIsWaiting(false);
     }
 
     const onNavigateToLogin = ()=> navigate('/login');
@@ -340,9 +361,13 @@ function RegisterPage() {
                                 <Button
                                     fullWidth variant={'contained'}
                                     color={'primary'}
+                                    sx={{display: 'flex', alignItems: 'center', gap: '10px'}}
                                     type={'submit'}
+                                    disabled={isWaiting}
                                 >
-                                    Đăng ký</Button>
+                                    Đăng ký
+                                    {isWaiting && (<CircularProgress color={'inherit'} size={20} />)}
+                                </Button>
                             </Grid>
                         </Grid>
 

@@ -2,7 +2,7 @@ import {Box, Button, Card, CardMedia, Checkbox, Container,
     FormControlLabel, Grid, Paper, TextField, Typography
 } from "@mui/material";
 import './style.css'
-import {type ChangeEvent, type FocusEvent, type FormEvent, type MouseEvent} from "react";
+import {type ChangeEvent, type FocusEvent, type FormEvent, type MouseEvent, useRef} from "react";
 import {useState} from "react";
 import {LogoElement} from "../../components";
 import {useNavigate} from "react-router-dom";
@@ -12,6 +12,7 @@ import {Visibility, VisibilityOff} from "@mui/icons-material";
 import {postMethod} from "../../utils/api";
 import {setCookie, getUserInfo} from "../../router/auth.ts";
 import { toast } from 'react-toastify';
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface LoginForm {
     email: string,
@@ -140,8 +141,22 @@ function LoginPage() {
 
     }
 
+    // flag to lock
+    const isLocked = useRef<boolean>(false);
+    const [isWaiting, setIsWaiting] = useState<boolean>(false);
+
     const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        // check the flag immediately
+        if(isLocked.current){
+            return;
+        }
+
+        // turn on the lock immediately
+        isLocked.current = true;
+        setIsWaiting(true);
+
         // set all touched to true
         const curTouched = {...touched};
         Object.keys(touched).forEach((key) => {
@@ -152,6 +167,8 @@ function LoginPage() {
         // check valid
         const isValid: boolean = validate.email(formData.email) && validate.password(formData.password);
         if (!isValid) {
+            isLocked.current = false;
+            setIsWaiting(false);
             return;
         }
 
@@ -166,6 +183,9 @@ function LoginPage() {
         } else {
             navigate('/classes');  // default if there is no redirect link
         }
+        // unlock
+        isLocked.current = false;
+        setIsWaiting(false);
 
     }
 
@@ -316,13 +336,17 @@ function LoginPage() {
                                         sx={{
                                             mt: 2, mb: 2, py: 1.5,
                                             borderRadius: '8px',
-                                            fontWeight: 'bold'
+                                            fontWeight: 'bold',
+                                            display: 'flex', alignItems: 'center', gap: '10px',
                                         }}
-                                >Đăng nhập</Button>
+                                        disabled={isWaiting}>
+                                    Đăng nhập
+                                    {isWaiting && (<CircularProgress color={'inherit'} size={20} />)}
+                                </Button>
 
                                 <Box sx={{textAlign: 'center'}}>
                                     <Button onClick={() => navigate('/register')}>
-                                        Đăng ký tài khoản cho học viên</Button>
+                                        Đăng ký tài khoản mới</Button>
                                 </Box>
 
                             </Box>
