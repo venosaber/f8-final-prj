@@ -1,9 +1,10 @@
 import {FHeader} from "../../components";
 import {Box, Button, Container, Grid, Paper, TextField, Typography} from "@mui/material";
 import {useNavigate} from "react-router-dom";
-import {type ChangeEvent, type FocusEvent, type FormEvent, useState} from "react";
+import {type ChangeEvent, type FocusEvent, type FormEvent, useRef, useState} from "react";
 import {postMethod} from "../../utils/api.ts";
 import { toast } from 'react-toastify';
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface NewClassForm {
     name: string,
@@ -77,8 +78,22 @@ function NewClass(){
         validate[name as keyof NewClassForm](value);
     }
 
+    // flag to lock
+    const isLocked = useRef<boolean>(false);
+    const [isWaiting, setIsWaiting] = useState<boolean>(false);
+
     const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        // check the flag immediately
+        if(isLocked.current){
+            return;
+        }
+
+        // turn on the lock immediately
+        isLocked.current = true;
+        setIsWaiting(true);
+
         // set all touched to true
         const curTouched = {...touched};
         Object.keys(touched).forEach((key) => {
@@ -88,7 +103,11 @@ function NewClass(){
 
         // check valid
         const isValid: boolean = validate.name(formData.name) && validate.code(formData.code);
-        if (!isValid) return;
+        if (!isValid) {
+            isLocked.current = false;
+            setIsWaiting(false);
+            return;
+        }
 
         // submit logic
         const payload = {
@@ -104,6 +123,8 @@ function NewClass(){
             navigate('/classes');
         }
 
+        isLocked.current = false;
+        setIsWaiting(false);
     }
 
     const onCancel = () => {
@@ -191,10 +212,15 @@ function NewClass(){
                                 <Grid size={{xs: 4}}>
                                     <Button
                                         fullWidth variant={'contained'}
-                                        color={'primary'} sx={{fontWeight: '600', borderRadius: 2}}
+                                        color={'primary'}
+                                        sx={{fontWeight: '600', borderRadius: 2,
+                                            display: 'flex', alignItems: 'center', gap: '5px' }}
                                         type={'submit'}
+                                        disabled={isWaiting}
                                     >
-                                        Tạo mới</Button>
+                                        Tạo mới
+                                        {isWaiting && <CircularProgress color={'inherit'} size={20} /> }
+                                    </Button>
                                 </Grid>
                             </Grid>
 

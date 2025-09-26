@@ -30,7 +30,7 @@ export default function StudentExamGroup() {
     }, [initializeExamData, examGroupId]);
 
     const numberOfCompletedExams: number = examsWithStatus.filter(exam => exam.status === 'completed').length;
-    let awaitTimeInMinutes: number = examGroupDetail ? examGroupDetail.await_time / 60 : 0;
+    const awaitTimeInMinutes: number = examGroupDetail ? examGroupDetail.await_time / 60 : 0;
 
     if (isLoading) return <Loading/>;
 

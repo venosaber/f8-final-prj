@@ -1,4 +1,4 @@
-import {type ChangeEvent, type FormEvent, useCallback} from "react";
+import {type ChangeEvent, type FormEvent, useCallback, useRef, useState} from "react";
 import type {TeacherAnswersProps} from "./types.ts";
 import {validateExamForm} from "./validation.ts";
 import {toast} from "react-toastify";
@@ -19,6 +19,10 @@ export const useTeacherAnswers = ({
             dispatch({ type: actionType, payload: value });
         }, [dispatch, actionType]);
     };
+
+    const [isWaiting, setIsWaiting] = useState<boolean>(false);
+    // flag to lock
+    const isLocked = useRef<boolean>(false);
 
     const handlers = {
         onNameChange: useInputChange('SET_NAME'),
@@ -48,6 +52,17 @@ export const useTeacherAnswers = ({
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        // check the flag immediately
+        if(isLocked.current){
+            return;
+        }
+
+        // turn on the lock immediately
+        isLocked.current = true;
+
+        // loading for the button
+        setIsWaiting(true);
+
         // validation
         const validationResult = validateExamForm({
             name: state.name,
@@ -60,6 +75,9 @@ export const useTeacherAnswers = ({
 
         if(!validationResult.isValid){
             toast.error(validationResult.message);
+            // unlock if validation failed
+            isLocked.current = false;
+            setIsWaiting(false);
             return;
         }
 
@@ -76,8 +94,11 @@ export const useTeacherAnswers = ({
         } catch (e) {
             console.error('Submission failed: ', e);
             toast.error('Đã có lỗi xảy ra, vui lòng thử lại!');
+        } finally {
+            isLocked.current = false;
+            setIsWaiting(false);
         }
     }
 
-    return { handlers, handleSubmit };
+    return { handlers, handleSubmit, isWaiting };
 }
