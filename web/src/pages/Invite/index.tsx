@@ -7,7 +7,7 @@ import {getMethod, postMethod} from '../../utils/api.ts'
 import type {Member} from '../../utils/types';
 import {toast} from 'react-toastify';
 
-function UnAuthorizedPage({navigate}: { navigate: NavigateFunction}) {
+function UnAuthorizedPage({navigate}: { navigate: NavigateFunction }) {
     return (
         <Box sx={{
             position: 'fixed',
@@ -88,9 +88,9 @@ export default function Invite() {
             code: inputCode,
         }
         const response = await postMethod('/invitations', payload);
-        if(!response){
+        if (!response) {
             toast.error('Có lỗi, vui lòng thử lại !');
-        }else{
+        } else {
             toast.success('Tham gia thành công!')
             navigate(`/class/${classId}`);
         }
@@ -113,7 +113,7 @@ export default function Invite() {
                 setUserId(userId);
 
                 const response = await getMethod(`/classes/${classId}`);
-                if(!response) return;
+                if (!response) return;
                 const {teachers, students} = response;
 
                 // check if the user is already in the class

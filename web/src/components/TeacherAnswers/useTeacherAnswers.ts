@@ -16,7 +16,7 @@ export const useTeacherAnswers = ({
     const useInputChange = (actionType: string) => {
         return useCallback((e: ChangeEvent<HTMLInputElement>) => {
             const value: string | number = actionType === 'SET_AMOUNT' ? Number(e.target.value) : e.target.value;
-            dispatch({ type: actionType, payload: value });
+            dispatch({type: actionType, payload: value});
         }, [dispatch, actionType]);
     };
 
@@ -53,7 +53,7 @@ export const useTeacherAnswers = ({
         e.preventDefault();
 
         // check the flag immediately
-        if(isLocked.current){
+        if (isLocked.current) {
             return;
         }
 
@@ -73,7 +73,7 @@ export const useTeacherAnswers = ({
             number_of_question: Number(state.number_of_question)
         });
 
-        if(!validationResult.isValid){
+        if (!validationResult.isValid) {
             toast.error(validationResult.message);
             // unlock if validation failed
             isLocked.current = false;
@@ -82,9 +82,9 @@ export const useTeacherAnswers = ({
         }
 
         // submission
-        try{
+        try {
             const response = await submitExam({...state, examGroupIdNum, examIdNum, selectedFile});
-            if(!response){
+            if (!response) {
                 toast.error(examIdNum ? 'Chỉnh sửa đề thi thất bại!' : 'Tạo đề thi thất bại!');
             } else {
                 toast.success(examIdNum ? 'Chỉnh sửa đề thi thành công!' : 'Tạo đề thi thành công!');
@@ -100,5 +100,5 @@ export const useTeacherAnswers = ({
         }
     }
 
-    return { handlers, handleSubmit, isWaiting };
+    return {handlers, handleSubmit, isWaiting};
 }

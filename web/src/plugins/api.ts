@@ -20,7 +20,7 @@ let failedRequests: { resolve: (value: unknown) => void, reject: (reason?: unkno
 
 const processQueue = (error: unknown, token: string | null = null) => {
     failedRequests.forEach(request => {
-        if(error) {
+        if (error) {
             request.reject(error);
         } else {
             request.resolve(token);
@@ -79,8 +79,8 @@ api.interceptors.response.use(
             }
 
             try {
-                const payload = { refreshToken: refreshToken }
-                const { data } = await api.post('/auth/refresh', payload);
+                const payload = {refreshToken: refreshToken}
+                const {data} = await api.post('/auth/refresh', payload);
                 const newAccessToken = data.accessToken;
                 const newRefreshToken = data.refreshToken;
 

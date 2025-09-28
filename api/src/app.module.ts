@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
-import { DatabaseModule } from './database/module';
+import {Module} from '@nestjs/common';
+import {DatabaseModule} from './database/module';
 import {AuthModule} from "@/modules/auth/module";
 import {StudentModule} from "@/modules/student/module";
 import {TeacherModule} from "@/modules/teacher/module";
@@ -16,33 +16,34 @@ import {AnswerModule} from "@/modules/answer/module";
 import {ExamResultModule} from "@/modules/exam_result/module";
 
 @Module({
-  imports: [
-    ClsModule.forRoot({
-      global: true,
-      middleware: {
-        // for all routes
-        mount: true,
-      }
-    }),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: '.env',
-    }),
+    imports: [
+        ClsModule.forRoot({
+            global: true,
+            middleware: {
+                // for all routes
+                mount: true,
+            }
+        }),
+        ConfigModule.forRoot({
+            isGlobal: true,
+            envFilePath: '.env',
+        }),
 
-    DatabaseModule,
-    AuthModule,
-    StudentModule,
-    TeacherModule,
-    ClassModule,
-    InvitationModule,
-    ExamGroupModule,
-    QuestionModule,
-    ExamModule,
-    PDFViewerModule,
-    AnswerModule,
-    ExamResultModule,
-  ],
-  controllers: [],
-  providers: [],
+        DatabaseModule,
+        AuthModule,
+        StudentModule,
+        TeacherModule,
+        ClassModule,
+        InvitationModule,
+        ExamGroupModule,
+        QuestionModule,
+        ExamModule,
+        PDFViewerModule,
+        AnswerModule,
+        ExamResultModule,
+    ],
+    controllers: [],
+    providers: [],
 })
-export class AppModule {}
+export class AppModule {
+}

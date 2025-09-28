@@ -12,7 +12,7 @@ export const submitExam = async (data: ExamFormData) => {
     formData.append('questions', JSON.stringify(data.questions.slice(0, Number(data.number_of_question))));
     formData.append('description', data.description);
 
-    if(data.selectedFile) {
+    if (data.selectedFile) {
         formData.append('examFile', data.selectedFile);
     }
 

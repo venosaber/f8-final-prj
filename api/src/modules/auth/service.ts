@@ -32,7 +32,6 @@ export class AuthService implements AuthServiceI {
         private readonly userService: UserServiceI,
         @Inject(UserEntityRepository)
         private readonly userRepository: Repository<UserEntity>,
-
         private readonly configService: ConfigService,
     ) {
     }
@@ -91,7 +90,7 @@ export class AuthService implements AuthServiceI {
             }),
         ]);
 
-        return { accessToken, refreshToken };
+        return {accessToken, refreshToken};
     }
 
     async refreshToken(data: RefreshTokenReq): Promise<LoginResI> {

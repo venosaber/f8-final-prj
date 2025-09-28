@@ -5,7 +5,14 @@ import Typography from '@mui/material/Typography';
 import {CourseCard} from '..';
 import type {Course} from '../../utils/types';
 
-function CourseGrid({courses}: {courses: Course[]}) {
+interface CourseGridProps {
+    courses: Course[],
+    role: string,
+    setClassIdToDelete: (classId: number) => void,
+    setIsOpenDialog: (isOpenDialog: boolean) => void
+}
+
+function CourseGrid({courses, role, setClassIdToDelete, setIsOpenDialog}: CourseGridProps) {
     if (!courses || courses.length === 0) {
         return (
             <Box sx={{textAlign: 'center', mt: 5}}>
@@ -20,7 +27,11 @@ function CourseGrid({courses}: {courses: Course[]}) {
         <Grid container spacing={3}>
             {courses.map((course: Course) => (
                 <Grid key={course.id} size={{xs: 12, md: 6, lg: 4}} width={'100%'}>
-                    <CourseCard course={course}/>
+                    <CourseCard course={course}
+                                role={role}
+                                setClassIdToDelete={setClassIdToDelete}
+                                setIsOpenDialog={setIsOpenDialog}
+                    />
                 </Grid>
             ))}
         </Grid>

@@ -1,4 +1,5 @@
-import {Box, Button, Card, CardMedia, Checkbox, Container,
+import {
+    Box, Button, Card, CardMedia, Checkbox, Container,
     FormControlLabel, Grid, Paper, TextField, Typography
 } from "@mui/material";
 import './style.css'
@@ -11,7 +12,7 @@ import {Visibility, VisibilityOff} from "@mui/icons-material";
 
 import {postMethod} from "../../utils/api";
 import {setCookie, getUserInfo} from "../../router/auth.ts";
-import { toast } from 'react-toastify';
+import {toast} from 'react-toastify';
 import CircularProgress from "@mui/material/CircularProgress";
 
 interface LoginForm {
@@ -113,7 +114,7 @@ function LoginPage() {
             password: formData.password
         }
         const response = await postMethod('/auth/login', payload);
-        if(!response){
+        if (!response) {
             toast.error('Sai email hoặc mật khẩu!');
         } else {
             toast.success('Đăng nhập thành công!');
@@ -126,14 +127,14 @@ function LoginPage() {
             setCookie('accessToken', accessToken, maxAge);
 
             // "remember me" feature
-            if(rememberMe){
+            if (rememberMe) {
                 const refreshMaxAgeMs: number = 7 * 24 * 60 * 60 * 1000; // a week
                 const expiresAt: number = now + refreshMaxAgeMs;
                 localStorage.setItem('refreshTokenExpiresAt', expiresAt.toString());
 
-                setCookie('refreshToken', refreshToken, refreshMaxAgeMs/1000);
+                setCookie('refreshToken', refreshToken, refreshMaxAgeMs / 1000);
                 localStorage.setItem('rememberMe', 'true');
-            }else{
+            } else {
                 setCookie('refreshToken', refreshToken);  // session cookie
                 localStorage.removeItem('rememberMe');
             }
@@ -149,7 +150,7 @@ function LoginPage() {
         e.preventDefault();
 
         // check the flag immediately
-        if(isLocked.current){
+        if (isLocked.current) {
             return;
         }
 
@@ -271,7 +272,7 @@ function LoginPage() {
                                 <Typography variant={'body2'}
                                             sx={{color: 'text.secondary', textAlign: 'center', mb: 3}}
                                 >
-                                    Cung cấp giải pháp toàn diện cho <br />
+                                    Cung cấp giải pháp toàn diện cho <br/>
                                     lớp học thông minh
                                 </Typography>
                             </Box>
@@ -328,7 +329,7 @@ function LoginPage() {
                                                   control={
                                                       <Checkbox
                                                           checked={rememberMe}
-                                                          onChange={(e: ChangeEvent<HTMLInputElement>)=>setRememberMe(e.target.checked)}
+                                                          onChange={(e: ChangeEvent<HTMLInputElement>) => setRememberMe(e.target.checked)}
                                                       />}
                                 />
 
@@ -341,7 +342,7 @@ function LoginPage() {
                                         }}
                                         disabled={isWaiting}>
                                     Đăng nhập
-                                    {isWaiting && (<CircularProgress color={'inherit'} size={20} />)}
+                                    {isWaiting && (<CircularProgress color={'inherit'} size={20}/>)}
                                 </Button>
 
                                 <Box sx={{textAlign: 'center'}}>

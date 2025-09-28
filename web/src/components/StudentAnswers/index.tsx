@@ -39,7 +39,8 @@ export default function StudentAnswers({state, dispatch}: StudentAnswersProps) {
                     dispatch({type: 'LONG_RESPONSE_ANSWER', payload: payload});
                     break;
             }
-        }},[dispatch]);
+        }
+    }, [dispatch]);
 
     return (
         <>
@@ -79,7 +80,7 @@ const MemoizedQuestionUnit = memo(function QuestionUnit({question, onAnswerChang
         case 'single-choice':
             questionElement = options.map((option: string, index: number) => {
                 return (
-                    <Box key={index} sx={{display:'flex', alignItems: 'center'}}>
+                    <Box key={index} sx={{display: 'flex', alignItems: 'center'}}>
                         <Radio name={`question-${question.questionIndex}`}
                                onChange={onAnswerChange}
                                checked={question.answer === option}
@@ -93,7 +94,7 @@ const MemoizedQuestionUnit = memo(function QuestionUnit({question, onAnswerChang
         case 'multiple-choice':
             questionElement = options.map((option: string, index: number) => {
                 return (
-                    <Box key={index} sx={{display:'flex', alignItems: 'center'}}>
+                    <Box key={index} sx={{display: 'flex', alignItems: 'center'}}>
                         <Checkbox name={`question-${question.questionIndex}`}
                                   onChange={onAnswerChange}
                                   checked={question.answer.includes(option)}
@@ -119,7 +120,8 @@ const MemoizedQuestionUnit = memo(function QuestionUnit({question, onAnswerChang
             />
             break;
 
-        default: questionElement = <></>;
+        default:
+            questionElement = <></>;
     }
 
     return (

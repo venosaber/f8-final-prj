@@ -30,7 +30,7 @@ const actionHandlers = {
     'SINGLE_CHANGE_ANSWER': (state: ExamDoing, action: Action) => {
         const {targetedAnswer, index} = action.payload;
         const newQuestions: Answer[] = state.questions.map((question: Answer) => {
-            if(question.questionIndex === index){
+            if (question.questionIndex === index) {
                 return {
                     ...question,
                     answer: targetedAnswer
@@ -48,16 +48,16 @@ const actionHandlers = {
     'MULTIPLE_UNCHECK_OPTION': (state: ExamDoing, action: Action) => {
         const {targetedAnswer: uncheckedAnswer, index} = action.payload;
         const newQuestions: Answer[] = state.questions.map((question: Answer) => {
-            if(question.questionIndex === index){
+            if (question.questionIndex === index) {
                 const curQuestion: Answer = state.questions[index];
                 const curChosenAnswers: string[] = curQuestion.answer.split(',');
-                if(curChosenAnswers.length === 1){
+                if (curChosenAnswers.length === 1) {
                     return {
                         ...question,
                         answer: ''
                     }
-                }else{
-                    const newChosenAnswers: string[] = curChosenAnswers.filter(answer => answer!== uncheckedAnswer);
+                } else {
+                    const newChosenAnswers: string[] = curChosenAnswers.filter(answer => answer !== uncheckedAnswer);
                     return {
                         ...question,
                         answer: newChosenAnswers.sort().join(',')
@@ -78,7 +78,7 @@ const actionHandlers = {
     'MULTIPLE_CHECK_OPTION': (state: ExamDoing, action: Action) => {
         const {targetedAnswer: checkedAnswer, index} = action.payload;
         const newQuestions: Answer[] = state.questions.map((question: Answer) => {
-            if(question.questionIndex === index){
+            if (question.questionIndex === index) {
                 const curQuestion: Answer = state.questions[index];
                 // avoid saving the empty string by filter(Boolean)
                 const curChosenAnswers: string[] = curQuestion.answer.split(',').filter(Boolean);
@@ -100,7 +100,7 @@ const actionHandlers = {
     'LONG_RESPONSE_ANSWER': (state: ExamDoing, action: Action) => {
         const {targetedAnswer, index} = action.payload;
         const newQuestions: Answer[] = state.questions.map((question: Answer) => {
-            if(question.questionIndex === index){
+            if (question.questionIndex === index) {
                 return {
                     ...question,
                     answer: targetedAnswer
@@ -116,7 +116,7 @@ const actionHandlers = {
     },
 
     'COUNTDOWN': (state: ExamDoing) => {
-        if(state.timeLeft <= 0) return state;
+        if (state.timeLeft <= 0) return state;
         return {
             ...state,
             timeLeft: state.timeLeft - 1

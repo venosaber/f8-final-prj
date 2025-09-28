@@ -65,7 +65,7 @@ export default function TeacherExamDetail() {
 
                 const examGroupData = await getMethod(`/exam_groups/${examGroupId}`);
                 setExamGroup(examGroupData);
-            }catch (e) {
+            } catch (e) {
                 console.error('Error on loading data: ', e);
                 toast.error('Có lỗi khi tải dữ liệu!');
             }
@@ -113,7 +113,7 @@ export default function TeacherExamDetail() {
                                 sx={{mr: 2}}>{`>`}</Typography>
 
                     <Typography variant="h6" fontWeight="bold">
-                        {examIdNum ? state.name : 'Thêm đề bài' }
+                        {examIdNum ? state.name : 'Thêm đề bài'}
                     </Typography>
                 </Box>
 

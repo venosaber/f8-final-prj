@@ -5,11 +5,11 @@ import {AvatarDefault} from "..";
 interface ResultGroupsListProps {
     studentResultGroups: StudentResultGroup[],
     numberOfExams: number,
-    handleMark: (studentID: number)=> void
+    handleMark: (studentID: number) => void
 }
 
 export default function ResultGroupsList({studentResultGroups, numberOfExams, handleMark}
-                          : ResultGroupsListProps) {
+                                         : ResultGroupsListProps) {
     const countCompleted = (studentResultGroup: StudentResultGroup) => {
         return studentResultGroup.results.length;
     }
@@ -17,11 +17,11 @@ export default function ResultGroupsList({studentResultGroups, numberOfExams, ha
     // if a student's results group has at least one exam which has at least one answered question that has not been marked,
     // that student's results group has to be remarked
     const isWaitingForRemark = (studentResultGroup: StudentResultGroup) => {
-        for(let i = 0; i < studentResultGroup.results.length; i++){
+        for (let i = 0; i < studentResultGroup.results.length; i++) {
             const examResult: ExamResult = studentResultGroup.results[i];
-            for(let j = 0; j < examResult.answers.length; j++){
+            for (let j = 0; j < examResult.answers.length; j++) {
                 // answered but not marked
-                if(examResult.answers[j].is_correct === null && examResult.answers[j].answer !== null){
+                if (examResult.answers[j].is_correct === null && examResult.answers[j].answer !== null) {
                     return true;
                 }
             }
@@ -33,7 +33,7 @@ export default function ResultGroupsList({studentResultGroups, numberOfExams, ha
         <Grid container spacing={2} sx={{my: 3}}>
             {
                 studentResultGroups.map(studentResult => (
-                    <Grid key={studentResult.id} size={{xs: 12, sm: 6, md: 4, lg: 3 }}>
+                    <Grid key={studentResult.id} size={{xs: 12, sm: 6, md: 4, lg: 3}}>
                         <Box sx={{border: '1px solid #0000ff', borderRadius: '8px', p: 2, backgroundColor: '#ffffff'}}>
                             <Box sx={{
                                 display: 'flex',
@@ -41,7 +41,7 @@ export default function ResultGroupsList({studentResultGroups, numberOfExams, ha
                                 gap: '10px',
                                 mb: '10px'
                             }}>
-                                <AvatarDefault fullName={studentResult.name} />
+                                <AvatarDefault fullName={studentResult.name}/>
                                 <Box>
                                     <Typography variant={'body1'} sx={{fontWeight: 600}}>
                                         {studentResult.name}
@@ -69,7 +69,7 @@ export default function ResultGroupsList({studentResultGroups, numberOfExams, ha
 
                             <Box sx={{textAlign: 'center', mt: '20px'}}>
                                 <Button variant={'contained'} color={'success'} size={'large'}
-                                        onClick={()=>handleMark(studentResult.id)}
+                                        onClick={() => handleMark(studentResult.id)}
                                 >
                                     Chi tiết
                                 </Button>

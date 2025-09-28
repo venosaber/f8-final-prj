@@ -15,8 +15,7 @@ import {Transactional} from "typeorm-transactional";
 
 @Injectable()
 export class ExamResultService extends BaseService<ExamResultEntity, ExamResultReqI, ExamResultResI>
-implements ExamResultServiceI
-{
+    implements ExamResultServiceI {
     constructor(
         @Inject(ExamResultEntityRepository)
         protected repository: Repository<ExamResultEntity>,
@@ -27,30 +26,26 @@ implements ExamResultServiceI
         super(repository, cls);
     }
 
-    protected getPublicColumns(): string[] {
-        return super.getPublicColumns().concat(['created_at']);
-    }
-
     // cannot be sure this is still ExamResultEntity, so use any
     async findAndFilter(userId: number, examGroupId: number) {
         const query = this.repository
             .createQueryBuilder(this.getTableName())
-            .select('er.id::int','id')
-            .addSelect('er.exam_id::int','exam_id')
-            .addSelect('er.user_id::int','user_id')
-            .addSelect('er.status','status')
-            .addSelect('er.device','device')
-            .addSelect('er.number_of_correct_answer','number_of_correct_answer')
-            .addSelect('er.score','score')
-            .addSelect('er.created_at','created_at')
-            .addSelect( subQuery => {
+            .select('er.id::int', 'id')
+            .addSelect('er.exam_id::int', 'exam_id')
+            .addSelect('er.user_id::int', 'user_id')
+            .addSelect('er.status', 'status')
+            .addSelect('er.device', 'device')
+            .addSelect('er.number_of_correct_answer', 'number_of_correct_answer')
+            .addSelect('er.score', 'score')
+            .addSelect('er.created_at', 'created_at')
+            .addSelect(subQuery => {
                 return subQuery
                     .select('COUNT(*)::int')
                     .from('answer', 'a')
                     .where('a.exam_result_id = er.id')
                     .andWhere('a.active')
-            },'number_of_question')
-            .addSelect( subQuery => {
+            }, 'number_of_question')
+            .addSelect(subQuery => {
                 return subQuery
                     .select(`
                         COALESCE(
@@ -95,7 +90,7 @@ implements ExamResultServiceI
             .returning(this.getPublicColumns());
         const response: InsertResult = await query.execute();
 
-        if(!response || !Array.isArray(response.raw) || response.raw.length === 0) {
+        if (!response || !Array.isArray(response.raw) || response.raw.length === 0) {
             throw new InternalServerErrorException('Failed to create new record');
         }
         const examResultId: number = response.raw[0].id;
@@ -120,12 +115,12 @@ implements ExamResultServiceI
 
         const result: UpdateResult = await queryToUpdate.execute();
 
-        if(!result || !Array.isArray(result.raw) || result.raw.length === 0) {
+        if (!result || !Array.isArray(result.raw) || result.raw.length === 0) {
             throw new InternalServerErrorException('Failed to update exam result with answers');
         }
         const number_of_question: number = newAnswers.length;
 
-        return {...result.raw[0], answers: newAnswers, number_of_question } as ExamResultResI;
+        return {...result.raw[0], answers: newAnswers, number_of_question} as ExamResultResI;
     }
 
     @Transactional()
@@ -144,20 +139,24 @@ implements ExamResultServiceI
             .returning(this.getPublicColumns());
         const response: UpdateResult = await query.execute();
 
-        if(!response || !Array.isArray(response.raw) || response.raw.length === 0) {
+        if (!response || !Array.isArray(response.raw) || response.raw.length === 0) {
             throw new InternalServerErrorException('Failed to update exam result with answers');
         }
         const number_of_question: number = updatedQuestions.length;
 
-        return {...response.raw[0], answers: updatedQuestions, number_of_question } as ExamResultResI;
+        return {...response.raw[0], answers: updatedQuestions, number_of_question} as ExamResultResI;
 
+    }
+
+    protected getPublicColumns(): string[] {
+        return super.getPublicColumns().concat(['created_at']);
     }
 
     private countCorrectAnswer(answers: AnswerResI[]): number {
         let correctAnswer: number = 0;
-        for(const answer of answers){
+        for (const answer of answers) {
             const isCorrect: boolean[] | null = answer.is_correct;
-            if(!isCorrect || isCorrect.includes(false)) continue;
+            if (!isCorrect || isCorrect.includes(false)) continue;
             correctAnswer++;
         }
         return correctAnswer;

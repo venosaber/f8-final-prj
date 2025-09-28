@@ -45,13 +45,13 @@ const actionHandlers = {
     'SET_AMOUNT': (state: Exam, action: Action) => {
         const newAmount: number = action.payload;
 
-      if (!newAmount || newAmount <= 0) {
-        return {
-          ...state,
-          number_of_question: 0,
-          // questions: []
-        };
-      }
+        if (!newAmount || newAmount <= 0) {
+            return {
+                ...state,
+                number_of_question: 0,
+                // questions: []
+            };
+        }
 
         const newQuestions = [...state.questions];
         for (let i: number = state.questions.length; i < newAmount; i++) {
@@ -72,7 +72,7 @@ const actionHandlers = {
     'CHANGE_QUESTION_TYPE': (state: Exam, action: Action) => {
         const {questionType, index} = action.payload;
         const newQuestions = state.questions.map((question: Question) => {
-            if(question.index === index){
+            if (question.index === index) {
                 return {
                     ...question,
                     type: questionType,
@@ -91,7 +91,7 @@ const actionHandlers = {
     'SINGLE_CHANGE_CORRECT_ANSWER': (state: Exam, action: Action) => {
         const {targetedAnswer, index} = action.payload;
         const newQuestions = state.questions.map((question: Question) => {
-            if(question.index === index){
+            if (question.index === index) {
                 return {
                     ...question,
                     correct_answer: targetedAnswer
@@ -109,16 +109,16 @@ const actionHandlers = {
     'MULTIPLE_UNCHECK_OPTION': (state: Exam, action: Action) => {
         const {targetedAnswer: uncheckedAnswer, index} = action.payload;
         const newQuestions: Question[] = state.questions.map((question: Question) => {
-            if(question.index === index){
+            if (question.index === index) {
                 const curQuestion = state.questions[index];
                 const curCorrectAnswers: string[] = curQuestion.correct_answer.split(',');
-                if(curCorrectAnswers.length === 1){
+                if (curCorrectAnswers.length === 1) {
                     return {
                         ...question,
                         correct_answer: ''
                     }
-                }else{
-                    const newCorrectAnswers: string[] = curCorrectAnswers.filter(answer => answer!== uncheckedAnswer);
+                } else {
+                    const newCorrectAnswers: string[] = curCorrectAnswers.filter(answer => answer !== uncheckedAnswer);
                     return {
                         ...question,
                         correct_answer: newCorrectAnswers.sort().join(',')
@@ -139,7 +139,7 @@ const actionHandlers = {
     'MULTIPLE_CHECK_OPTION': (state: Exam, action: Action) => {
         const {targetedAnswer: checkedAnswer, index} = action.payload;
         const newQuestions: Question[] = state.questions.map((question: Question) => {
-            if(question.index === index){
+            if (question.index === index) {
                 const curQuestion = state.questions[index];
                 // avoid saving the empty string by filter(Boolean)
                 const curCorrectAnswers: string[] = curQuestion.correct_answer.split(',').filter(Boolean);

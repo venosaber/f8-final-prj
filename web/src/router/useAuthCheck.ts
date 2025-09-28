@@ -9,12 +9,12 @@ import {useEffect, useState} from "react";
 const tryRefreshToken = async () => {
     const refreshToken = getCookie('refreshToken');
 
-    if(!refreshToken || isTokenExpired(refreshToken)) return null;
+    if (!refreshToken || isTokenExpired(refreshToken)) return null;
     try {
         const {data} = await api.post(
             '/auth/refresh',
-            { refreshToken: refreshToken }, // payload
-            { _retry: true } // set this flag to make the response interceptor skip, avoid infinite loop
+            {refreshToken: refreshToken}, // payload
+            {_retry: true} // set this flag to make the response interceptor skip, avoid infinite loop
         );
         const {accessToken: newAccessToken, refreshToken: newRefreshToken} = data;
         setNewAccessToken(newAccessToken);
@@ -42,7 +42,7 @@ export const useAuthCheck = () => {
     useEffect(() => {
         const checkAuth = async () => {
             const accessToken = getCookie('accessToken');
-            if(accessToken && !isTokenExpired(accessToken)) {
+            if (accessToken && !isTokenExpired(accessToken)) {
                 setIsAuthenticated(true);
             } else {
                 const newAccessToken = await tryRefreshToken();

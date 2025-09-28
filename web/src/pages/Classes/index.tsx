@@ -1,4 +1,4 @@
-import {FHeader} from '../../components'
+import {DeleteClassDialog, FHeader} from '../../components'
 import {Container, Box, Typography, TextField, InputAdornment, Button} from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
@@ -19,20 +19,30 @@ function Classes() {
     }
 
     const [user, setUser] = useState({name: '', role: ''});
-    const displayAddClassButton = user.role === 'teacher'?'inline-flex':'none';
+    const displayAddClassButton = user.role === 'teacher' ? 'inline-flex' : 'none';
     const [courses, setCourses] = useState<Course[]>([]);
 
     const [searchStr, setSearchStr] = useState('');
     const [isLoading, setIsLoading] = useState(true);
 
-    const filteredCourses: Course[] = useMemo(()=> courses.filter(course => {
+    const filteredCourses: Course[] = useMemo(() => courses.filter(course => {
         return course.name.toLowerCase().includes(searchStr.toLowerCase());
-    }),[courses, searchStr]);
+    }), [courses, searchStr]);
+
+    const [isOpenDialog, setIsOpenDialog] = useState(false);
+
+    const [classIdToDelete, setClassIdToDelete] = useState<number | null>(null);
+
+    const updateAfterDelete = () => {
+        const updatedCourses: Course[] = courses.filter(course => course.id !== classIdToDelete);
+        setCourses(updatedCourses); // re-render
+        setClassIdToDelete(null);
+    }
 
     useEffect(() => {
         const onMounted = async () => {
             const accessToken: string | null = await getValidAccessToken();
-            if(!accessToken){
+            if (!accessToken) {
                 console.error("No valid access token, redirecting to login page");
                 navigate('/login');
                 return;
@@ -41,12 +51,12 @@ function Classes() {
             const {name, role} = getUserInfo(accessToken);
             setUser({name, role});
 
-            try{
+            try {
                 const coursesData: Course[] = await getMethod('/classes');
                 setCourses(coursesData);
-            }catch (err) {
-                console.error("Error on loading courses: ",err);
-            }finally {
+            } catch (err) {
+                console.error("Error on loading courses: ", err);
+            } finally {
                 setIsLoading(false);
             }
         }
@@ -54,7 +64,7 @@ function Classes() {
         onMounted();
     }, []);
 
-    if(isLoading) return <Loading />
+    if (isLoading) return <Loading/>
 
     return (
         <>
@@ -123,9 +133,19 @@ function Classes() {
 
                 {/* Course grid */}
                 <Box sx={{mt: 3}}>
-                    <CourseGrid courses={filteredCourses}/>
+                    <CourseGrid courses={filteredCourses}
+                                role={user.role}
+                                setClassIdToDelete={setClassIdToDelete}
+                                setIsOpenDialog={setIsOpenDialog}
+                    />
                 </Box>
             </Container>
+
+            <DeleteClassDialog classId={classIdToDelete}
+                               isOpenDialog={isOpenDialog}
+                               setIsOpenDialog={setIsOpenDialog}
+                               updateAfterDelete={updateAfterDelete}
+            />
         </>
     )
 }

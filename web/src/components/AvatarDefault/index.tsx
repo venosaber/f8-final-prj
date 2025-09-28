@@ -30,7 +30,7 @@ interface AvatarDefaultProps {
     mr?: number | string
 }
 
-export default function AvatarDefault({fullName, width=40, height=40, mr=2}: AvatarDefaultProps) {
+export default function AvatarDefault({fullName, width = 40, height = 40, mr = 2}: AvatarDefaultProps) {
     return (
         <Avatar sx={{backgroundColor: stringToColor(fullName), width, height, mr}}>
             {getInitials(fullName)}

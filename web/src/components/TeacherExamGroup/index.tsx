@@ -34,7 +34,7 @@ export default function TeacherExamGroup() {
         navigate(`/class/${id}/exam/${examGroupId}/${examId}`);
     }
 
-    const handleMark = (studentID: number)=> {
+    const handleMark = (studentID: number) => {
         navigate(`/class/${id}/exam/${examGroupId}/marking?student=${studentID}`);
     }
 
@@ -89,7 +89,7 @@ export default function TeacherExamGroup() {
                 );
 
                 // add exam results to each student's data
-                const studentResults= students.map((student: Member, index: number)=>{
+                const studentResults = students.map((student: Member, index: number) => {
                     return {
                         ...student,
                         results: resultsData[index]

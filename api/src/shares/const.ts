@@ -8,7 +8,7 @@ export const StudentServiceToken = Symbol('StudentServiceToken');
 
 export const AuthServiceToken = Symbol('AuthServiceToken');
 export const PasswordResetTokenRepository = Symbol(
-  'PasswordResetTokenRepository',
+    'PasswordResetTokenRepository',
 );
 
 export const FileEntityRepository = Symbol('FileEntityRepository');

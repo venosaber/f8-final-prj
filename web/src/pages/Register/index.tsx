@@ -18,7 +18,7 @@ import type {FocusEvent, MouseEvent} from "react";
 import {postMethod} from "../../utils/api.ts";
 import {toast} from 'react-toastify'
 import {Visibility, VisibilityOff} from '@mui/icons-material';
-import Select, {type SelectChangeEvent } from '@mui/material/Select';
+import Select, {type SelectChangeEvent} from '@mui/material/Select';
 import CircularProgress from "@mui/material/CircularProgress";
 
 interface RegisterForm {
@@ -60,7 +60,7 @@ function RegisterPage() {
         confirmPassword: false,
     });
 
-    const validate: {[name: string]: (value: string) => boolean} = {
+    const validate: { [name: string]: (value: string) => boolean } = {
         name: (value: string) => {
             if (!value) {
                 setHelperTexts(prev => ({...prev, name: 'Vui lòng nhập tên của bạn!'}));
@@ -157,7 +157,7 @@ function RegisterPage() {
 
     /******************* register logic *********************/
 
-    // flag to lock
+        // flag to lock
     const isLocked = useRef<boolean>(false);
     const [isWaiting, setIsWaiting] = useState<boolean>(false);
 
@@ -165,7 +165,7 @@ function RegisterPage() {
         e.preventDefault();
 
         // check the flag immediately
-        if(isLocked.current){
+        if (isLocked.current) {
             return;
         }
 
@@ -199,16 +199,16 @@ function RegisterPage() {
             status: 'confirmed'
         }
         const response = await postMethod('/auth/register', payload);
-        if(!response){
+        if (!response) {
             toast.error('Đăng ký mới thất bại, hãy thử lại!');
-        }else{
+        } else {
             setShowSuccessful(true);
         }
         isLocked.current = false;
         setIsWaiting(false);
     }
 
-    const onNavigateToLogin = ()=> navigate('/login');
+    const onNavigateToLogin = () => navigate('/login');
 
     const onCancel = () => {
         setFormData({name: '', email: '', password: '', confirmPassword: '', role: 'student'});
@@ -354,7 +354,7 @@ function RegisterPage() {
                                     fullWidth variant={'outlined'}
                                     color={'primary'}
                                     onClick={onCancel}
-                                    >Hủy</Button>
+                                >Hủy</Button>
                             </Grid>
 
                             <Grid size={{xs: 6}}>
@@ -366,7 +366,7 @@ function RegisterPage() {
                                     disabled={isWaiting}
                                 >
                                     Đăng ký
-                                    {isWaiting && (<CircularProgress color={'inherit'} size={20} />)}
+                                    {isWaiting && (<CircularProgress color={'inherit'} size={20}/>)}
                                 </Button>
                             </Grid>
                         </Grid>
@@ -378,7 +378,7 @@ function RegisterPage() {
             </Paper>
 
             {
-                showSuccessful && <OverlayAndDialog onNavigate={onNavigateToLogin} />
+                showSuccessful && <OverlayAndDialog onNavigate={onNavigateToLogin}/>
             }
 
         </Container>
@@ -387,7 +387,7 @@ function RegisterPage() {
 
 export default RegisterPage;
 
-function OverlayAndDialog({onNavigate}: {onNavigate: ()=> void}){
+function OverlayAndDialog({onNavigate}: { onNavigate: () => void }) {
     return (
         <>
             {/* Dark transparent overlay */}
@@ -400,7 +400,7 @@ function OverlayAndDialog({onNavigate}: {onNavigate: ()=> void}){
                 backgroundColor: 'rgba(0, 0, 0, 0.5)',
                 backdropFilter: 'blur(4px)',
                 zIndex: 1000,
-            }} />
+            }}/>
 
             {/* Dialog content */}
             <Box sx={{
@@ -424,14 +424,14 @@ function OverlayAndDialog({onNavigate}: {onNavigate: ()=> void}){
                     Thành công
                 </Typography>
 
-                <Typography sx={{ mb: 3 }}>
+                <Typography sx={{mb: 3}}>
                     Tạo tài khoản thành công, quay lại trang đăng nhập
                 </Typography>
 
                 <Button
                     variant="contained"
                     fullWidth
-                    sx={{ mb: 1, backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#388e3c' } }}
+                    sx={{mb: 1, backgroundColor: '#4caf50', '&:hover': {backgroundColor: '#388e3c'}}}
                     onClick={onNavigate}
                 >
                     Quay lại đăng nhập

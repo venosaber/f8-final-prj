@@ -10,7 +10,14 @@ import {useNavigate} from 'react-router-dom';
 import {toast} from 'react-toastify';
 import {Tooltip} from "@mui/material";
 
-const CourseCard = ({course}: { course: Course }) => {
+interface CourseCardProps {
+    course: Course,
+    role: string,
+    setClassIdToDelete: (classId: number) => void,
+    setIsOpenDialog: (isOpenDialog: boolean) => void
+}
+
+const CourseCard = ({course, role, setClassIdToDelete, setIsOpenDialog}: CourseCardProps) => {
     const navigate = useNavigate();
 
     const onEnterClass = (course: Course) => {
@@ -27,6 +34,15 @@ const CourseCard = ({course}: { course: Course }) => {
             console.error('Failed to copy link to clipboard: ', err);
         })
     };
+
+    const onEditClass = () => {
+        navigate(`/class/edit/${course.id}`);
+    }
+
+    const onDeleteClass = () => {
+        setClassIdToDelete(course.id);
+        setIsOpenDialog(true);
+    }
 
     return (
         <Card
@@ -126,37 +142,66 @@ const CourseCard = ({course}: { course: Course }) => {
                         <Typography variant="body2" sx={{color: 'rgba(255, 255, 255, 0.8)'}}>
                             Thành viên tham gia
                         </Typography>
-                        <Typography variant="body2" sx={{color: 'rgba(255, 255, 255, 0.9)'}}>
-                            Mã lớp: {course.code}
-                        </Typography>
+
+                        { // students aren't allowed to see class code
+                            role !== 'student' && (
+                                <Typography variant="body2" sx={{color: 'rgba(255, 255, 255, 0.9)'}}>
+                                    Mã lớp: {course.code}
+                                </Typography>
+                            )}
+
                     </Box>
 
                     {/*To center the tooltip for the Button, wrap the button inside Tooltip and div*/}
-                    <div style={{display: 'flex', justifyContent: 'center'}}>
-                        <Tooltip title={'Copy link mời vào lớp'} arrow>
-                            <Button
-                                variant="outlined"
-                                size="small"
-                                startIcon={<ShareIcon fontSize="inherit"/>}
-                                sx={{
-                                    color: 'white',
-                                    borderColor: 'rgba(255, 255, 255, 0.5)',
-                                    textTransform: 'none',
-                                    borderRadius: '16px',
-                                    p: '2px 10px',
-                                    '&:hover': {
-                                        borderColor: 'white',
-                                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                                    },
-                                }}
-                                onClick={onCopyLink}
-                            >
-                                Chia sẻ
-                            </Button>
-                        </Tooltip>
-                </div>
+                    { // students aren't allowed to share the invite link
+                        role !== 'student' && (
+                            <div style={{display: 'flex', justifyContent: 'center'}}>
+                                <Tooltip title={'Copy link mời vào lớp'} arrow>
+                                    <Button
+                                        variant="outlined"
+                                        size="small"
+                                        startIcon={<ShareIcon fontSize="inherit"/>}
+                                        sx={{
+                                            color: 'white',
+                                            borderColor: 'rgba(255, 255, 255, 0.5)',
+                                            textTransform: 'none',
+                                            borderRadius: '16px',
+                                            p: '2px 10px',
+                                            '&:hover': {
+                                                borderColor: 'white',
+                                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                                            },
+                                        }}
+                                        onClick={onCopyLink}
+                                    >
+                                        Chia sẻ
+                                    </Button>
+                                </Tooltip>
+                            </div>
+                        )}
 
                 </Box>
+
+                {/* Edit and Delete buttons - Not for students */}
+                {role !== 'student' && (
+                    <Box sx={{
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                        mt: 2
+                    }}>
+                        <Button variant={'contained'} color={'success'} size={'small'}
+                                sx={{borderRadius: '5px'}}
+                                onClick={onEditClass}
+                        >
+                            Sửa thông tin
+                        </Button>
+                        <Button variant={'contained'} color={'error'} size={'small'}
+                                sx={{borderRadius: '5px'}}
+                                onClick={onDeleteClass}
+                        >
+                            Xóa lớp
+                        </Button>
+                    </Box>
+                )}
             </Box>
 
         </Card>
