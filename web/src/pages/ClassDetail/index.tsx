@@ -4,8 +4,8 @@ export default function ClassDetail() {
 
     return (
         <>
-            <FHeader />
-            <ClassroomLayout />
+            <FHeader/>
+            <ClassroomLayout/>
         </>
     )
 }

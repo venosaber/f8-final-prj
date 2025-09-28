@@ -26,7 +26,7 @@ export default function ExamsList({exams, handleEditExam}:
                                 }}>
                                     Đề bài: {exam.name}
                                 </Typography>
-                                <Button onClick={() => handleEditExam(exam.id!)}>Sửa</Button>
+                                <Button onClick={() => handleEditExam(exam.id!)}>Sửa / Xóa</Button>
                             </Box>
 
                             <Typography>Mã đề: {exam.code}</Typography>

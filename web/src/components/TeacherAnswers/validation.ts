@@ -1,21 +1,21 @@
 import type {ExamFormValidationData} from "./types.ts";
 
-export const validateExamForm = (data: ExamFormValidationData): {isValid: boolean, message?: string} => {
+export const validateExamForm = (data: ExamFormValidationData): { isValid: boolean, message?: string } => {
     const {name, code, total_time, questions, number_of_question, fileUrl} = data;
 
-    if(!name || !code) {
+    if (!name || !code) {
         return {isValid: false, message: 'Hãy điền đầy đủ tên đề và mã đề!'};
     }
 
-    if(total_time <= 0 || isNaN(total_time)) {
+    if (total_time <= 0 || isNaN(total_time)) {
         return {isValid: false, message: 'Thời gian thi phải là số dương!'};
     }
 
-    if(Number(number_of_question) <= 0 || isNaN(Number(number_of_question))) {
+    if (Number(number_of_question) <= 0 || isNaN(Number(number_of_question))) {
         return {isValid: false, message: 'Số câu hỏi phải là số dương!'};
     }
 
-    if(!fileUrl) {
+    if (!fileUrl) {
         return {isValid: false, message: 'Chưa upload đề thi!'};
     }
 

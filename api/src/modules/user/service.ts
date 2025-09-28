@@ -34,23 +34,6 @@ export class UserService
     }
 
     // remove password for security
-    // remove id to avoid conflict when joining with FileEntity
-    protected getPublicColumns(): string[] {
-        return super.getPublicColumns().filter((column) => !['password', 'avatar', 'id'].includes(column));
-    }
-
-    protected handleSelect(): SelectQueryBuilder<UserEntity> {
-        return this.repository
-            .createQueryBuilder(this.getTableName())
-            .select('user.id AS id')    // avoid conflict with FileEntity.id
-            .addSelect(this.getPublicColumns())
-            .addSelect(`
-            CASE WHEN user_file.id IS NULL THEN NULL
-                 ELSE json_build_object('id', user_file.id, 'url', user_file.url)
-            END as avatar_info
-        `)
-            .leftJoin('user.file', 'user_file');
-    }
 
     async findUserByEmailWithPassword(email: string): Promise<UserWithPassI | null> {
         const response: UserWithPassI | undefined = await this.handleSelect()
@@ -61,16 +44,7 @@ export class UserService
         return response;
     }
 
-    private async findUserByIdWithPassword(id: number): Promise<UserWithPassI | null> {
-        const response: UserWithPassI | undefined = await this.handleSelect()
-            .addSelect('user.password AS password')
-            .where('user.id = :id and user.active = :active', {id: id, active: true})
-            .getRawOne<UserWithPassI>();
-        if (!response) return null;
-        return response;
-    }
-
-    async changePassword(data: ChangePasswordReqI){
+    async changePassword(data: ChangePasswordReqI) {
         const userId: number | null = this.getAuthenticatedUserId();
         if (!userId) throw new UnauthorizedException('Unauthorized');
 
@@ -93,5 +67,32 @@ export class UserService
         await this.repository.update({id: userId}, {password: hashedPassword});
         return {msg: 'Successfully changed password'};
 
+    }
+
+    // remove id to avoid conflict when joining with FileEntity
+    protected getPublicColumns(): string[] {
+        return super.getPublicColumns().filter((column) => !['password', 'avatar', 'id'].includes(column));
+    }
+
+    protected handleSelect(): SelectQueryBuilder<UserEntity> {
+        return this.repository
+            .createQueryBuilder(this.getTableName())
+            .select('user.id AS id')    // avoid conflict with FileEntity.id
+            .addSelect(this.getPublicColumns())
+            .addSelect(`
+            CASE WHEN user_file.id IS NULL THEN NULL
+                 ELSE json_build_object('id', user_file.id, 'url', user_file.url)
+            END as avatar_info
+        `)
+            .leftJoin('user.file', 'user_file');
+    }
+
+    private async findUserByIdWithPassword(id: number): Promise<UserWithPassI | null> {
+        const response: UserWithPassI | undefined = await this.handleSelect()
+            .addSelect('user.password AS password')
+            .where('user.id = :id and user.active = :active', {id: id, active: true})
+            .getRawOne<UserWithPassI>();
+        if (!response) return null;
+        return response;
     }
 }

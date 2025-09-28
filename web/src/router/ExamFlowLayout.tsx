@@ -1,10 +1,10 @@
-import { Outlet } from 'react-router-dom';
-import { ExamFlowProvider } from '../contexts/ExamFlowProvider';
+import {Outlet} from 'react-router-dom';
+import {ExamFlowProvider} from '../contexts/ExamFlowProvider';
 
 const ExamFlowLayout = () => {
     return (
         <ExamFlowProvider>
-            <Outlet />
+            <Outlet/>
         </ExamFlowProvider>
     );
 };

@@ -175,7 +175,7 @@ export default function DrawerAppBar() {
         <Box>
             <Box sx={{p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                 <Box sx={{p: '10px'}}/>
-                <Button onClick={()=>navigate('/classes')}>
+                <Button onClick={() => navigate('/classes')}>
                     <CustomLogoIcon/>
                 </Button>
                 <button onClick={handleDrawerToggle} style={{border: 'none', background: 'none', cursor: 'pointer'}}>
@@ -222,7 +222,7 @@ export default function DrawerAppBar() {
 
                     {/* Logo Section */}
                     <Button sx={{display: 'flex', alignItems: 'center', cursor: 'pointer', textTransform: 'none'}}
-                            onClick={()=>navigate('/classes')}
+                            onClick={() => navigate('/classes')}
                     >
                         <Box sx={{display: {xs: 'none', lg: 'block'}}}>
                             <CustomLogoIcon/>
@@ -312,7 +312,7 @@ export default function DrawerAppBar() {
                             {/*Placeholder avatar*/}
                             {
                                 user.avatar_info !== null
-                                ? <Avatar sx={{width: 36, height: 36, mr: 1}} src={user.avatar_info.url} />
+                                    ? <Avatar sx={{width: 36, height: 36, mr: 1}} src={user.avatar_info.url}/>
                                     : <AvatarDefault fullName={user.name} width={36} height={36} mr={1}/>
                             }
 

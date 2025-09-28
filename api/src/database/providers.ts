@@ -1,5 +1,5 @@
-import { DataSource } from 'typeorm';
-import { DATA_SOURCE } from "@/shares";
+import {DataSource} from 'typeorm';
+import {DATA_SOURCE} from "@/shares";
 import {PasswordResetTokenEntity} from "@/modules/password_reset_token/entity";
 import {UserEntity} from "@/modules/user/entity";
 import {FileEntity} from "@/modules/file/entity";
@@ -10,7 +10,7 @@ import {UserSubscriber} from "@/modules/user/subscriber";
 import {ExamGroupEntity} from "@/modules/exam_group/entity";
 import {QuestionEntity} from "@/modules/question/entity";
 import {ExamEntity} from "@/modules/exam/entity";
-import { addTransactionalDataSource } from 'typeorm-transactional';
+import {addTransactionalDataSource} from 'typeorm-transactional';
 import {ExamGroupSubscriber} from "@/modules/exam_group/subscriber";
 import {ExamSubscriber} from "@/modules/exam/subscriber";
 import {AnswerEntity} from "@/modules/answer/entity";

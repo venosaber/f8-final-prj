@@ -10,8 +10,7 @@ import {FileReq} from "@/modules/file/dtos";
 
 @Injectable()
 export class FileService extends BaseService<FileEntity, FileReqI, FileI>
-    implements FileServiceI
-{
+    implements FileServiceI {
     constructor(
         @Inject(FileEntityRepository)
         protected repository: Repository<FileEntity>,
@@ -21,22 +20,8 @@ export class FileService extends BaseService<FileEntity, FileReqI, FileI>
         super(repository, cls)
     }
 
-    private getFileTypeFromMimeType(mimeType: string): string {
-        const mimeToExtension: { [key: string]: string } = {
-            'application/pdf': 'pdf',
-            'application/msword': 'doc',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
-            'application/vnd.ms-excel': 'xls',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
-            'text/plain': 'txt'
-        };
-
-        return mimeToExtension[mimeType] || 'unknown';
-    }
-
-
     async uploadAndCreateFile(file: Express.Multer.File): Promise<FileI> {
-        try{
+        try {
             // upload the file to cloudinary
             const cloudinaryResponse: UploadApiResponse =
                 await this.cloudinaryService.uploadFile(file);
@@ -76,6 +61,19 @@ export class FileService extends BaseService<FileEntity, FileReqI, FileI>
             console.error('Error in uploadAndCreateFile:', error);
             throw new Error(`Failed to upload and create file: ${error.message}`);
         }
+    }
+
+    private getFileTypeFromMimeType(mimeType: string): string {
+        const mimeToExtension: { [key: string]: string } = {
+            'application/pdf': 'pdf',
+            'application/msword': 'doc',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+            'application/vnd.ms-excel': 'xls',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
+            'text/plain': 'txt'
+        };
+
+        return mimeToExtension[mimeType] || 'unknown';
     }
 
     // create url for viewing a file directly in the browser

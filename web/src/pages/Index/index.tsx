@@ -33,14 +33,14 @@ export default function Index() {
                     <Button variant={'outlined'}
                             sx={{p: 2, border: '2px solid #0000ff', width: '200px'}}
                             size={'large'}
-                            onClick={()=>navigate('/login')}>
+                            onClick={() => navigate('/login')}>
                         <Typography variant={'body1'} sx={{color: '#0000ff'}}>Đăng nhập</Typography>
                     </Button>
 
                     <Button variant={'contained'}
                             sx={{p: 2, border: '2px solid #0000ff', backgroundColor: '#0000ff', width: '200px'}}
                             size={'large'}
-                            onClick={()=>navigate('/register')}>
+                            onClick={() => navigate('/register')}>
                         <Typography variant={'body1'} sx={{color: '#ffffff'}}>Đăng ký</Typography>
                     </Button>
                 </Box>

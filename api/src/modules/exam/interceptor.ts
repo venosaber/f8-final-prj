@@ -16,7 +16,7 @@ export class ExamInterceptor extends BaseDataInterceptor {
         const userRole: Role = request.user.role;
 
         // if the user's role is not teacher and the item has questions
-        if(item && typeof item === 'object' && Array.isArray(item.questions)){
+        if (item && typeof item === 'object' && Array.isArray(item.questions)) {
             if (userRole !== Role.TEACHER) {
                 const transformedItem = {...item};
                 transformedItem.questions = transformedItem.questions.map(q => {

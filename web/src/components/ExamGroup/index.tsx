@@ -24,11 +24,11 @@ export default function ExamGroup() {
         onMounted();
     }, []);
 
-    if(userRole === 'student') {
-        return <StudentExamGroup />
+    if (userRole === 'student') {
+        return <StudentExamGroup/>
     }
-    if(userRole === 'teacher') {
-        return <TeacherExamGroup />
+    if (userRole === 'teacher') {
+        return <TeacherExamGroup/>
     }
 
     return <></>

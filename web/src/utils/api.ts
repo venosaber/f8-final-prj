@@ -1,10 +1,10 @@
 import api from '../plugins/api.ts'
 
 export const getMethod = async (endpoint: string) => {
-    try{
+    try {
         const {data} = await api.get(endpoint);
         return data;
-    }catch(e){
+    } catch (e) {
         console.log(e);
     }
 
@@ -12,10 +12,10 @@ export const getMethod = async (endpoint: string) => {
 }
 
 export const postMethod = async (endpoint: string, payload: unknown) => {
-    try{
+    try {
         const {data} = await api.post(endpoint, payload);
         return data;
-    }catch(e){
+    } catch (e) {
         console.log(e);
     }
 

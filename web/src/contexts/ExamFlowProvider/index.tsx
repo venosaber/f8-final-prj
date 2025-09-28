@@ -50,10 +50,16 @@ export function ExamFlowProvider({children}: { children: ReactNode }) {
         setIsLoading(true);
 
         const accessToken = await getValidAccessToken();
-        if (!accessToken) { navigate('/login'); return; }
+        if (!accessToken) {
+            navigate('/login');
+            return;
+        }
 
         const userInfo = getUserInfo(accessToken);
-        if (!userInfo || !userInfo.sub) { navigate('/login'); return; }
+        if (!userInfo || !userInfo.sub) {
+            navigate('/login');
+            return;
+        }
 
         const currentUserId: number = Number(userInfo.sub);
         setUserId(currentUserId);
@@ -82,12 +88,18 @@ export function ExamFlowProvider({children}: { children: ReactNode }) {
                 const remainingTime: number = examGroupData.await_time - elapsed;
 
                 if (remainingTime > 0) {
-                    processedExams = processedExams.map(exam => exam.id === Number(unlockingExamId) ? { ...exam, status: 'unlocking' } : exam);
+                    processedExams = processedExams.map(exam => exam.id === Number(unlockingExamId) ? {
+                        ...exam,
+                        status: 'unlocking'
+                    } : exam);
                     setIsUnlocking(true);
                     setAwaitingTime(remainingTime);
                 } else {
                     // when timeout, change status from 'unlocking' to 'unlocked' and clear localStorage
-                    processedExams = processedExams.map(exam => exam.id === Number(unlockingExamId) ? { ...exam, status: 'unlocked' } : exam);
+                    processedExams = processedExams.map(exam => exam.id === Number(unlockingExamId) ? {
+                        ...exam,
+                        status: 'unlocked'
+                    } : exam);
 
                     localStorage.removeItem(`unlockStartTime-${currentUserId}-${examGroupId}`);
                     localStorage.removeItem(`unlockingExamId-${currentUserId}-${examGroupId}`);
@@ -99,7 +111,10 @@ export function ExamFlowProvider({children}: { children: ReactNode }) {
                 if (!hasActiveExam) {
                     const firstLockedIndex: number = processedExams.findIndex(e => e.status === 'locked');
                     if (firstLockedIndex !== -1) {
-                        processedExams = processedExams.map((exam, index) => index === firstLockedIndex ? { ...exam, status: 'unlocked' } : exam);
+                        processedExams = processedExams.map((exam, index) => index === firstLockedIndex ? {
+                            ...exam,
+                            status: 'unlocked'
+                        } : exam);
                     }
                 }
             }
@@ -134,8 +149,8 @@ export function ExamFlowProvider({children}: { children: ReactNode }) {
             }
 
             return prevExams.map(exam => {
-                if (exam.id === completedExamId) return { ...exam, status: 'completed' };
-                if (exam.id === nextExamToUnlockId) return { ...exam, status: 'unlocking' };
+                if (exam.id === completedExamId) return {...exam, status: 'completed'};
+                if (exam.id === nextExamToUnlockId) return {...exam, status: 'unlocking'};
                 return exam;
             });
         });
@@ -159,7 +174,7 @@ export function ExamFlowProvider({children}: { children: ReactNode }) {
                     setExamsWithStatus(prevExams =>
                         prevExams.map(exam =>
                             exam.id === Number(unlockingExamId)
-                                ? { ...exam, status: 'unlocked' }
+                                ? {...exam, status: 'unlocked'}
                                 : exam
                         )
                     );
@@ -172,7 +187,15 @@ export function ExamFlowProvider({children}: { children: ReactNode }) {
         }
     }, [isUnlocking, awaitingTime, userId, activeExamGroupId]);
 
-    const value = { isLoading, examsWithStatus, examGroupDetail, awaitingTime, isUnlocking, startUnlockTimer, initializeExamData };
+    const value = {
+        isLoading,
+        examsWithStatus,
+        examGroupDetail,
+        awaitingTime,
+        isUnlocking,
+        startUnlockTimer,
+        initializeExamData
+    };
 
     return <ExamFlowContext.Provider value={value}>{children}</ExamFlowContext.Provider>;
 }

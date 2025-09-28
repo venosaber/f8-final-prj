@@ -13,7 +13,7 @@ export const getCookie = (name: string): string | null => {
 
 export const setCookie = (name: string, value: string, maxAgeInSeconds?: number) => {
     let cookieString: string = `${name}=${value}; path=/; secure; samesite=strict`;
-    if(maxAgeInSeconds){
+    if (maxAgeInSeconds) {
         cookieString += `; max-age=${maxAgeInSeconds}`;
     }
     document.cookie = cookieString;
@@ -26,7 +26,7 @@ export const deleteCookie = (name: string) => {
 /******** JWT utils ********/
 export const isTokenExpired = (token: string): boolean => {
     try {
-        const { exp } = jwtDecode<DecodedJWT>(token);
+        const {exp} = jwtDecode<DecodedJWT>(token);
         const now: number = Date.now() / 1000;
         return exp < now;
     } catch {
@@ -49,8 +49,8 @@ export const refreshToken = async () => {
     if (!refreshToken) throw new Error('No refreshToken');
 
     try {
-        const payload = { refreshToken: refreshToken }
-        const {accessToken: newAccessToken, refreshToken: newRefreshToken } = await postMethod('/auth/refresh', payload);
+        const payload = {refreshToken: refreshToken}
+        const {accessToken: newAccessToken, refreshToken: newRefreshToken} = await postMethod('/auth/refresh', payload);
 
         setNewAccessToken(newAccessToken);
         setNewRefreshToken(newRefreshToken);
@@ -97,7 +97,7 @@ export const setNewAccessToken = (accessToken: string) => {
 
 // set a new refreshToken after login or refresh
 export const setNewRefreshToken = (refreshToken: string) => {
-    if(!refreshToken) return;
+    if (!refreshToken) return;
 
     // Conditionally set refreshToken depending on rememberMe
     if (localStorage.getItem('rememberMe') === 'true') {
@@ -105,7 +105,7 @@ export const setNewRefreshToken = (refreshToken: string) => {
         const expiresAt: number = parseInt(localStorage.getItem('refreshTokenExpiresAt') || '0');
         const remainingMs: number = expiresAt - Date.now();
         if (remainingMs > 0) {
-            setCookie('refreshToken', refreshToken, Math.floor(remainingMs/1000));
+            setCookie('refreshToken', refreshToken, Math.floor(remainingMs / 1000));
         } else {
             // refreshToken is already expired
             deleteCookie('refreshToken');

@@ -6,7 +6,7 @@ import {getUserInfo, getValidAccessToken} from "../../router/auth.ts";
 import type {User, AvatarInfo} from "../../utils/types";
 import {getMethod, postMethod, putMethod} from "../../utils/api.ts";
 import {useNavigate} from 'react-router-dom';
-import { toast } from 'react-toastify';
+import {toast} from 'react-toastify';
 
 interface InfoForm {
     name: string,
@@ -227,14 +227,14 @@ export default function Profile() {
         formData.append('parent_name', infoFormData.parent_name);
         formData.append('parent_phone', infoFormData.parent_phone);
 
-        if(avatarFile){
+        if (avatarFile) {
             formData.append('avatar', avatarFile);
         }
 
         const response = await putMethod(`/${role}s/${userId}`, formData)
-        if(response !== null){
+        if (response !== null) {
             toast.success('Cập nhật thông tin thành công!');
-        }else{
+        } else {
             toast.error('Cập nhật thất bại!')
         }
 
@@ -254,7 +254,7 @@ export default function Profile() {
             validate.old_password(passwordFormData.old_password)
             && validate.new_password(passwordFormData.new_password)
             && validate.confirm_new_password(passwordFormData.confirm_new_password);
-        if(!isValid) return;
+        if (!isValid) return;
 
         // submit logic
         const payload = {
@@ -264,20 +264,19 @@ export default function Profile() {
 
         const response = await postMethod('/users/change-password', payload);
 
-        if(!response){
-           toast.error('Sai mật khẩu cũ!');
-        }else{
+        if (!response) {
+            toast.error('Sai mật khẩu cũ!');
+        } else {
             toast.success('Thay đổi mật khẩu thành công!');
         }
 
     }
 
 
-
     useEffect(() => {
         const onMounted = async () => {
             const accessToken: string | null = await getValidAccessToken();
-            if(!accessToken){
+            if (!accessToken) {
                 console.error("No valid access token, redirecting to login page");
                 navigate('/login');
                 return;
@@ -287,7 +286,7 @@ export default function Profile() {
             setUserId(Number(sub));
             setRole(role);
 
-            try{
+            try {
                 const userData: User = await getMethod(`/${role}s/${sub}`);
 
                 const {name, email, school, parent_name, parent_phone, avatar_info} = userData;
@@ -300,16 +299,16 @@ export default function Profile() {
                     parent_phone: parent_phone || '',
                     avatar_info: avatar_info || null
                 })
-            }catch (err) {
-                console.error("Error on loading courses: ",err);
-            }finally {
+            } catch (err) {
+                console.error("Error on loading courses: ", err);
+            } finally {
                 setIsLoadingInfo(false);
             }
         }
         onMounted();
     }, [navigate]);
 
-    if(isLoadingInfo) return <Loading />
+    if (isLoadingInfo) return <Loading/>
 
     return (
         <>

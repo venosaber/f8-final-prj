@@ -38,7 +38,7 @@ export interface ExamGroup {
     is_save_local: boolean
 }
 
-export interface Exam{
+export interface Exam {
     id?: number,
     name: string,
     code: string,
@@ -50,31 +50,31 @@ export interface Exam{
     file: ExamFile | null,
 }
 
-export interface ExamFile{
+export interface ExamFile {
     id: number | null,
     url?: string,
     file_type?: string
 }
 
-export interface ExamWithStatus extends Exam{
+export interface ExamWithStatus extends Exam {
     status: string
 }
 
-export interface Question{
+export interface Question {
     type: string,
     correct_answer: string,
     index: number,
     id?: number
 }
 
-export interface Answer{
+export interface Answer {
     questionId: number,
     questionIndex: number,
     questionType: string,
     answer: string
 }
 
-export interface AnswerResult{
+export interface AnswerResult {
     id: number | null,
     question_id: number,
     index: number,
@@ -83,7 +83,7 @@ export interface AnswerResult{
     type: string
 }
 
-export interface ExamDoing{
+export interface ExamDoing {
     examName: string,
     examCode: string,
     examFile: ExamFile,
@@ -92,7 +92,7 @@ export interface ExamDoing{
     device: string
 }
 
-export interface ExamResult{
+export interface ExamResult {
     id: number,
     exam_id: number,
     user_id: number,
@@ -105,7 +105,7 @@ export interface ExamResult{
     device: string
 }
 
-export interface StudentResultGroup extends Member{
+export interface StudentResultGroup extends Member {
     results: ExamResult[]
 }
 

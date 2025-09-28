@@ -1,6 +1,6 @@
-import { Box, CircularProgress, Typography } from '@mui/material';
+import {Box, CircularProgress, Typography} from '@mui/material';
 
-export default function ProgressCircle({ value, total }: { value: number, total: number }) {
+export default function ProgressCircle({value, total}: { value: number, total: number }) {
     const percent: number = (value / total) * 100;
 
     return (

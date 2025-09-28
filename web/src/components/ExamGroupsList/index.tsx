@@ -89,39 +89,39 @@ export default function ExamsContent({course}: { course: Course }) {
 
                     <Box sx={{display: {xs: 'block', md: 'inline-flex'}}}>
                         <Box sx={{display: {xs: 'block', sm: 'inline-flex'}, gap: 2}}>
-                        <TextField
-                            placeholder="Tìm kiếm"
-                            variant="outlined"
-                            size="small"
-                            value={searchQuery}
-                            onChange={handleSearchChange}
-                            slotProps={{
-                                input: {
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <SearchIcon color="action"/>
-                                        </InputAdornment>
-                                    )
-                                },
+                            <TextField
+                                placeholder="Tìm kiếm"
+                                variant="outlined"
+                                size="small"
+                                value={searchQuery}
+                                onChange={handleSearchChange}
+                                slotProps={{
+                                    input: {
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <SearchIcon color="action"/>
+                                            </InputAdornment>
+                                        )
+                                    },
 
-                            }}
-                            sx={{backgroundColor: "#fff", flexShrink: 0, minWidth: '300px', mb: 2}}
-                        />
+                                }}
+                                sx={{backgroundColor: "#fff", flexShrink: 0, minWidth: '300px', mb: 2}}
+                            />
 
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={handleCreateExamGroup}
-                            // not allowing students to create an exam group
-                            sx={{
-                                display: userRole === 'student' ? 'none' : {xs: 'block', sm: 'inline-flex'},
-                                flexShrink: 0, mb: 2
-                            }}
-                        >
-                            <Box sx={{display: 'flex', alignItems: 'center ', gap: '5px'}}>
-                                <AddIcon/> <Typography>Tạo bài thi</Typography>
-                            </Box>
-                        </Button>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleCreateExamGroup}
+                                // not allowing students to create an exam group
+                                sx={{
+                                    display: userRole === 'student' ? 'none' : {xs: 'block', sm: 'inline-flex'},
+                                    flexShrink: 0, mb: 2
+                                }}
+                            >
+                                <Box sx={{display: 'flex', alignItems: 'center ', gap: '5px'}}>
+                                    <AddIcon/> <Typography>Tạo bài thi</Typography>
+                                </Box>
+                            </Button>
                         </Box>
                     </Box>
                 </Box>

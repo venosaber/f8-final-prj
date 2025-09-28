@@ -59,7 +59,7 @@ export default function TeacherMarking() {
             } catch (e) {
                 console.error('Error on loading data: ', e);
                 toast.error('Có lỗi khi tải dữ liệu!')
-            } finally{
+            } finally {
                 setIsLoading(false);
             }
         }
@@ -88,7 +88,7 @@ export default function TeacherMarking() {
             </Box>
 
             <Box sx={{backgroundColor: "#ffffff"}}>
-                <BasicTabs examResults={examResults} matchExam={matchExam} onSaveSuccess={fetchResultData} />
+                <BasicTabs examResults={examResults} matchExam={matchExam} onSaveSuccess={fetchResultData}/>
             </Box>
         </>
     )
@@ -157,7 +157,7 @@ function BasicTabs({examResults, matchExam, onSaveSuccess}: BasicTabsProps) {
                     const matchedExam: Exam = matchExam(examResult)!;
                     return (
                         <CustomTabPanel key={examResult.id} index={index} value={value}>
-                            <RemarkingDetail examResult={examResult} exam={matchedExam} onSaveSuccess={onSaveSuccess} />
+                            <RemarkingDetail examResult={examResult} exam={matchedExam} onSaveSuccess={onSaveSuccess}/>
                         </CustomTabPanel>
                     )
                 })

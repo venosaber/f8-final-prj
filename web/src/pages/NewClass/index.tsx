@@ -3,7 +3,7 @@ import {Box, Button, Container, Grid, Paper, TextField, Typography} from "@mui/m
 import {useNavigate} from "react-router-dom";
 import {type ChangeEvent, type FocusEvent, type FormEvent, useRef, useState} from "react";
 import {postMethod} from "../../utils/api.ts";
-import { toast } from 'react-toastify';
+import {toast} from 'react-toastify';
 import CircularProgress from "@mui/material/CircularProgress";
 
 interface NewClassForm {
@@ -11,7 +11,7 @@ interface NewClassForm {
     code: string
 }
 
-function NewClass(){
+function NewClass() {
 
     const navigate = useNavigate();
 
@@ -86,7 +86,7 @@ function NewClass(){
         e.preventDefault();
 
         // check the flag immediately
-        if(isLocked.current){
+        if (isLocked.current) {
             return;
         }
 
@@ -116,7 +116,7 @@ function NewClass(){
         }
 
         const response = await postMethod('/classes', payload)
-        if(!response){
+        if (!response) {
             toast.error('Tạo lớp học không thành công!');
         } else {
             toast.success('Tạo lớp học mới thành công!');
@@ -174,7 +174,7 @@ function NewClass(){
                         <Box component={'form'} sx={{width: '100%'}}
                              onSubmit={onSubmit}
                         >
-                            <Typography>Tên lớp học <span style={{color:'#ff0000'}}>*</span></Typography>
+                            <Typography>Tên lớp học <span style={{color: '#ff0000'}}>*</span></Typography>
                             <TextField fullWidth size={'small'} sx={{my: 1}}
                                        placeholder={"Nhập tên lớp học"}
 
@@ -186,7 +186,7 @@ function NewClass(){
                                        helperText={touched.name && helperTexts.name}
                             />
 
-                            <Typography>Mã bảo vệ <span style={{color:'#ff0000'}}>*</span></Typography>
+                            <Typography>Mã bảo vệ <span style={{color: '#ff0000'}}>*</span></Typography>
                             <TextField fullWidth size={'small'} sx={{my: 1}}
                                        placeholder={"Nhập mã bảo vệ"}
 
@@ -199,9 +199,11 @@ function NewClass(){
                             />
 
                             {/* Buttons */}
-                            <Grid container sx={{mt: 2, mb: 2,
-                            display: 'flex', justifyContent: 'center', alignItems: 'center'}} spacing={2}>
-                                <Grid size={{xs: 4}}>
+                            <Grid container sx={{
+                                mt: 2, mb: 2,
+                                display: 'flex', justifyContent: 'center', alignItems: 'center'
+                            }} spacing={2}>
+                                <Grid size={{xs: 6}}>
                                     <Button
                                         fullWidth variant={'outlined'}
                                         color={'primary'} sx={{fontWeight: '600', borderRadius: 2}}
@@ -209,17 +211,19 @@ function NewClass(){
                                     >Hủy</Button>
                                 </Grid>
 
-                                <Grid size={{xs: 4}}>
+                                <Grid size={{xs: 6}}>
                                     <Button
                                         fullWidth variant={'contained'}
                                         color={'primary'}
-                                        sx={{fontWeight: '600', borderRadius: 2,
-                                            display: 'flex', alignItems: 'center', gap: '5px' }}
+                                        sx={{
+                                            fontWeight: '600', borderRadius: 2,
+                                            display: 'flex', alignItems: 'center', gap: '5px'
+                                        }}
                                         type={'submit'}
                                         disabled={isWaiting}
                                     >
                                         Tạo mới
-                                        {isWaiting && <CircularProgress color={'inherit'} size={20} /> }
+                                        {isWaiting && <CircularProgress color={'inherit'} size={20}/>}
                                     </Button>
                                 </Grid>
                             </Grid>

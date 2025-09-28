@@ -337,7 +337,7 @@ export default function ExamGroupDialog({
                                 onClick={() => {
                                     setIsDeleting(false);
                                     handleCloseDialog();
-                                    }
+                                }
                                 }
                             >
                                 Hủy

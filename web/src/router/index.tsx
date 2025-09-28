@@ -1,6 +1,6 @@
-import { createBrowserRouter } from 'react-router-dom'
+import {createBrowserRouter} from 'react-router-dom'
 
-import {Login, Register, Classes, ClassDetail, NewClass, Profile, Invite, NotFound, Index} from '../pages'
+import {Login, Register, Classes, ClassDetail, NewClass, EditClass, Profile, Invite, NotFound, Index} from '../pages'
 import {default as PublicLayout} from './PublicLayout'
 import {default as ProtectedLayout} from './ProtectedLayout'
 import {default as ExamFlowLayout} from './ExamFlowLayout'
@@ -9,61 +9,65 @@ import {StudentExamDetail} from "../components";
 
 const router = createBrowserRouter([
     {
-        element: <PublicLayout />,
+        element: <PublicLayout/>,
         children: [
             {
                 path: '/login',
-                element: <Login />
+                element: <Login/>
             },
             {
                 path: '/register',
-                element: <Register />
+                element: <Register/>
             }
         ]
     },
     {
-        element: <ProtectedLayout />,
+        element: <ProtectedLayout/>,
         children: [
             {
                 path: '/classes',
-                element: <Classes />
+                element: <Classes/>
             },
             {
                 path: '/class/add',
-                element: <NewClass />
+                element: <NewClass/>
+            },
+            {
+                path: '/class/edit/:classId',
+                element: <EditClass/>
             },
             {
                 path: '/profile',
-                element: <Profile />
+                element: <Profile/>
             },
 
             {
-                element: <ExamFlowLayout />,
+                element: <ExamFlowLayout/>,
                 children: [
                     {
                         path: '/class/:id/*',
-                        element: <ClassDetail />
+                        element: <ClassDetail/>
                     },
                     {
                         path: '/class/:id/exam/:examGroupId/doing',
-                        element: <StudentExamDetail />
+                        element: <StudentExamDetail/>
                     },
                 ]
             }
         ],
-        errorElement: <NotFound />
+        errorElement: <NotFound/>
     },
     {
         path: '/invite',
-        element: <Invite />
+        element: <Invite/>
     },
     {
         path: '/',
-        element: <Index />
+        element: <Index/>
     },
     {
         path: '*',
-        element: <NotFound />
+        element: <NotFound/>
     }
 ])
 

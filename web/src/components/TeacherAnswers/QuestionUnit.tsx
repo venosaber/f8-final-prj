@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import type {ChangeEvent} from "react";
 import {memo} from "react";
-import type { QuestionUnitProps } from './types.ts';
+import type {QuestionUnitProps} from './types.ts';
 
 
 const QuestionUnit = ({question, onTypeChange, onAnswerChange, isDisplay}: QuestionUnitProps) => {

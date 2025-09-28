@@ -46,7 +46,7 @@ export default function MembersContent({course}: MembersContentProps) {
                                 <TableCell>{member.name}</TableCell>
                                 <TableCell>
                                     <Chip
-                                        label={member.role === "student"?"Học sinh":"Giáo viên"}
+                                        label={member.role === "student" ? "Học sinh" : "Giáo viên"}
                                         size="small"
                                         sx={{
                                             backgroundColor: member.role === 'teacher' ? 'rgba(255, 118, 117, 0.5)' : 'rgb(46, 204, 113)',

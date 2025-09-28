@@ -13,10 +13,11 @@ export class UserController {
     constructor(
         @Inject(UserServiceToken)
         private readonly userService: UserServiceI
-    ) {}
+    ) {
+    }
 
     @Post('change-password')
-    changePassword(@Body() data: ChangePasswordReq){
+    changePassword(@Body() data: ChangePasswordReq) {
         return this.userService.changePassword(data);
     }
 }

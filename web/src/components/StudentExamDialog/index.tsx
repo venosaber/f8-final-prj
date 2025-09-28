@@ -21,7 +21,7 @@ export default function StudentExamDialog({
     const isLocked = useRef<boolean>(false);
     const [isWaiting, setIsWaiting] = useState<boolean>(false);
 
-    const onSubmitEarly = async ()=>{
+    const onSubmitEarly = async () => {
         // check the flag immediately
         if (isLocked.current) return;
 
@@ -118,7 +118,7 @@ export default function StudentExamDialog({
                                     >
                                         Xác nhận
 
-                                        {(isWaiting && <CircularProgress color={'inherit'} size={20} /> )}
+                                        {(isWaiting && <CircularProgress color={'inherit'} size={20}/>)}
                                     </Button>
                                 </Grid>
                             </Grid>
@@ -148,9 +148,9 @@ export default function StudentExamDialog({
                             </Box>
 
                             <Box sx={{textAlign: 'center'}}>
-                            <Typography variant="h6" component="p">
-                                Đáp án đã được ghi lại.
-                            </Typography>
+                                <Typography variant="h6" component="p">
+                                    Đáp án đã được ghi lại.
+                                </Typography>
                             </Box>
 
                             {/* Buttons */}
