@@ -337,7 +337,6 @@ function RegisterPage() {
                         <Typography>Nhập lại mật khẩu</Typography>
                         <TextField fullWidth size={'small'} sx={{my: 1}}
                                    placeholder={"Nhập lại mật khẩu"}
-                                   type={"password"}
 
                                    name={"confirmPassword"}
                                    value={formData.confirmPassword}
@@ -345,6 +344,26 @@ function RegisterPage() {
                                    onBlur={handleBlur}
                                    error={touched.confirmPassword && Boolean(helperTexts.confirmPassword)}
                                    helperText={touched.confirmPassword && helperTexts.confirmPassword}
+
+                                   type={showPassword ? 'text' : 'password'}
+                                   slotProps={{
+                                       input: {
+                                           endAdornment:
+                                               <InputAdornment position="end">
+                                                   <IconButton
+                                                       aria-label={
+                                                           showPassword ? 'hide the password' : 'display the password'
+                                                       }
+                                                       onClick={handleClickShowPassword}
+                                                       onMouseDown={handleMouseDownPassword}
+                                                       onMouseUp={handleMouseUpPassword}
+                                                       edge="end"
+                                                   >
+                                                       {showPassword ? <VisibilityOff/> : <Visibility/>}
+                                                   </IconButton>
+                                               </InputAdornment>
+                                       }
+                                   }}
                         />
 
                         {/* Buttons */}
