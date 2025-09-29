@@ -51,8 +51,12 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        // if the error is 401 Unauthorized and this request hasn't been retried
-        if (error.response.status === 401 && !originalRequest._retry) {
+        // if the error is 401 Unauthorized, NOT from the login endpoint, and this request hasn't been retried
+        if (
+            error.response?.status === 401
+            && originalRequest.url !== '/auth/login'
+            && !originalRequest._retry
+        ) {
             if (isRefreshing) {
                 // if there is another refresh process running, add this request to a queue
                 return new Promise((resolve, reject) => {
@@ -106,6 +110,8 @@ api.interceptors.response.use(
                 isRefreshing = false;
             }
         }
+
+        return Promise.reject(error);
     }
 )
 
