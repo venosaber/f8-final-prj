@@ -19,7 +19,7 @@ function Classes() {
     }
 
     const [user, setUser] = useState({name: '', role: ''});
-    const displayAddClassButton = user.role === 'teacher' ? 'inline-flex' : 'none';
+    const displayAddClassButton = user.role === 'student' ? 'none' : 'inline-flex';
     const [courses, setCourses] = useState<Course[]>([]);
 
     const [searchStr, setSearchStr] = useState('');

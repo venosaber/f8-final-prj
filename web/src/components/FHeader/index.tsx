@@ -111,7 +111,7 @@ export default function DrawerAppBar() {
     const [className, setClassName] = useState<string>('');
 
     const [user, setUser] = useState<UserBaseInfo>({name: '', role: '', avatar_info: null});
-    const displayAddClassButton = user.role === 'teacher' ? 'inline-flex' : 'none';
+    const displayAddClassButton = user.role === 'student' ? 'none' : 'inline-flex';
     const {id: classId} = useParams();
 
     useEffect(() => {

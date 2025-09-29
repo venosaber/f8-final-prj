@@ -26,8 +26,7 @@ export default function ExamGroup() {
 
     if (userRole === 'student') {
         return <StudentExamGroup/>
-    }
-    if (userRole === 'teacher') {
+    } else  {
         return <TeacherExamGroup/>
     }
 
