@@ -1,12 +1,14 @@
 import {FHeader, Loading} from "../../components";
 import {Avatar, Box, Button, Container, Grid, Paper, TextField, Typography} from "@mui/material";
-import {type ChangeEvent, type FocusEvent, type FormEvent, useEffect} from "react";
+import {type ChangeEvent, type FocusEvent, type FormEvent, type MouseEvent, useEffect} from "react";
 import {useState} from "react";
 import {getUserInfo, getValidAccessToken} from "../../router/auth.ts";
 import type {User, AvatarInfo} from "../../utils/types";
 import {getMethod, postMethod, putMethod} from "../../utils/api.ts";
 import {useNavigate} from 'react-router-dom';
 import {toast} from 'react-toastify';
+import {InputAdornment, IconButton} from "@mui/material";
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 
 interface InfoForm {
     name: string,
@@ -272,6 +274,16 @@ export default function Profile() {
 
     }
 
+    /*********** show - hide password **************/
+    const [showPassword, setShowPassword] = useState(false);
+    const handleClickShowPassword = () => setShowPassword((show: boolean) => !show);
+
+    const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
+    const handleMouseUpPassword = (event: MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
 
     useEffect(() => {
         const onMounted = async () => {
@@ -454,7 +466,6 @@ export default function Profile() {
                                             color={'textPrimary'}>Mật khẩu cũ</Typography>
                                 <TextField fullWidth size={'small'} sx={{my: 1}}
                                            placeholder={'Nhập mật khẩu cũ của bạn'}
-                                           type={'password'}
 
                                            name={'old_password'}
                                            value={passwordFormData.old_password}
@@ -462,6 +473,26 @@ export default function Profile() {
                                            onBlur={handleBlur}
                                            error={touchedPassword.old_password && Boolean(passwordHelperTexts.old_password)}
                                            helperText={touchedPassword.old_password && passwordHelperTexts.old_password}
+
+                                           type={showPassword ? 'text' : 'password'}
+                                           slotProps={{
+                                               input: {
+                                                   endAdornment:
+                                                       <InputAdornment position="end">
+                                                           <IconButton
+                                                               aria-label={
+                                                                   showPassword ? 'hide the password' : 'display the password'
+                                                               }
+                                                               onClick={handleClickShowPassword}
+                                                               onMouseDown={handleMouseDownPassword}
+                                                               onMouseUp={handleMouseUpPassword}
+                                                               edge="end"
+                                                           >
+                                                               {showPassword ? <VisibilityOff/> : <Visibility/>}
+                                                           </IconButton>
+                                                       </InputAdornment>
+                                               }
+                                           }}
                                 />
                             </Grid>
 
@@ -473,7 +504,6 @@ export default function Profile() {
                                             color={'textPrimary'}>Mật khẩu mới</Typography>
                                 <TextField fullWidth size={'small'} sx={{my: 1}}
                                            placeholder={'Nhập mật khẩu mới của bạn'}
-                                           type={'password'}
 
                                            name={'new_password'}
                                            value={passwordFormData.new_password}
@@ -481,6 +511,26 @@ export default function Profile() {
                                            onBlur={handleBlur}
                                            error={touchedPassword.new_password && Boolean(passwordHelperTexts.new_password)}
                                            helperText={touchedPassword.new_password && passwordHelperTexts.new_password}
+
+                                           type={showPassword ? 'text' : 'password'}
+                                           slotProps={{
+                                               input: {
+                                                   endAdornment:
+                                                       <InputAdornment position="end">
+                                                           <IconButton
+                                                               aria-label={
+                                                                   showPassword ? 'hide the password' : 'display the password'
+                                                               }
+                                                               onClick={handleClickShowPassword}
+                                                               onMouseDown={handleMouseDownPassword}
+                                                               onMouseUp={handleMouseUpPassword}
+                                                               edge="end"
+                                                           >
+                                                               {showPassword ? <VisibilityOff/> : <Visibility/>}
+                                                           </IconButton>
+                                                       </InputAdornment>
+                                               }
+                                           }}
                                 />
                             </Grid>
 
@@ -489,7 +539,6 @@ export default function Profile() {
                                             color={'textPrimary'}>Nhập lại mật khẩu mới</Typography>
                                 <TextField fullWidth size={'small'} sx={{my: 1}}
                                            placeholder={'Nhập lại mật khẩu mới của bạn'}
-                                           type={'password'}
 
                                            name={'confirm_new_password'}
                                            value={passwordFormData.confirm_new_password}
@@ -497,6 +546,26 @@ export default function Profile() {
                                            onBlur={handleBlur}
                                            error={touchedPassword.confirm_new_password && Boolean(passwordHelperTexts.confirm_new_password)}
                                            helperText={touchedPassword.confirm_new_password && passwordHelperTexts.confirm_new_password}
+
+                                           type={showPassword ? 'text' : 'password'}
+                                           slotProps={{
+                                               input: {
+                                                   endAdornment:
+                                                       <InputAdornment position="end">
+                                                           <IconButton
+                                                               aria-label={
+                                                                   showPassword ? 'hide the password' : 'display the password'
+                                                               }
+                                                               onClick={handleClickShowPassword}
+                                                               onMouseDown={handleMouseDownPassword}
+                                                               onMouseUp={handleMouseUpPassword}
+                                                               edge="end"
+                                                           >
+                                                               {showPassword ? <VisibilityOff/> : <Visibility/>}
+                                                           </IconButton>
+                                                       </InputAdornment>
+                                               }
+                                           }}
                                 />
                             </Grid>
 
