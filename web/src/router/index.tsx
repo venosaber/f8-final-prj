@@ -1,6 +1,18 @@
 import {createBrowserRouter} from 'react-router-dom'
 
-import {Login, Register, Classes, ClassDetail, NewClass, EditClass, Profile, Invite, NotFound, Index} from '../pages'
+import {
+    Login,
+    Register,
+    Classes,
+    ClassDetail,
+    NewClass,
+    EditClass,
+    Profile,
+    Invite,
+    NotFound,
+    Index,
+    ForgotPassword, ResetPassword
+} from '../pages'
 import {default as PublicLayout} from './PublicLayout'
 import {default as ProtectedLayout} from './ProtectedLayout'
 import {default as ExamFlowLayout} from './ExamFlowLayout'
@@ -18,6 +30,14 @@ const router = createBrowserRouter([
             {
                 path: '/register',
                 element: <Register/>
+            },
+            {
+                path: '/forgot-password',
+                element: <ForgotPassword/>
+            },
+            {
+                path: '/reset-password',
+                element: <ResetPassword/>
             }
         ]
     },

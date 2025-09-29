@@ -114,8 +114,9 @@ function LoginPage() {
             password: formData.password
         }
         const response = await postMethod('/auth/login', payload);
-        if (!response) {
+        if (!response || !response.accessToken ) {
             toast.error('Sai email hoặc mật khẩu!');
+            return false;
         } else {
             toast.success('Đăng nhập thành công!');
             const {accessToken, refreshToken} = response;
@@ -138,6 +139,8 @@ function LoginPage() {
                 setCookie('refreshToken', refreshToken);  // session cookie
                 localStorage.removeItem('rememberMe');
             }
+
+            return true;
         }
 
     }
@@ -173,7 +176,12 @@ function LoginPage() {
             return;
         }
 
-        await login();
+        const isLoginSuccessful: boolean = await login();
+        if (!isLoginSuccessful) {
+            isLocked.current = false;
+            setIsWaiting(false);
+            return;
+        }
 
         const redirectUrl: string | null = localStorage.getItem('redirectAfterLogin');
 
@@ -325,17 +333,24 @@ function LoginPage() {
                                     }}
                                 />
 
-                                <FormControlLabel label="Ghi nhớ tôi"
-                                                  control={
-                                                      <Checkbox
-                                                          checked={rememberMe}
-                                                          onChange={(e: ChangeEvent<HTMLInputElement>) => setRememberMe(e.target.checked)}
-                                                      />}
-                                />
+                                <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                    <FormControlLabel label="Ghi nhớ tôi"
+                                                      control={
+                                                          <Checkbox
+                                                              checked={rememberMe}
+                                                              onChange={(e: ChangeEvent<HTMLInputElement>) => setRememberMe(e.target.checked)}
+                                                          />}
+                                    />
+
+                                    <Button onClick={()=> navigate('/forgot-password')}>
+                                        Quên mật khẩu?
+                                    </Button>
+                                </Box>
+
 
                                 <Button fullWidth type={'submit'} variant={'contained'}
                                         sx={{
-                                            mt: 2, mb: 2, py: 1.5,
+                                            mt: 1, mb: 1, py: 1,
                                             borderRadius: '8px',
                                             fontWeight: 'bold',
                                             display: 'flex', alignItems: 'center', gap: '10px',
@@ -346,8 +361,15 @@ function LoginPage() {
                                 </Button>
 
                                 <Box sx={{textAlign: 'center'}}>
-                                    <Button onClick={() => navigate('/register')}>
-                                        Đăng ký tài khoản mới</Button>
+                                    <Button fullWidth variant={'contained'} color={'success'}
+                                            sx={{
+                                                mt: 1, mb: 1, py: 1,
+                                                borderRadius: '8px',
+                                                fontWeight: 'bold',
+                                            }}
+                                        onClick={() => navigate('/register')}>
+                                        Đăng ký tài khoản mới
+                                    </Button>
                                 </Box>
 
                             </Box>
