@@ -5,7 +5,7 @@ import {useState} from "react";
 import {getUserInfo, getValidAccessToken} from "../../router/auth.ts";
 import type {User, AvatarInfo} from "../../utils/types";
 import {getMethod, postMethod, putMethod} from "../../utils/api.ts";
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {toast} from 'react-toastify';
 import {InputAdornment, IconButton} from "@mui/material";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
@@ -27,12 +27,12 @@ interface PasswordForm {
 
 export default function Profile() {
     const navigate = useNavigate();
+    const {profileId} = useParams();
 
-    const [userId, setUserId] = useState(0);
-    const [role, setRole] = useState('student');
+    const [profileRole, setProfileRole] = useState('student');
     const [isLoadingInfo, setIsLoadingInfo] = useState<boolean>(true);
-    const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [infoFormData, setInfoFormData] = useState<InfoForm>({
         name: '',
         email: '',
@@ -233,7 +233,7 @@ export default function Profile() {
             formData.append('avatar', avatarFile);
         }
 
-        const response = await putMethod(`/${role}s/${userId}`, formData)
+        const response = await putMethod(`/${profileRole}s/${profileId}`, formData)
         if (response !== null) {
             toast.success('Cập nhật thông tin thành công!');
         } else {
@@ -285,6 +285,9 @@ export default function Profile() {
         event.preventDefault();
     };
 
+    // check if the user who is viewing/editing is the owner of the profile info
+    const [isOwner, setIsOwner] = useState(true);
+
     useEffect(() => {
         const onMounted = async () => {
             const accessToken: string | null = await getValidAccessToken();
@@ -294,15 +297,35 @@ export default function Profile() {
                 return;
             }
 
-            const {sub, role} = getUserInfo(accessToken);
-            setUserId(Number(sub));
-            setRole(role);
+            const {sub, role: roleOfCurUser} = getUserInfo(accessToken);
+            let userData :User | null = null;
 
-            try {
-                const userData: User = await getMethod(`/${role}s/${sub}`);
+            // if sub === Number(profileId), the current user is viewing his/her own profile
+            // the role can be derived from accessToken
+            if (sub === Number(profileId)){
+                userData = await getMethod(`/${roleOfCurUser}s/${profileId}`);
+            } else {
+                console.log("sub: ", sub, typeof sub," profileId: ", profileId, typeof profileId);
+                // the only people who can view others profile info are admins
+                if (roleOfCurUser !== 'admin') {
+                    console.error("You don't have permission to view others' profile info.");
+                    navigate('/403');
+                    return;
+                } else {
+                    // the current user is an admin viewing another user's profile info
+                    // the role can only be derived from API
+                    userData = await getMethod(`/users/${profileId}`);
+                    setIsOwner(false);
+                }
+            }
 
-                const {name, email, school, parent_name, parent_phone, avatar_info} = userData;
-
+            if(!userData) {
+                console.error("Error on loading user info: ", userData);
+                navigate('/404');
+                return;
+            } else {
+                const {name, email, role, school, parent_name, parent_phone, avatar_info} = userData;
+                setProfileRole(role);
                 setInfoFormData({
                     name,
                     email,
@@ -311,14 +334,12 @@ export default function Profile() {
                     parent_phone: parent_phone || '',
                     avatar_info: avatar_info || null
                 })
-            } catch (err) {
-                console.error("Error on loading courses: ", err);
-            } finally {
-                setIsLoadingInfo(false);
             }
+
+            setIsLoadingInfo(false);
         }
         onMounted();
-    }, [navigate]);
+    }, [navigate, profileId]);
 
     if (isLoadingInfo) return <Loading/>
 
@@ -443,135 +464,139 @@ export default function Profile() {
                     </Box>
                 </Paper>
 
-                <Paper sx={{
-                    width: "100%",
-                    borderRadius: "10px",
-                    overflow: "hidden", // to remain effect of border-radius with child grid items
-                    boxShadow: "0 0 10px #000000",
-                    m: '40px auto 30px'
-                }}>
+                {/* This will only appear to the user who is the owner of this profile, not admins */}
+                { isOwner && (
+                    <Paper sx={{
+                        width: "100%",
+                        borderRadius: "10px",
+                        overflow: "hidden", // to remain effect of border-radius with child grid items
+                        boxShadow: "0 0 10px #000000",
+                        m: '40px auto 30px'
+                    }}>
 
-                    <Box component={'form'} sx={{width: '100%', p: 2}} onSubmit={onSubmitPassword}>
-                        <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                            <Typography component={'h2'} color={'primary'}
-                                        sx={{fontWeight: 600, fontSize: 20}}>THAY ĐỔI MẬT KHẨU</Typography>
-                            <Button variant={'contained'} size={'large'}
-                                    sx={{fontWeight: 600, borderRadius: 2}}
-                                    type={'submit'}>Lưu lại</Button>
+                        <Box component={'form'} sx={{width: '100%', p: 2}} onSubmit={onSubmitPassword}>
+                            <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                <Typography component={'h2'} color={'primary'}
+                                            sx={{fontWeight: 600, fontSize: 20}}>THAY ĐỔI MẬT KHẨU</Typography>
+                                <Button variant={'contained'} size={'large'}
+                                        sx={{fontWeight: 600, borderRadius: 2}}
+                                        type={'submit'}>Lưu lại</Button>
+                            </Box>
+
+                            <Grid container spacing={3}>
+                                <Grid size={{xs: 12, md: 6}} width={'100%'}>
+                                    <Typography sx={{fontWeight: 600, fontSize: 18}}
+                                                color={'textPrimary'}>Mật khẩu cũ</Typography>
+                                    <TextField fullWidth size={'small'} sx={{my: 1}}
+                                               placeholder={'Nhập mật khẩu cũ của bạn'}
+
+                                               name={'old_password'}
+                                               value={passwordFormData.old_password}
+                                               onChange={onChange}
+                                               onBlur={handleBlur}
+                                               error={touchedPassword.old_password && Boolean(passwordHelperTexts.old_password)}
+                                               helperText={touchedPassword.old_password && passwordHelperTexts.old_password}
+
+                                               type={showPassword ? 'text' : 'password'}
+                                               slotProps={{
+                                                   input: {
+                                                       endAdornment:
+                                                           <InputAdornment position="end">
+                                                               <IconButton
+                                                                   aria-label={
+                                                                       showPassword ? 'hide the password' : 'display the password'
+                                                                   }
+                                                                   onClick={handleClickShowPassword}
+                                                                   onMouseDown={handleMouseDownPassword}
+                                                                   onMouseUp={handleMouseUpPassword}
+                                                                   edge="end"
+                                                               >
+                                                                   {showPassword ? <VisibilityOff/> : <Visibility/>}
+                                                               </IconButton>
+                                                           </InputAdornment>
+                                                   }
+                                               }}
+                                    />
+                                </Grid>
+
+                                <Grid size={{xs: 12, md: 6}} width={'100%'}>
+                                </Grid>
+
+                                <Grid size={{xs: 12, md: 6}} width={'100%'}>
+                                    <Typography sx={{fontWeight: 600, fontSize: 18}}
+                                                color={'textPrimary'}>Mật khẩu mới</Typography>
+                                    <TextField fullWidth size={'small'} sx={{my: 1}}
+                                               placeholder={'Nhập mật khẩu mới của bạn'}
+
+                                               name={'new_password'}
+                                               value={passwordFormData.new_password}
+                                               onChange={onChange}
+                                               onBlur={handleBlur}
+                                               error={touchedPassword.new_password && Boolean(passwordHelperTexts.new_password)}
+                                               helperText={touchedPassword.new_password && passwordHelperTexts.new_password}
+
+                                               type={showPassword ? 'text' : 'password'}
+                                               slotProps={{
+                                                   input: {
+                                                       endAdornment:
+                                                           <InputAdornment position="end">
+                                                               <IconButton
+                                                                   aria-label={
+                                                                       showPassword ? 'hide the password' : 'display the password'
+                                                                   }
+                                                                   onClick={handleClickShowPassword}
+                                                                   onMouseDown={handleMouseDownPassword}
+                                                                   onMouseUp={handleMouseUpPassword}
+                                                                   edge="end"
+                                                               >
+                                                                   {showPassword ? <VisibilityOff/> : <Visibility/>}
+                                                               </IconButton>
+                                                           </InputAdornment>
+                                                   }
+                                               }}
+                                    />
+                                </Grid>
+
+                                <Grid size={{xs: 12, md: 6}} width={'100%'}>
+                                    <Typography sx={{fontWeight: 600, fontSize: 18}}
+                                                color={'textPrimary'}>Nhập lại mật khẩu mới</Typography>
+                                    <TextField fullWidth size={'small'} sx={{my: 1}}
+                                               placeholder={'Nhập lại mật khẩu mới của bạn'}
+
+                                               name={'confirm_new_password'}
+                                               value={passwordFormData.confirm_new_password}
+                                               onChange={onChange}
+                                               onBlur={handleBlur}
+                                               error={touchedPassword.confirm_new_password && Boolean(passwordHelperTexts.confirm_new_password)}
+                                               helperText={touchedPassword.confirm_new_password && passwordHelperTexts.confirm_new_password}
+
+                                               type={showPassword ? 'text' : 'password'}
+                                               slotProps={{
+                                                   input: {
+                                                       endAdornment:
+                                                           <InputAdornment position="end">
+                                                               <IconButton
+                                                                   aria-label={
+                                                                       showPassword ? 'hide the password' : 'display the password'
+                                                                   }
+                                                                   onClick={handleClickShowPassword}
+                                                                   onMouseDown={handleMouseDownPassword}
+                                                                   onMouseUp={handleMouseUpPassword}
+                                                                   edge="end"
+                                                               >
+                                                                   {showPassword ? <VisibilityOff/> : <Visibility/>}
+                                                               </IconButton>
+                                                           </InputAdornment>
+                                                   }
+                                               }}
+                                    />
+                                </Grid>
+
+                            </Grid>
                         </Box>
+                    </Paper>
+                )}
 
-                        <Grid container spacing={3}>
-                            <Grid size={{xs: 12, md: 6}} width={'100%'}>
-                                <Typography sx={{fontWeight: 600, fontSize: 18}}
-                                            color={'textPrimary'}>Mật khẩu cũ</Typography>
-                                <TextField fullWidth size={'small'} sx={{my: 1}}
-                                           placeholder={'Nhập mật khẩu cũ của bạn'}
-
-                                           name={'old_password'}
-                                           value={passwordFormData.old_password}
-                                           onChange={onChange}
-                                           onBlur={handleBlur}
-                                           error={touchedPassword.old_password && Boolean(passwordHelperTexts.old_password)}
-                                           helperText={touchedPassword.old_password && passwordHelperTexts.old_password}
-
-                                           type={showPassword ? 'text' : 'password'}
-                                           slotProps={{
-                                               input: {
-                                                   endAdornment:
-                                                       <InputAdornment position="end">
-                                                           <IconButton
-                                                               aria-label={
-                                                                   showPassword ? 'hide the password' : 'display the password'
-                                                               }
-                                                               onClick={handleClickShowPassword}
-                                                               onMouseDown={handleMouseDownPassword}
-                                                               onMouseUp={handleMouseUpPassword}
-                                                               edge="end"
-                                                           >
-                                                               {showPassword ? <VisibilityOff/> : <Visibility/>}
-                                                           </IconButton>
-                                                       </InputAdornment>
-                                               }
-                                           }}
-                                />
-                            </Grid>
-
-                            <Grid size={{xs: 12, md: 6}} width={'100%'}>
-                            </Grid>
-
-                            <Grid size={{xs: 12, md: 6}} width={'100%'}>
-                                <Typography sx={{fontWeight: 600, fontSize: 18}}
-                                            color={'textPrimary'}>Mật khẩu mới</Typography>
-                                <TextField fullWidth size={'small'} sx={{my: 1}}
-                                           placeholder={'Nhập mật khẩu mới của bạn'}
-
-                                           name={'new_password'}
-                                           value={passwordFormData.new_password}
-                                           onChange={onChange}
-                                           onBlur={handleBlur}
-                                           error={touchedPassword.new_password && Boolean(passwordHelperTexts.new_password)}
-                                           helperText={touchedPassword.new_password && passwordHelperTexts.new_password}
-
-                                           type={showPassword ? 'text' : 'password'}
-                                           slotProps={{
-                                               input: {
-                                                   endAdornment:
-                                                       <InputAdornment position="end">
-                                                           <IconButton
-                                                               aria-label={
-                                                                   showPassword ? 'hide the password' : 'display the password'
-                                                               }
-                                                               onClick={handleClickShowPassword}
-                                                               onMouseDown={handleMouseDownPassword}
-                                                               onMouseUp={handleMouseUpPassword}
-                                                               edge="end"
-                                                           >
-                                                               {showPassword ? <VisibilityOff/> : <Visibility/>}
-                                                           </IconButton>
-                                                       </InputAdornment>
-                                               }
-                                           }}
-                                />
-                            </Grid>
-
-                            <Grid size={{xs: 12, md: 6}} width={'100%'}>
-                                <Typography sx={{fontWeight: 600, fontSize: 18}}
-                                            color={'textPrimary'}>Nhập lại mật khẩu mới</Typography>
-                                <TextField fullWidth size={'small'} sx={{my: 1}}
-                                           placeholder={'Nhập lại mật khẩu mới của bạn'}
-
-                                           name={'confirm_new_password'}
-                                           value={passwordFormData.confirm_new_password}
-                                           onChange={onChange}
-                                           onBlur={handleBlur}
-                                           error={touchedPassword.confirm_new_password && Boolean(passwordHelperTexts.confirm_new_password)}
-                                           helperText={touchedPassword.confirm_new_password && passwordHelperTexts.confirm_new_password}
-
-                                           type={showPassword ? 'text' : 'password'}
-                                           slotProps={{
-                                               input: {
-                                                   endAdornment:
-                                                       <InputAdornment position="end">
-                                                           <IconButton
-                                                               aria-label={
-                                                                   showPassword ? 'hide the password' : 'display the password'
-                                                               }
-                                                               onClick={handleClickShowPassword}
-                                                               onMouseDown={handleMouseDownPassword}
-                                                               onMouseUp={handleMouseUpPassword}
-                                                               edge="end"
-                                                           >
-                                                               {showPassword ? <VisibilityOff/> : <Visibility/>}
-                                                           </IconButton>
-                                                       </InputAdornment>
-                                               }
-                                           }}
-                                />
-                            </Grid>
-
-                        </Grid>
-                    </Box>
-                </Paper>
             </Container>
         </>
     )
