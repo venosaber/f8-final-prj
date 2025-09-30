@@ -18,6 +18,10 @@ function Classes() {
         navigate('/class/add');
     }
 
+    const handleGoToAdminPanel = () => {
+        navigate('/users');
+    }
+
     const [user, setUser] = useState({name: '', role: ''});
     const displayAddClassButton = user.role === 'student' ? 'none' : 'inline-flex';
     const [courses, setCourses] = useState<Course[]>([]);
@@ -74,6 +78,18 @@ function Classes() {
                            mt: '64px', backgroundColor: '#f0f2f5',
                            minHeight: 'calc(100vh - 64px)', p: 3
                        }}>
+
+                {/* Admin panel for admin */}
+                {user.role === 'admin' && (
+                    <Box sx={{my: 2, textAlign: 'center'}}>
+                        <Button variant={'contained'} size={'large'}
+                                sx={{minWidth: '33%', fontSize: '1.2em', fontWeight: 600, backgroundColor: '#9400c0', borderRadius: 3, p: 2}}
+                                onClick={handleGoToAdminPanel}
+                        >
+                            Quản lý người dùng
+                        </Button>
+                    </Box>
+                )}
 
                 {/* Page title & controls */}
                 <Box sx={{display: {md: 'flex'}, alignItems: 'center', justifyContent: 'space-between', mb: 2}}>

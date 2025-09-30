@@ -11,7 +11,7 @@ import {
     Invite,
     NotFound,
     Index,
-    ForgotPassword, ResetPassword
+    ForgotPassword, ResetPassword, Forbidden, Users
 } from '../pages'
 import {default as PublicLayout} from './PublicLayout'
 import {default as ProtectedLayout} from './ProtectedLayout'
@@ -57,8 +57,12 @@ const router = createBrowserRouter([
                 element: <EditClass/>
             },
             {
-                path: '/profile',
+                path: '/profile/:profileId',
                 element: <Profile/>
+            },
+            {
+                path: '/users',
+                element: <Users/>
             },
 
             {
@@ -84,6 +88,10 @@ const router = createBrowserRouter([
     {
         path: '/',
         element: <Index/>
+    },
+    {
+        path: '/403',
+        element: <Forbidden/>
     },
     {
         path: '*',

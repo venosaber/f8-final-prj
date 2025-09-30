@@ -5,10 +5,11 @@ export const UserServiceToken = Symbol('UserServiceToken');
 
 export const TeacherServiceToken = Symbol('TeacherServiceToken');
 export const StudentServiceToken = Symbol('StudentServiceToken');
+export const AdminServiceToken = Symbol('AdminServiceToken');
 
 export const AuthServiceToken = Symbol('AuthServiceToken');
 export const PasswordResetTokenRepository = Symbol(
-    'PasswordResetTokenRepository',
+  'PasswordResetTokenRepository',
 );
 
 export const FileEntityRepository = Symbol('FileEntityRepository');

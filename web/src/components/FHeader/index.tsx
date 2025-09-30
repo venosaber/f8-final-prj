@@ -28,6 +28,7 @@ import {deleteCookie, getUserInfo, getValidAccessToken} from "../../router/auth.
 import {getMethod} from "../../utils/api.ts";
 
 interface UserBaseInfo {
+    userId: string;
     name: string;
     role: string;
     avatar_info: {
@@ -88,6 +89,14 @@ const getRoleLabel = (role: string) => {
 
 export default function DrawerAppBar() {
 
+    /************** Set classname, username, role label ****************/
+    const [className, setClassName] = useState<string>('');
+
+    const [user, setUser] = useState<UserBaseInfo>({userId: '', name: '', role: '', avatar_info: null});
+    const displayAddClassButton = user.role === 'student' ? 'none' : 'inline-flex';
+    const {id: classId} = useParams();
+
+    /*********** drop-down menu for profile editing & logout ***********/
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
     const handleOpenUserMenu = (event: MouseEvent<HTMLElement>) => {
         setAnchorElUser(event.currentTarget);
@@ -98,7 +107,7 @@ export default function DrawerAppBar() {
 
     const navigate = useNavigate();
     const handleChangeProfile = () => {
-        navigate('/profile');
+        navigate(`/profile/${user.userId}`);
     }
 
     const handleLogout = () => {
@@ -106,13 +115,6 @@ export default function DrawerAppBar() {
         deleteCookie('refreshToken');
         navigate('/login');
     }
-
-    /************** Set classname, username, role label ****************/
-    const [className, setClassName] = useState<string>('');
-
-    const [user, setUser] = useState<UserBaseInfo>({name: '', role: '', avatar_info: null});
-    const displayAddClassButton = user.role === 'student' ? 'none' : 'inline-flex';
-    const {id: classId} = useParams();
 
     useEffect(() => {
         const onMounted = async () => {
@@ -124,8 +126,8 @@ export default function DrawerAppBar() {
             }
 
             try {
-                const {name, role, avatar_info} = getUserInfo(accessToken);
-                setUser({name, role, avatar_info});
+                const {sub: userId, name, role, avatar_info} = getUserInfo(accessToken);
+                setUser({userId, name, role, avatar_info});
 
                 // the ClassDetail page has an id, the Classes page doesn't
                 if (classId) {
