@@ -300,12 +300,12 @@ export default function Profile() {
             const {sub, role: roleOfCurUser} = getUserInfo(accessToken);
             let userData :User | null = null;
 
-            // if sub === Number(profileId), the current user is viewing his/her own profile
+            // if Number(sub) === Number(profileId), the current user is viewing his/her own profile
             // the role can be derived from accessToken
-            if (sub === Number(profileId)){
+            if (Number(sub) === Number(profileId)){
                 userData = await getMethod(`/${roleOfCurUser}s/${profileId}`);
+                setIsOwner(true);
             } else {
-                console.log("sub: ", sub, typeof sub," profileId: ", profileId, typeof profileId);
                 // the only people who can view others profile info are admins
                 if (roleOfCurUser !== 'admin') {
                     console.error("You don't have permission to view others' profile info.");

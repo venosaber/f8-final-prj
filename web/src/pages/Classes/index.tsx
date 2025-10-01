@@ -1,5 +1,5 @@
 import {DeleteClassDialog, FHeader} from '../../components'
-import {Container, Box, Typography, TextField, InputAdornment, Button} from "@mui/material";
+import {Container, Box, Typography, TextField, InputAdornment, Button, Divider} from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import {CourseGrid} from '../../components';
@@ -83,11 +83,15 @@ function Classes() {
                 {user.role === 'admin' && (
                     <Box sx={{my: 2, textAlign: 'center'}}>
                         <Button variant={'contained'} size={'large'}
-                                sx={{minWidth: '33%', fontSize: '1.2em', fontWeight: 600, backgroundColor: '#9400c0', borderRadius: 3, p: 2}}
+                                sx={{
+                                    minWidth: '33%', fontSize: '1.2em', fontWeight: 600,
+                                    backgroundColor: '#9400c0', borderRadius: 3, p: 2, mb: 2,
+                                }}
                                 onClick={handleGoToAdminPanel}
                         >
                             Quản lý người dùng
                         </Button>
+                        <Divider variant={'fullWidth'} sx={{backgroundColor: '#ff0000'}} />
                     </Box>
                 )}
 

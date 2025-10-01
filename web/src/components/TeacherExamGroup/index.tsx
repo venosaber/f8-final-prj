@@ -62,7 +62,11 @@ export default function TeacherExamGroup() {
             ]);
 
             if (examGroupData) setExamGroupDetail(examGroupData);
-            if (examsData) setExams(examsData);
+            if (examsData){
+                // sort the exams by id
+                examsData.sort((a: Exam, b: Exam) => a.id! - b.id!);
+                setExams(examsData);
+            }
 
             // get the students of the class
             const studentsData = classData?.students;

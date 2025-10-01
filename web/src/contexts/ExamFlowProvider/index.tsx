@@ -72,6 +72,8 @@ export function ExamFlowProvider({children}: { children: ReactNode }) {
             ]);
 
             setExamGroupDetail(examGroupData);
+            // sort the exams by id
+            exams.sort((a: Exam, b: Exam) => a.id! - b.id!);
 
             // if an exam has its id appear in the ids of examResults, that exam's status is 'completed'
             // otherwise its status can be temporarily assigned to 'locked'

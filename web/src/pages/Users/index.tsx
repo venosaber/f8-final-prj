@@ -37,7 +37,7 @@ export default function Users() {
             || user.email.toLowerCase().includes(searchStr.toLowerCase())
             || userRoleName(user.role).toLowerCase().includes(searchStr.toLowerCase())
             || user.id.toString().includes(searchStr);
-    }), [users, searchStr]);
+    }), [users, searchStr]).sort((a, b) => a.id - b.id);
 
     const handleEditUser = (userId: number) => {
         navigate(`/profile/${userId}`);
@@ -73,7 +73,6 @@ export default function Users() {
 
             try {
                 const usersData: User[] = await getMethod('/users');
-                usersData.sort((a, b) => a.id - b.id);
                 setUsers(usersData);
             } catch (err) {
                 console.error("Error on loading users: ", err);
@@ -158,13 +157,13 @@ export default function Users() {
                                         <TableCell sx={{display: 'flex', alignItems: 'center', gap: 3}}>
                                             <Button variant={'contained'} color={'success'}
                                                     size={'medium'} sx={{borderRadius: 2, px: 3}}
-                                                    onClick={()=>handleEditUser(user.id)}
+                                                    onClick={() => handleEditUser(user.id)}
                                             >
                                                 Sửa
                                             </Button>
                                             <Button variant={'contained'} color={'error'}
                                                     size={'medium'} sx={{borderRadius: 2, px: 3}}
-                                                    onClick={()=>handleDeleteUser(user.id)}
+                                                    onClick={() => handleDeleteUser(user.id)}
                                             >
                                                 Xóa
                                             </Button>
@@ -180,9 +179,9 @@ export default function Users() {
             </Container>
 
             <DeleteUserDialog userId={userIdToDelete}
-                               isOpenDialog={isOpenDialog}
-                               setIsOpenDialog={setIsOpenDialog}
-                               updateAfterDelete={updateAfterDelete}
+                              isOpenDialog={isOpenDialog}
+                              setIsOpenDialog={setIsOpenDialog}
+                              updateAfterDelete={updateAfterDelete}
             />
         </>
     )
