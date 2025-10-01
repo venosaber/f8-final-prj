@@ -10,8 +10,7 @@ import {
     Profile,
     Invite,
     NotFound,
-    Index,
-    ForgotPassword, ResetPassword, Forbidden, Users
+    ForgotPassword, ResetPassword, Users, Homepage
 } from '../pages'
 import {default as PublicLayout} from './PublicLayout'
 import {default as ProtectedLayout} from './ProtectedLayout'
@@ -87,11 +86,7 @@ const router = createBrowserRouter([
     },
     {
         path: '/',
-        element: <Index/>
-    },
-    {
-        path: '/403',
-        element: <Forbidden/>
+        element: <Homepage/>
     },
     {
         path: '*',

@@ -1,4 +1,4 @@
-import {DeleteUserDialog, FHeader} from '../../components'
+import {DeleteUserDialog, FHeader, Forbidden} from '../../components'
 import {
     Container,
     Box,
@@ -26,6 +26,7 @@ export default function Users() {
     const userRoleName = (role: string) => {
         return role === 'student' ? 'Học sinh' : role === 'teacher' ? 'Giáo viên' : 'Admin';
     }
+    const [isForbidden, setIsForbidden] = useState(false);
 
     const [users, setUsers] = useState<User[]>([]);
 
@@ -68,7 +69,9 @@ export default function Users() {
 
             const {role} = getUserInfo(accessToken);
             if (role !== 'admin') {
-                navigate('/403');
+                setIsForbidden(true);
+                setIsLoading(false);
+                return;
             }
 
             try {
@@ -85,6 +88,7 @@ export default function Users() {
     }, []);
 
     if (isLoading) return <Loading/>
+    if (isForbidden) return <Forbidden/>
 
     return (
         <>

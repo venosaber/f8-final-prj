@@ -1,4 +1,4 @@
-import {FHeader, Loading} from "../../components";
+import {FHeader, Loading, Forbidden} from "../../components";
 import {Avatar, Box, Button, Container, Grid, Paper, TextField, Typography} from "@mui/material";
 import {type ChangeEvent, type FocusEvent, type FormEvent, type MouseEvent, useEffect} from "react";
 import {useState} from "react";
@@ -30,6 +30,11 @@ export default function Profile() {
     const {profileId} = useParams();
 
     const [profileRole, setProfileRole] = useState('student');
+    // check if the user who is viewing/editing is the owner of the profile info
+    const [isOwner, setIsOwner] = useState(true);
+    // determine if the user is forbidden or not
+    const [isForbidden, setIsForbidden] = useState(false);
+
     const [isLoadingInfo, setIsLoadingInfo] = useState<boolean>(true);
 
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -285,9 +290,6 @@ export default function Profile() {
         event.preventDefault();
     };
 
-    // check if the user who is viewing/editing is the owner of the profile info
-    const [isOwner, setIsOwner] = useState(true);
-
     useEffect(() => {
         const onMounted = async () => {
             const accessToken: string | null = await getValidAccessToken();
@@ -309,7 +311,8 @@ export default function Profile() {
                 // the only people who can view others profile info are admins
                 if (roleOfCurUser !== 'admin') {
                     console.error("You don't have permission to view others' profile info.");
-                    navigate('/403');
+                    setIsForbidden(true);
+                    setIsLoadingInfo(false);
                     return;
                 } else {
                     // the current user is an admin viewing another user's profile info
@@ -342,6 +345,7 @@ export default function Profile() {
     }, [navigate, profileId]);
 
     if (isLoadingInfo) return <Loading/>
+    if (isForbidden) return <Forbidden/>
 
     return (
         <>
