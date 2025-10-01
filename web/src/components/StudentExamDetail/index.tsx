@@ -56,7 +56,7 @@ export default function StudentExamDetail() {
         if (!accessToken) {
             toast.error("Có lỗi xảy ra: Phiên đăng nhập không hợp lệ!");
             navigate('/login');
-            return;
+            return false;
         }
 
         const payload = {
@@ -75,6 +75,7 @@ export default function StudentExamDetail() {
         const response = await postMethod('/exam_results', payload)
         if (!response) {
             toast.error('Nộp bài không thành công!');
+            return false;
         } else {
             toast.success('Nộp bài thành công');
             // clear localStorage
@@ -83,6 +84,7 @@ export default function StudentExamDetail() {
 
             // start counting down to unlock the next exam (if any)
             startUnlockTimer(Number(examId));
+            return true;
         }
     }
 

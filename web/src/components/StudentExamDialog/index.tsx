@@ -6,7 +6,7 @@ interface StudentExamDialogProps {
     timeLeft: number,
     isOpenDialog: boolean,
     setIsOpenDialog: (isOpenDialog: boolean) => void,
-    onSubmit: () => Promise<void>,
+    onSubmit: () => Promise<boolean>,
     handleBackToExamGroupDetail: () => void
 }
 
@@ -28,14 +28,17 @@ export default function StudentExamDialog({
         // if not locked, lock immediately
         isLocked.current = true;
         setIsWaiting(true);
-        await onSubmit();
+        const isSubmittedSuccessfully: boolean = await onSubmit();
 
         // after submitting, unlock
         setIsWaiting(false);
         isLocked.current = false;
         setIsOpenDialog(false);
 
-        handleBackToExamGroupDetail();
+        if (isSubmittedSuccessfully) {
+            handleBackToExamGroupDetail();
+        }
+
     }
 
     return (
