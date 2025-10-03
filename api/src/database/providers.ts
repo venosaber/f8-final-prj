@@ -55,8 +55,8 @@ export const databaseProviders = [
 
       await dataSource.initialize();
 
-      // automatically run migrations when started up
-      await dataSource.runMigrations();
+      // // automatically run migrations when started up
+      // await dataSource.runMigrations();
 
       addTransactionalDataSource(dataSource);
 
