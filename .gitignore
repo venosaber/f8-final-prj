@@ -1,3 +1,9 @@
 .idea
 .env
 db
+certbot
+docker-compose.override.yml
+
+# Nginx generated config (keep template only)
+nginx/nginx.conf
+
