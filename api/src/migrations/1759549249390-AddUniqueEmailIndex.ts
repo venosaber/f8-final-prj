@@ -1,9 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddUniqueEmailIndexForActiveUsers1759309946127
-  implements MigrationInterface
-{
-  name = 'AddUniqueEmailIndexForActiveUsers1759309946127';
+export class AddUniqueEmailIndex1759549249390 implements MigrationInterface {
+  name = 'AddUniqueEmailIndex1759549249390';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // drop old indexes

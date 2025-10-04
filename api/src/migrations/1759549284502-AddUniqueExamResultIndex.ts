@@ -1,8 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddUniqueExamResultIndex1759330775237
+export class AddUniqueExamResultIndex1759549284502
   implements MigrationInterface
 {
+  name = 'AddUniqueExamResultIndex1759549284502';
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `DROP INDEX IF EXISTS "IDX_exam_result_user_exam_active"`,
