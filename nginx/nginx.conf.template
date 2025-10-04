@@ -55,7 +55,11 @@ http {
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection $connection_upgrade;
-            proxy_read_timeout 86400; # 24 hours for WebSocket
+
+            # prevent nginx from using websocket extensions which can cause conflict
+            proxy_set_header Sec-WebSocket-Extensions "";
+            # 24 hours for WebSocket
+            proxy_read_timeout 86400;
         }
 
         # Proxy configuration for backend (api)
