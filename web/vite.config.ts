@@ -6,6 +6,8 @@ export default defineConfig({
     plugins: [react()],
     server: {
         port: 4000,
-        allowedHosts: [import.meta.env.VITE_DOMAIN || 'localhost']
+        allowedHosts: [process.env.VITE_DOMAIN || 'localhost']
     }
 })
+
+
