@@ -17,7 +17,7 @@ export default function Homepage() {
                        p: {xs: 2, md: 4},
                    }}
         >
-            <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', px: 1}}>
+            <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', mx: 2}}>
                 <LogoElement/>
                 <Typography component={"h1"} variant={"h4"} color={'primary'} fontWeight={600} my={1}>
                     BKStar Classroom
