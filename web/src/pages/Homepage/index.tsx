@@ -15,10 +15,9 @@ export default function Homepage() {
                        alignItems: "center",
                        backgroundColor: "#f0f0f0",
                        p: {xs: 2, md: 4},
-                       mx: 1,
                    }}
         >
-            <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center'}}>
+            <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', px: 1}}>
                 <LogoElement/>
                 <Typography component={"h1"} variant={"h4"} color={'primary'} fontWeight={600} my={1}>
                     BKStar Classroom
@@ -26,7 +25,7 @@ export default function Homepage() {
                 <Typography component={"h2"} variant={"h5"} fontWeight={600} my={1}>
                     Cung cấp giải pháp học tập một cách hiệu quả
                 </Typography>
-                <Typography component={"p"} variant={"h6"}>
+                <Typography component={"p"} variant={"h6"} color={'error'} my={2}>
                     Đa dạng bài tập và đề thi, quản lí theo lớp học.<br/>
                     Làm bài thi trực tuyến, hệ thống chấm bài tự động.
                 </Typography>
