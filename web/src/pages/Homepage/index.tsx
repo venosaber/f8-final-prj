@@ -2,7 +2,7 @@ import {Box, Button, Container, Typography} from "@mui/material";
 import {LogoElement} from "../../components";
 import {useNavigate} from "react-router-dom";
 
-export default function Index() {
+export default function Homepage() {
     const navigate = useNavigate();
 
     return (
@@ -14,7 +14,8 @@ export default function Index() {
                        justifyContent: "center",
                        alignItems: "center",
                        backgroundColor: "#f0f0f0",
-                       p: {xs: 2, md: 4}
+                       p: {xs: 2, md: 4},
+                       mx: 1,
                    }}
         >
             <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center'}}>
@@ -37,8 +38,8 @@ export default function Index() {
                         <Typography variant={'body1'} sx={{color: '#0000ff'}}>Đăng nhập</Typography>
                     </Button>
 
-                    <Button variant={'contained'}
-                            sx={{p: 2, border: '2px solid #0000ff', backgroundColor: '#0000ff', width: '200px'}}
+                    <Button variant={'contained'} color={'success'}
+                            sx={{p: 2, border: '2px solid #008000', width: '200px'}}
                             size={'large'}
                             onClick={() => navigate('/register')}>
                         <Typography variant={'body1'} sx={{color: '#ffffff'}}>Đăng ký</Typography>
