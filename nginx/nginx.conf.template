@@ -4,6 +4,9 @@ http {
     include /etc/nginx/mime.types;
     default_type application/octet-stream;
 
+    # default max body size is only 1M, need to increase to be able to upload files
+    client_max_body_size 10M;
+
     # WebSocket timeout settings
     map $http_upgrade $connection_upgrade {
         default upgrade;
