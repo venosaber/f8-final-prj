@@ -152,13 +152,13 @@ function CopyrightInfo() {
     return (
         <Box sx={{p: 2, mt: 'auto'}}>
             <Typography variant="caption" color="text.secondary" sx={{display: 'block', textAlign: 'center'}}>
-                ©2024 Allrights reserved
+                ©2025 Allrights reserved
             </Typography>
             <Typography variant="caption" color="text.secondary" sx={{display: 'block', textAlign: 'center'}}>
                 BKStar
             </Typography>
             <Typography variant="caption" color="text.secondary" sx={{display: 'block', textAlign: 'center'}}>
-                Version 1.3.1
+                Version 1.0.0
             </Typography>
         </Box>
     )
