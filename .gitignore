@@ -3,8 +3,3 @@
 db
 certbot
 docker-compose.override.yml
-
-# Nginx generated config (keep template only)
-nginx/nginx.conf
-db_backup_20251004_101258
-

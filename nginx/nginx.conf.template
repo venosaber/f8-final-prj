@@ -48,7 +48,7 @@ http {
 
         # Proxy configuration for frontend (web)
         location / {
-            proxy_pass http://web:${WEB_PORT};
+            proxy_pass http://web:4000;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -67,7 +67,7 @@ http {
 
         # Proxy configuration for backend (api)
         location /api/ {
-            proxy_pass http://api:${API_PORT}/;
+            proxy_pass http://api:3000/;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -79,13 +79,18 @@ http {
             proxy_send_timeout 300;
         }
 
-        # Swagger Documentation (Optional)
+        # Swagger Documentation — blocked in production for security
+        # To re-enable temporarily, comment out the block below and uncomment the proxy block
         location /docs {
-            proxy_pass http://api:${API_PORT}/docs;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
+            return 404;
         }
+
+        # location /docs {
+        #     proxy_pass http://api:3000/docs;
+        #     proxy_set_header Host $host;
+        #     proxy_set_header X-Real-IP $remote_addr;
+        #     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        #     proxy_set_header X-Forwarded-Proto $scheme;
+        # }
     }
 }
