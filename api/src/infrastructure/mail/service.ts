@@ -22,7 +22,7 @@ export class MailService implements MailServiceI {
     async sendMail(options: SendMailOptions) {
         try {
             const info = await this.transporter.sendMail({
-                from: `${process.env.MAIL_FROM_NAME} <${process.env.MAIL_USER}>`,
+                from: `${process.env.MAIL_FROM_NAME} <${process.env.MAIL_FROM ?? process.env.MAIL_USER}>`,
                 to: options.to,
                 subject: options.subject,
                 html: options.html,

@@ -155,11 +155,15 @@ Subsequent deploys after `git pull` only need `docker compose up -d`.
 
 ## Database Migrations
 
+Migrations run **automatically** when the API container starts (`npm run migration:run` runs before `npm run start:dev`). On a fresh VPS this creates all tables; on subsequent deploys it applies any new migrations and skips already-applied ones.
+
+For manual control (e.g. generating a new migration from entity changes):
+
 ```bash
 # Generate a new migration from entity changes
 docker compose exec api npm run migration:generate -- src/migrations/MigrationName
 
-# Run pending migrations
+# Run pending migrations manually
 docker compose exec api npm run migration:run
 
 # Revert the last migration
